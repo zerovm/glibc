@@ -23,7 +23,11 @@
 #include <stdio.h>
 #include <string.h>
 #include <dlfcn.h>
+
+#ifdef SHARED
 #include <gnu/lib-names.h>
+#endif
+
 #include <bits/libc-lock.h>
 
 /* Get specification for idna_to_ascii_lz. */
@@ -48,7 +52,11 @@ load_dso (void)
   /* Retest in case some other thread arrived here at the same time.  */
   if (h == NULL)
     {
+#ifdef SHARED
       h = __libc_dlopen (LIBCIDN_SO);
+#else
+      abort();
+#endif
 
       if (h == NULL)
 	h = (void *) 1l;

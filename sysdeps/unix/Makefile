@@ -308,7 +308,7 @@ endif
 # This is the end of the pipeline for compiling the syscall stubs.
 # The stdin in assembler with cpp using sysdep.h macros.
 # Be sure to disable debugging info since it would all just say "<stdin>".
-compile-syscall = $(filter-out -g%,$(COMPILE.S)) -x assembler-with-cpp -o $@ -
+compile-syscall = $(filter-out -g%,$(COMPILE.c)) -x c -o $@ -
 
 ifndef avoid-generated
 $(common-objpfx)sysd-syscalls: $(..)sysdeps/unix/make-syscalls.sh \

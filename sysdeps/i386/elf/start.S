@@ -82,8 +82,13 @@ _start:
 	   which grow downwards).  */
 	pushl %esp
 
+#ifndef __native_client__
 	pushl %edx		/* Push address of the shared library
 				   termination function.  */
+#else
+        /* Under NaCl, %edx is undefined on process start. */
+        pushl $0
+#endif
 
 #ifdef SHARED
 	/* Load PIC register.  */

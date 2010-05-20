@@ -55,6 +55,11 @@ ENTRY (BP_SYM (_setjmp))
 	movl %ebp, (JB_BP*4)(%edx) /* Save caller's frame pointer.  */
 
 	movl %eax, JB_SIZE(%edx) /* No signal mask set.  */
+#ifdef __native_client__
+	popl %ecx
+	nacljmp %ecx
+#else
 	ret
+#endif
 END (BP_SYM (_setjmp))
 libc_hidden_def (_setjmp)

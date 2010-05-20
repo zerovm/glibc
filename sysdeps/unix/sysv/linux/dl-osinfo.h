@@ -38,6 +38,7 @@ dl_fatal (const char *str)
 }
 #endif
 
+#ifndef __native_client__
 #define DL_SYSDEP_OSCHECK(FATAL)					      \
   do {									      \
     /* Test whether the kernel is new enough.  This test is only performed    \
@@ -58,6 +59,7 @@ dl_fatal (const char *str)
     else if (__LINUX_KERNEL_VERSION > 0)				      \
       FATAL ("FATAL: cannot determine kernel version\n");		      \
   } while (0)
+#endif
 
 static inline uintptr_t __attribute__ ((always_inline))
 _dl_setup_stack_chk_guard (void)

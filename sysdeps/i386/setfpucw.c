@@ -39,6 +39,8 @@ __setfpucw (fpu_control_t set)
 
   __asm__ ("fldcw %0" : : "m" (*&cw));
 
+  /* NaCl doesn't allow stmxcsr */
+#ifndef __native_client__
   /* If the CPU supports SSE, we set the MXCSR as well.  */
   if ((GLRO(dl_hwcap) & HWCAP_I386_XMM) != 0)
     {
@@ -52,4 +54,5 @@ __setfpucw (fpu_control_t set)
 
       __asm__ ("ldmxcsr %0" : : "m" (*&xnew_exc));
     }
+#endif
 }

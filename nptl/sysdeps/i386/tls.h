@@ -191,13 +191,14 @@ union user_desc_init
 # endif
 #endif
 
+#include <nacl_syscalls.h>
+
 /* Code to initially initialize the thread pointer.  This might need
    special attention since 'errno' is not yet available and if the
    operation can cause a failure 'errno' must not be touched.  */
 # define TLS_INIT_TP(thrdescr, secondcall) \
   ({ void *_thrdescr = (thrdescr);					      \
      tcbhead_t *_head = _thrdescr;					      \
-     union user_desc_init _segdescr;					      \
      int _result;							      \
 									      \
      _head->tcb = _thrdescr;						      \
@@ -205,44 +206,9 @@ union user_desc_init
      _head->self = _thrdescr;						      \
      /* New syscall handling support.  */				      \
      INIT_SYSINFO;							      \
-									      \
-     /* The 'entry_number' field.  Let the kernel pick a value.  */	      \
-     if (secondcall)							      \
-       _segdescr.vals[0] = TLS_GET_GS () >> 3;				      \
-     else								      \
-       _segdescr.vals[0] = -1;						      \
-     /* The 'base_addr' field.  Pointer to the TCB.  */			      \
-     _segdescr.vals[1] = (unsigned long int) _thrdescr;			      \
-     /* The 'limit' field.  We use 4GB which is 0xfffff pages.  */	      \
-     _segdescr.vals[2] = 0xfffff;					      \
-     /* Collapsed value of the bitfield:				      \
-	  .seg_32bit = 1						      \
-	  .contents = 0							      \
-	  .read_exec_only = 0						      \
-	  .limit_in_pages = 1						      \
-	  .seg_not_present = 0						      \
-	  .useable = 1 */						      \
-     _segdescr.vals[3] = 0x51;						      \
-									      \
-     /* Install the TLS.  */						      \
-     asm volatile (TLS_LOAD_EBX						      \
-		   "int $0x80\n\t"					      \
-		   TLS_LOAD_EBX						      \
-		   : "=a" (_result), "=m" (_segdescr.desc.entry_number)	      \
-		   : "0" (__NR_set_thread_area),			      \
-		     TLS_EBX_ARG (&_segdescr.desc), "m" (_segdescr.desc));    \
-									      \
-     if (_result == 0)							      \
-       /* We know the index in the GDT, now load the segment register.	      \
-	  The use of the GDT is described by the value 3 in the lower	      \
-	  three bits of the segment descriptor value.			      \
-									      \
-	  Note that we have to do this even if the numeric value of	      \
-	  the descriptor does not change.  Loading the segment register	      \
-	  causes the segment information from the GDT to be loaded	      \
-	  which is necessary since we have changed it.   */		      \
-       TLS_SET_GS (_segdescr.desc.entry_number * 8 + 3);		      \
-									      \
+     int (*nacl_tls_init)(void const *buf, size_t size) =                     \
+       NACL_SYSCALL_ADDR(NACL_sys_tls_init);				      \
+     _result = nacl_tls_init (_thrdescr, 0x1000);			      \
      _result == 0 ? NULL						      \
      : "set_thread_area failed when setting up thread-local storage\n"; })
 

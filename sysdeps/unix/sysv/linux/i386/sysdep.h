@@ -410,29 +410,10 @@ asm (".L__X'%ebx = 1\n\t"
     (int) resultvar; })
 # endif
 #else
-# define INTERNAL_SYSCALL(name, err, nr, args...) \
-  ({									      \
-    register unsigned int resultvar;					      \
-    EXTRAVAR_##nr							      \
-    asm volatile (							      \
-    LOADARGS_##nr							      \
-    "movl %1, %%eax\n\t"						      \
-    "int $0x80\n\t"							      \
-    RESTOREARGS_##nr							      \
-    : "=a" (resultvar)							      \
-    : "i" (__NR_##name) ASMFMT_##nr(args) : "memory", "cc");		      \
-    (int) resultvar; })
-# define INTERNAL_SYSCALL_NCS(name, err, nr, args...) \
-  ({									      \
-    register unsigned int resultvar;					      \
-    EXTRAVAR_##nr							      \
-    asm volatile (							      \
-    LOADARGS_##nr							      \
-    "int $0x80\n\t"							      \
-    RESTOREARGS_##nr							      \
-    : "=a" (resultvar)							      \
-    : "0" (name) ASMFMT_##nr(args) : "memory", "cc");			      \
-    (int) resultvar; })
+/* TODO(mseaborn): Don't use these in the NaCl build, or at least
+   don't hard code the value of ENOSYS. */
+# define INTERNAL_SYSCALL(name, err, nr, args...) (-38 /* ENOSYS */)
+# define INTERNAL_SYSCALL_NCS(name, err, nr, args...) (-38 /* ENOSYS */)
 #endif
 
 #undef INTERNAL_SYSCALL_DECL
@@ -560,6 +541,7 @@ asm (".L__X'%ebx = 1\n\t"
 
 
 /* Pointer mangling support.  */
+#ifndef __native_client__
 #if defined NOT_IN_libc && defined IS_IN_rtld
 /* We cannot use the thread descriptor because in ld.so we use setjmp
    earlier than the descriptor is initialized.  Using a global variable
@@ -584,6 +566,7 @@ asm (".L__X'%ebx = 1\n\t"
 				       "i" (offsetof (tcbhead_t,	      \
 						      pointer_guard)))
 # endif
+#endif
 #endif
 
 #endif /* linux/i386/sysdep.h */

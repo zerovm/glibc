@@ -64,7 +64,7 @@ routines := brk sbrk sstk ioctl \
 	    getloadavg getclktck \
 	    fgetxattr flistxattr fremovexattr fsetxattr getxattr \
 	    listxattr lgetxattr llistxattr lremovexattr lsetxattr \
-	    removexattr setxattr
+	    removexattr setxattr unimpl_syscall
 
 distribute := device-nrs.h
 

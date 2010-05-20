@@ -151,6 +151,7 @@ shared-only-routines += $file
     ;;
   esac
 
+  echo "		\$(common-objpfx)sysd-syscalls \\"
   echo "		\$(common-objpfx)s-proto$cancellable.d"
   case x"$callnum" in
   x_)
@@ -160,10 +161,8 @@ shared-only-routines += $file
   x*)
   echo "\
 	\$(make-target-directory)
-	(echo '#include <sysdep$cancellable.h>'; \\
-	 echo 'PSEUDO$noerrno ($strong, $syscall, $nargs)'; \\
-	 echo '	ret$noerrno'; \\
-	 echo 'PSEUDO_END$noerrno($strong)'; \\
+	(echo 'int $strong() { return __unimplemented_syscall(\"$syscall\"); }'; \\
+	 echo 'strong_alias ($strong, __${syscall}_nocancel)'; \\
 	 echo 'libc_hidden_def ($strong)'; \\"
   ;;
   esac
