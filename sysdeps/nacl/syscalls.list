@@ -1,0 +1,9 @@
+
+# This file is for overriding the Linux versions.
+# TODO(mseaborn): Change build system so that overriding files is easier.
+
+# These are listed only for generating stubs, so argument lists don't matter.
+
+umount		EXTRA	umount		i:s	__umount	umount
+umount2		EXTRA	umount2		i:si	__umount2	umount2
+clone		EXTRA	clone		i:	__clone	clone

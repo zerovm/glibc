@@ -161,7 +161,9 @@ shared-only-routines += $file
   x*)
   echo "\
 	\$(make-target-directory)
-	(echo 'int $strong() { return __unimplemented_syscall(\"$syscall\"); }'; \\
+	(echo 'int $strong();'; \\
+	 echo 'libc_hidden_proto ($strong)'; \\
+	 echo 'int $strong() { return __unimplemented_syscall(\"$syscall\"); }'; \\
 	 echo 'strong_alias ($strong, __${syscall}_nocancel)'; \\
 	 echo 'libc_hidden_def ($strong)'; \\"
   ;;
@@ -186,7 +188,7 @@ shared-only-routines += $file
 	  vcount=`expr $vcount + 1`
 	  echo "	 echo 'strong_alias ($strong, $source)'; \\"
 	fi
-	echo "	 echo 'default_symbol_version($source, $base, $ver)'; \\"
+	echo "	 echo 'default_symbol_version($source, $base, $ver);'; \\"
 	;;
       *@*)
 	base=`echo $name | sed 's/@.*//'`
@@ -199,7 +201,7 @@ shared-only-routines += $file
 	  vcount=`expr $vcount + 1`
 	  echo "	 echo 'strong_alias ($strong, $source)'; \\"
 	fi
-	echo "	 echo 'symbol_version($source, $base, $ver)'; \\"
+	echo "	 echo 'symbol_version($source, $base, $ver);'; \\"
 	;;
       !*)
 	name=`echo $name | sed 's/.//'`
@@ -207,6 +209,8 @@ shared-only-routines += $file
 	echo "	 echo 'libc_hidden_def ($name)'; \\"
 	;;
       *)
+	echo "	 echo 'int $name();'; \\"
+	echo "	 echo 'libc_hidden_proto ($name)'; \\"
 	echo "	 echo 'weak_alias ($strong, $name)'; \\"
 	echo "	 echo 'libc_hidden_weak ($name)'; \\"
 	;;

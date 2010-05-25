@@ -288,5 +288,8 @@ ${ac_prefix}/include directory out of the way.])
   fi
 fi
 
-# We have inlined syscalls.
-AC_DEFINE(HAVE_INLINED_SYSCALLS)
+# The NaCl build does not have inlined syscalls.
+# TODO(mseaborn): Separate Linux and NaCl files.
+
+# # We have inlined syscalls.
+# AC_DEFINE(HAVE_INLINED_SYSCALLS)

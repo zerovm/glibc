@@ -507,8 +507,8 @@ echo "${ECHO_T}ok" >&6; }
   fi
 fi
 
-# We have inlined syscalls.
-cat >>confdefs.h <<\_ACEOF
-#define HAVE_INLINED_SYSCALLS 1
-_ACEOF
+# The NaCl build does not have inlined syscalls.
+# TODO(mseaborn): Separate Linux and NaCl files.
 
+# # We have inlined syscalls.
+# AC_DEFINE(HAVE_INLINED_SYSCALLS)

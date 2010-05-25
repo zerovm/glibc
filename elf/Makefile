@@ -309,7 +309,8 @@ $(objpfx)ld.so: $(objpfx)librtld.os $(ld-map)
 	$(LINK.o) -nostdlib -nostartfiles -shared -o $@			\
 		  $(LDFLAGS-rtld) -Wl,-z,defs $(z-now-$(bind-now))	\
 		  $(filter-out $(map-file),$^) $(load-map-file)		\
-		  -Wl,-soname=$(rtld-installed-name) -T $@.lds
+		  -Wl,-soname=$(rtld-installed-name) -T $@.lds		\
+		  -Wl,-Ttext,0x20000
 	rm -f $@.lds
 	readelf -s $@ \
 	  | $(AWK) '($$7 ~ /^UND(|EF)$$/ && $$1 != "0:" && $$4 != "REGISTER") { print; p=1 } END { exit p != 0 }'

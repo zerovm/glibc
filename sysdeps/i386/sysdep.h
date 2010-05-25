@@ -133,6 +133,12 @@ lose: SYSCALL_PIC_SETUP							      \
     cfi_adjust_cfa_offset (-4);						      \
     addl $_GLOBAL_OFFSET_TABLE+[.-0b], %ebx;
 
+/* This is a workaround for the problem that gcc sometimes defines the
+   preprocessor symbol "__i686", which interferes with the link-time
+   symbol "__i686.get_pc_thunk.REG" below.
+   See http://sourceware.org/bugzilla/show_bug.cgi?id=4507 */
+#undef __i686
+
 # define SETUP_PIC_REG(reg) \
   .ifndef __i686.get_pc_thunk.reg;					      \
   .section .gnu.linkonce.t.__i686.get_pc_thunk.reg,"ax",@progbits;	      \

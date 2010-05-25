@@ -540,6 +540,10 @@ asm (".L__X'%ebx = 1\n\t"
 #endif	/* __ASSEMBLER__ */
 
 
+/* Default null implementations, which may be overridden below. */
+#define PTR_MANGLE(reg)
+#define PTR_DEMANGLE(reg)
+
 /* Pointer mangling support.  */
 #ifndef __native_client__
 #if defined NOT_IN_libc && defined IS_IN_rtld
