@@ -116,8 +116,9 @@ endif
 
 ifeq (yes,$(build-shared))
 extra-objs	= $(all-rtld-routines:%=%.os) soinit.os sofini.os interp.os
-generated	+= librtld.os dl-allobjs.os ld.so ldd
-install-others	= $(inst_slibdir)/$(rtld-installed-name)
+generated	+= librtld.os dl-allobjs.os ld.so runnable-ld.so ldd
+install-others	= $(inst_slibdir)/$(rtld-installed-name) \
+		  $(inst_slibdir)/runnable-ld.so
 install-bin-script = ldd
 endif
 
@@ -242,6 +243,7 @@ ifeq (yes,$(build-shared))
 # Make sure these things are built in the `make lib' pass so they can be used
 # to run programs during the `make others' pass.
 lib-noranlib: $(objpfx)$(rtld-installed-name) \
+	      $(objpfx)runnable-ld.so \
 	      $(addprefix $(objpfx),$(extra-objs))
 endif
 
@@ -315,6 +317,15 @@ $(objpfx)ld.so: $(objpfx)librtld.os $(ld-map)
 	readelf -s $@ \
 	  | $(AWK) '($$7 ~ /^UND(|EF)$$/ && $$1 != "0:" && $$4 != "REGISTER") { print; p=1 } END { exit p != 0 }'
 
+# We have to modify ld.so's ELF headers to get a version that NaCl's
+# sel_ldr will run.  For a discussion, see:
+# http://code.google.com/p/nativeclient/issues/detail?id=156
+# TODO(mseaborn): Remove the need to have two versions of ld.so.
+$(objpfx)runnable-ld.so: $(objpfx)ld.so nacl_fixup_ldso.py
+	cp $(objpfx)ld.so $@.tmp
+	python nacl_fixup_ldso.py $@.tmp
+	mv -f $@.tmp $@
+
 # interp.c exists just to get this string into the libraries.
 CFLAGS-interp.c = -D'RUNTIME_LINKER="$(slibdir)/$(rtld-installed-name)"' \
 		  -DNOT_IN_libc=1
@@ -345,6 +356,10 @@ CPPFLAGS-dl-load.c = -I$(objpfx). -I$(csu-objpfx).
 
 ifeq (yes,$(build-shared))
 $(inst_slibdir)/$(rtld-version-installed-name): $(objpfx)ld.so $(+force)
+	$(make-target-directory)
+	$(do-install-program)
+
+$(inst_slibdir)/runnable-ld.so: $(objpfx)runnable-ld.so $(+force)
 	$(make-target-directory)
 	$(do-install-program)
 
