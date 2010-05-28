@@ -221,31 +221,11 @@ FORCE:
 endif
 $(common-objpfx)sysd-rules: $(common-objpfx)config.make $(..)Makerules \
 			    $(sysdep-makefiles) $(sysdep-makeconfigs) \
+			    make_sysd_rules.py \
 			    $(sysd-rules-force)
 	-@rm -f $@T
-	(echo 'sysd-rules-sysdirs := $(config-sysdirs)';		      \
-	 for dir in $(config-sysdirs); do				      \
-	   case "$$dir" in						      \
-	   /*) ;;							      \
-	   *) dir="\$$(..)$$dir" ;;					      \
-	   esac;							      \
-	   asm='.S .s';							      \
-	   $(check-inhibit-asm)						      \
-	   for o in $(all-object-suffixes); do				      \
-	     set $(subst :, ,$(sysd-rules-patterns));			      \
-	     while [ $$# -ge 2 ]; do					      \
-	       t=$$1; shift; 						      \
-	       d=$$1; shift;						      \
-	       v=$${t%%%}; [ x"$$v" = x ] || v="\$$($${v}CPPFLAGS)";	      \
-	       for s in $$asm .c; do					      \
-		 echo "\$$(objpfx)$$t$$o: $$dir/$$d$$s \$$(before-compile)";  \
-		 echo "	\$$(compile-command$$s) $$v";			      \
-	       done;							      \
-	     done;							      \
-	   done;							      \
-	   echo "\$$(inst_includedir)/%.h: $$dir/%.h \$$(+force)";	      \
-	   echo "	\$$(do-install)"; 				      \
-	 done;								      \
+	(echo 'sysd-rules-sysdirs := $(config-sysdirs)' &&	      \
+	 python make_sysd_rules.py $(config-sysdirs) &&		      \
 	 echo 'sysd-rules-done = t') > $@T
 	mv -f $@T $@
 
@@ -350,10 +330,14 @@ endif # sysd-sorted-done
 
 # Generate .dT files as we compile.
 compile-mkdep-flags = -MD -MP -MF $@.dt -MT $@
-compile-command.S = $(compile.S) $(OUTPUT_OPTION) $(compile-mkdep-flags)
-compile-command.s = $(COMPILE.s) $< $(OUTPUT_OPTION) $(compile-mkdep-flags)
-compile-command.c = $(compile.c) $(OUTPUT_OPTION) $(compile-mkdep-flags)
-compile-command.cc = $(compile.cc) $(OUTPUT_OPTION) $(compile-mkdep-flags)
+compile-command.S = @echo building $@ && \
+		$(compile.S) $(OUTPUT_OPTION) $(compile-mkdep-flags)
+compile-command.s = @echo building $@ && \
+		$(COMPILE.s) $< $(OUTPUT_OPTION) $(compile-mkdep-flags)
+compile-command.c = @echo building $@ && \
+		$(compile.c) $(OUTPUT_OPTION) $(compile-mkdep-flags)
+compile-command.cc = @echo building $@ && \
+		$(compile.cc) $(OUTPUT_OPTION) $(compile-mkdep-flags)
 
 # GCC can grok options after the file name, and it looks nicer that way.
 compile.c = $(CC) $< -c $(CFLAGS) $(CPPFLAGS)
