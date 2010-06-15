@@ -36,6 +36,7 @@
 #include <stackinfo.h>
 #include <caller.h>
 #include <sysdep.h>
+#include <nacl_dyncode.h>
 
 #include <dl-dst.h>
 
@@ -869,6 +870,9 @@ _dl_map_object_from_fd (const char *name, int fd, struct filebuf *fbp,
 	    make_consistent ? r : NULL);
     }
 
+  /* NaCl doesn't have meaningful inode numbers, so don't try to use
+     them to detect duplicate files. */
+#ifndef __native_client__
   /* Look again to see if the real name matched another already loaded.  */
   for (l = GL(dl_ns)[nsid]._ns_loaded; l; l = l->l_next)
     if (l->l_removed == 0 && l->l_ino == st.st_ino && l->l_dev == st.st_dev)
@@ -884,6 +888,7 @@ _dl_map_object_from_fd (const char *name, int fd, struct filebuf *fbp,
 
 	return l;
       }
+#endif
 
 #ifdef SHARED
   /* When loading into a namespace other than the base one we must
@@ -1050,6 +1055,26 @@ _dl_map_object_from_fd (const char *name, int fd, struct filebuf *fbp,
 	      goto call_lose;
 	    }
 
+#ifdef __native_client__
+          /* Sanity check. */
+          if (ph->p_flags & PF_X)
+            {
+              if (nloadcmds != 0)
+                {
+                  errstring = N_("Only the first segment can be code");
+                  goto call_lose;
+                }
+            }
+          else
+            {
+              if (nloadcmds == 0)
+                {
+                  errstring = N_("Expected the first segment to be code");
+                  goto call_lose;
+                }
+            }
+#endif
+
 	  c = &loadcmds[nloadcmds++];
 	  c->mapstart = ph->p_vaddr & ~(GLRO(dl_pagesize) - 1);
 	  c->mapend = ((ph->p_vaddr + ph->p_filesz + GLRO(dl_pagesize) - 1)
@@ -1183,6 +1208,28 @@ cannot allocate TLS data structures for initial thread");
 
     if (__builtin_expect (type, ET_DYN) == ET_DYN)
       {
+        size_t code_size = loadcmds[0].allocend - loadcmds[0].mapstart;
+        size_t data_size = 0;
+        size_t data_offset = 0;
+        if (nloadcmds > 1)
+          {
+            data_size = loadcmds[nloadcmds - 1].allocend - loadcmds[1].mapstart;
+            data_offset = loadcmds[1].mapstart - loadcmds[0].mapstart;
+          }
+        l->l_map_start =
+          (ElfW(Addr)) nacl_dyncode_alloc (code_size, data_size, data_offset);
+        if (l->l_map_start == 0)
+          {
+            errstring = N_("failed to allocate code and data space");
+            goto call_lose;
+          }
+
+        l->l_addr = l->l_map_start - c->mapstart;
+      }
+
+#ifndef __native_client__
+    if (__builtin_expect (type, ET_DYN) == ET_DYN)
+      {
 	/* This is a position-independent shared object.  We can let the
 	   kernel map it anywhere it likes, but we must have space for all
 	   the segments in their specified positions relative to the first.
@@ -1228,35 +1275,48 @@ cannot allocate TLS data structures for initial thread");
 
 	goto postmap;
       }
+#endif
 
-    /* This object is loaded at a fixed address.  This must never
-       happen for objects loaded with dlopen().  */
-    if (__builtin_expect ((mode & __RTLD_OPENEXEC) == 0, 0))
+    if (__builtin_expect (type, ET_DYN) != ET_DYN)
       {
-	errstring = N_("cannot dynamically load executable");
-	goto call_lose;
+        /* This object is loaded at a fixed address.  This must never
+           happen for objects loaded with dlopen().  */
+        if (__builtin_expect ((mode & __RTLD_OPENEXEC) == 0, 0))
+          {
+            errstring = N_("cannot dynamically load executable");
+            goto call_lose;
+          }
       }
 
-    /* Notify ELF_PREFERRED_ADDRESS that we have to load this one
-       fixed.  */
-    ELF_FIXED_ADDRESS (loader, c->mapstart);
-
-
     /* Remember which part of the address space this object uses.  */
-    l->l_map_start = c->mapstart + l->l_addr;
     l->l_map_end = l->l_map_start + maplength;
     l->l_contiguous = !has_holes;
 
     while (c < &loadcmds[nloadcmds])
       {
-	if (c->mapend > c->mapstart
-	    /* Map the segment contents from the file.  */
-	    && (__mmap ((void *) (l->l_addr + c->mapstart),
-			c->mapend - c->mapstart, c->prot,
-			MAP_FIXED|MAP_COPY|MAP_FILE,
-			fd, c->mapoff)
-		== MAP_FAILED))
-	  goto map_error;
+        if (c->prot & PROT_EXEC)
+          {
+            if (nacl_dyncode_map (fd, (void *) (l->l_addr + c->mapstart),
+                                  c->mapoff, c->dataend - c->mapstart) < 0)
+              {
+                errstring = N_("failed to load code from shared object");
+                goto call_lose_errno;
+              }
+          }
+        else
+          {
+            if (c->mapend > c->mapstart
+                /* Map the segment contents from the file.  */
+                && (__mmap ((void *) (l->l_addr + c->mapstart),
+                            c->mapend - c->mapstart, c->prot,
+                            MAP_FIXED|MAP_COPY|MAP_FILE,
+                            fd, c->mapoff)
+                    == MAP_FAILED))
+              {
+                errstring = N_("failed to map segment from shared object");
+                goto call_lose_errno;
+              }
+          }
 
       postmap:
 	if (c->prot & PROT_EXEC)
@@ -1655,6 +1715,10 @@ open_verify (const char *name, struct filebuf *fbp, struct link_map *loader,
 	  lose (errval, fd, name, NULL, NULL, errstring, NULL);
 	}
 
+      /* The NaCl toolchain fills out non-standard OSABI/ABIVERSION
+         values, so disable this check for the time being.
+         See http://code.google.com/p/nativeclient/issues/detail?id=564 */
+#ifndef __native_client__
       /* See whether the ELF header is what we expect.  */
       if (__builtin_expect (! VALID_ELF_HEADER (ehdr->e_ident, expected,
 						EI_PAD), 0))
@@ -1704,6 +1768,7 @@ open_verify (const char *name, struct filebuf *fbp, struct link_map *loader,
 
 	  goto call_lose;
 	}
+#endif
 
       if (__builtin_expect (ehdr->e_version, EV_CURRENT) != EV_CURRENT)
 	{

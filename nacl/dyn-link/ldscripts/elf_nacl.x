@@ -4,17 +4,27 @@ OUTPUT_FORMAT("elf32-nacl", "elf32-nacl",
 OUTPUT_ARCH(i386)
 ENTRY(_start)
 SEARCH_DIR("/usr/i386-linux-gnu/lib32"); SEARCH_DIR("/usr/local/lib32"); SEARCH_DIR("/lib32"); SEARCH_DIR("/usr/lib32"); SEARCH_DIR("/usr/i386-linux-gnu/lib"); SEARCH_DIR("/usr/local/lib"); SEARCH_DIR("/lib"); SEARCH_DIR("/usr/lib");
+PHDRS
+{
+  seg_code     PT_LOAD FLAGS(5) ;       /* read + execute */
+  seg_rodata   PT_LOAD FLAGS(4) ;       /* read */
+  seg_rwdata   PT_LOAD FLAGS(6) ;       /* read + write */
+  seg_dynamic  PT_DYNAMIC FLAGS(6) ;
+  seg_stack    PT_GNU_STACK FLAGS(6) ;
+  seg_tls      PT_TLS FLAGS(4) ;
+}
 SECTIONS
 {
-  /* Read-only sections, merged into text segment: */
-  PROVIDE (__executable_start = 0x1000000); . = 0x1000000 + SIZEOF_HEADERS;
-  .interp         : { *(.interp) }
-  . = ALIGN(CONSTANT (MAXPAGESIZE)); /* nacl wants page alignment */
+  PROVIDE (__executable_start = 0x1000000); . = 0x1000000;
+  /* The ALIGN(32) instructions below are workarounds.
+     TODO(mseaborn): Get the object files to include the correct
+     alignments and padding themselves.
+     See http://code.google.com/p/nativeclient/issues/detail?id=499. */
   .init           :
   {
     KEEP (*(.init))
     . = ALIGN(32); /* ensures NOP fill */
-  } =0x90909090
+  } :seg_code =0x90909090
   .plt            : { *(.plt) }
   .text           :
   {
@@ -22,18 +32,19 @@ SECTIONS
     KEEP (*(.text.*personality*))
     /* .gnu.warning sections are handled specially by elf32.em.  */
     *(.gnu.warning)
+    . = ALIGN(32); /* ensures NOP fill */
   } =0x90909090
   .fini           :
   {
     KEEP (*(.fini))
-    /* Putting alignment inside section ensures we get NOP fill */
-    . = ALIGN(CONSTANT (MAXPAGESIZE)); /* nacl wants page alignment */
+    . = ALIGN(32); /* ensures NOP fill */
   } =0x90909090
   PROVIDE (__etext = .);
   PROVIDE (_etext = .);
   PROVIDE (etext = .);
 
-  .note.gnu.build-id : { *(.note.gnu.build-id) }
+  . = 0x11000000 + (. & (CONSTANT (MAXPAGESIZE) - 1));
+  .note.gnu.build-id : { *(.note.gnu.build-id) } :seg_rodata
   .hash           : { *(.hash) }
   .gnu.hash       : { *(.gnu.hash) }
   .dynsym         : { *(.dynsym) }
@@ -71,7 +82,7 @@ SECTIONS
   .rodata         : { *(.rodata .rodata.* .gnu.linkonce.r.*) }
   .rodata1        : { *(.rodata1) }
   .eh_frame_hdr : { *(.eh_frame_hdr) }
-  .eh_frame       : ONLY_IF_RO { KEEP (*(.eh_frame)) }
+  .eh_frame       : ONLY_IF_RO { KEEP (*(.eh_frame)) } :seg_rwdata
   .gcc_except_table   : ONLY_IF_RO { *(.gcc_except_table .gcc_except_table.*) }
   /* Adjust the address for the data segment.  We want to adjust up to
      the same address within the page on the next page up.  */
@@ -138,8 +149,8 @@ SECTIONS
   }
   .jcr            : { KEEP (*(.jcr)) }
   .data.rel.ro : { *(.data.rel.ro.local* .gnu.linkonce.d.rel.ro.local.*) *(.data.rel.ro* .gnu.linkonce.d.rel.ro.*) }
-  .dynamic        : { *(.dynamic) }
-  .got            : { *(.got) }
+  .dynamic        : { *(.dynamic) } :seg_dynamic :seg_rwdata
+  .got            : { *(.got) } :seg_rwdata
   . = DATA_SEGMENT_RELRO_END (12, .);
   .got.plt        : { *(.got.plt) }
   .data           :
@@ -205,4 +216,6 @@ SECTIONS
   .debug_ranges   0 : { *(.debug_ranges) }
   .gnu.attributes 0 : { KEEP (*(.gnu.attributes)) }
   /DISCARD/ : { *(.note.GNU-stack) *(.gnu_debuglink) }
+  /DISCARD/ : { *(.note.ABI-tag) }
+  /DISCARD/ : { *(.interp) }
 }

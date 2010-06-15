@@ -1404,6 +1404,11 @@ of this helper program; chances are you did not intend to run this program.\n\
   if (GLRO(dl_use_load_bias) == (ElfW(Addr)) -2)
     GLRO(dl_use_load_bias) = main_map->l_addr == 0 ? -1 : 0;
 
+  /* Under NaCl, ld.so's Program Headers are not mapped as part of a
+     readable segment, so don't try to read them.
+     TODO(mseaborn): Make ld.so's Program Headers available via some
+     other route. */
+#ifndef __native_client__
   /* Set up the program header information for the dynamic linker
      itself.  It is needed in the dl_iterate_phdr() callbacks.  */
   ElfW(Ehdr) *rtld_ehdr = (ElfW(Ehdr) *) GL(dl_rtld_map).l_map_start;
@@ -1422,6 +1427,7 @@ of this helper program; chances are you did not intend to run this program.\n\
 	GL(dl_rtld_map).l_relro_size = rtld_phdr[cnt].p_memsz;
 	break;
       }
+#endif
 
   /* Add the dynamic linker to the TLS list if it also uses TLS.  */
   if (GL(dl_rtld_map).l_tls_blocksize != 0)

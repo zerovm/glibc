@@ -6,23 +6,27 @@ ENTRY(_start)
 SEARCH_DIR("/usr/i386-linux-gnu/lib32"); SEARCH_DIR("/usr/local/lib32"); SEARCH_DIR("/lib32"); SEARCH_DIR("/usr/lib32"); SEARCH_DIR("/usr/i386-linux-gnu/lib"); SEARCH_DIR("/usr/local/lib"); SEARCH_DIR("/lib"); SEARCH_DIR("/usr/lib");
 PHDRS
 {
-  segtext    PT_LOAD FLAGS(5) ;       /* read + execute */
-  segrodata  PT_LOAD FLAGS(4) ;       /* read */
-  segdata    PT_LOAD FLAGS(6) ;       /* read + write */
-  dynamic    PT_DYNAMIC FLAGS(6) ;
-  stack      PT_GNU_STACK FLAGS(6) ;
-  tls        PT_TLS FLAGS(4) ;
+  seg_code     PT_LOAD FLAGS(5) ;       /* read + execute */
+  seg_rodata   PT_LOAD FLAGS(4) ;       /* read */
+  seg_rwdata   PT_LOAD FLAGS(6) ;       /* read + write */
+  seg_dynamic  PT_DYNAMIC FLAGS(6) ;
+  seg_stack    PT_GNU_STACK FLAGS(6) ;
+  seg_tls      PT_TLS FLAGS(4) ;
 }
 SECTIONS
 {
   /* ELF headers are not included in any PT_LOAD segment */
   . = SEGMENT_START("text", 0);
   _begin = .;
+  /* The ALIGN(32) instructions below are workarounds.
+     TODO(mseaborn): Get the object files to include the correct
+     alignments and padding themselves.
+     See http://code.google.com/p/nativeclient/issues/detail?id=499. */
   .init           : SUBALIGN(32)
   {
     KEEP (*(.init))
     . = ALIGN(32); /* ensure nop padding */
-  } :segtext =0x90909090
+  } :seg_code =0x90909090
   .plt            : { *(.plt) }
   .text           : SUBALIGN(32)
   {
@@ -35,13 +39,14 @@ SECTIONS
     KEEP (*(.fini))
     *(__libc_freeres_fn)
     *(__libc_thread_freeres_fn)
+    . = ALIGN(32); /* ensure nop padding */
   } =0x90909090
-  /* . = ALIGN(CONSTANT (MAXPAGESIZE)); /\* nacl wants page alignment *\/ */
-  . = 0x1000000;
   PROVIDE (__etext = .);
   PROVIDE (_etext = .);
   PROVIDE (etext = .);
-  .note.gnu.build-id : { *(.note.gnu.build-id) } :segrodata
+
+  . = SEGMENT_START("text", 0) + 0x10000000;
+  .note.gnu.build-id : { *(.note.gnu.build-id) } :seg_rodata
   .hash           : { *(.hash) }
   .gnu.hash       : { *(.gnu.hash) }
   .dynsym         : { *(.dynsym) }
@@ -75,11 +80,11 @@ SECTIONS
   .rela.bss       : { *(.rela.bss .rela.bss.* .rela.gnu.linkonce.b.*) }
   .rel.plt        : { *(.rel.plt) }
   .rela.plt       : { *(.rela.plt) }
-  .rodata         : { *(.rodata .rodata.* .gnu.linkonce.r.*) } :segrodata
+  .rodata         : { *(.rodata .rodata.* .gnu.linkonce.r.*) }
   .rodata1        : { *(.rodata1) }
   .eh_frame_hdr : { *(.eh_frame_hdr) }
   . = ALIGN(CONSTANT (MAXPAGESIZE)); /* nacl wants page alignment */
-  .eh_frame       : ONLY_IF_RO { KEEP (*(.eh_frame)) } :segdata
+  .eh_frame       : ONLY_IF_RO { KEEP (*(.eh_frame)) } :seg_rwdata
   .gcc_except_table   : ONLY_IF_RO { *(.gcc_except_table .gcc_except_table.*) }
   /* Adjust the address for the data segment.  We want to adjust up to
      the same address within the page on the next page up.  */
@@ -88,12 +93,12 @@ SECTIONS
   .eh_frame       : ONLY_IF_RW { KEEP (*(.eh_frame)) }
   .gcc_except_table   : ONLY_IF_RW { *(.gcc_except_table .gcc_except_table.*) }
   /* Thread Local Storage sections  */
-  .tdata	  : { *(.tdata .tdata.* .gnu.linkonce.td.*) } :segdata :tls
+  .tdata	  : { *(.tdata .tdata.* .gnu.linkonce.td.*) } :seg_rwdata :seg_tls
   .tbss		  : { *(.tbss .tbss.* .gnu.linkonce.tb.*) *(.tcommon) }
   .preinit_array     :
   {
     KEEP (*(.preinit_array))
-  } :segdata
+  } :seg_rwdata
   .init_array     :
   {
      KEEP (*(SORT(.init_array.*)))
@@ -135,8 +140,8 @@ SECTIONS
   }
   .jcr            : { KEEP (*(.jcr)) }
   .data.rel.ro : { *(.data.rel.ro.local* .gnu.linkonce.d.rel.ro.local.*) *(.data.rel.ro* .gnu.linkonce.d.rel.ro.*) }
-  .dynamic        : { *(.dynamic) } :dynamic :segdata
-  .got            : { *(.got) } :segdata
+  .dynamic        : { *(.dynamic) } :seg_dynamic :seg_rwdata
+  .got            : { *(.got) } :seg_rwdata
   . = DATA_SEGMENT_RELRO_END (12, .);
   .got.plt        : { *(.got.plt) }
   . = ALIGN(CONSTANT (MAXPAGESIZE)); /* nacl wants page alignment */
