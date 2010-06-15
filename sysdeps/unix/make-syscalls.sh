@@ -161,9 +161,10 @@ shared-only-routines += $file
   x*)
   echo "\
 	\$(make-target-directory)
-	(echo 'int $strong();'; \\
+	(echo 'int __unimplemented_syscall(const char *name);'; \\
+	 echo 'int $strong (void);'; \\
 	 echo 'libc_hidden_proto ($strong)'; \\
-	 echo 'int $strong() { return __unimplemented_syscall(\"$syscall\"); }'; \\
+	 echo 'int $strong (void) { return __unimplemented_syscall(\"$syscall\"); }'; \\
 	 echo 'strong_alias ($strong, __${syscall}_nocancel)'; \\
 	 echo 'libc_hidden_def ($strong)'; \\"
   ;;
@@ -209,7 +210,7 @@ shared-only-routines += $file
 	echo "	 echo 'libc_hidden_def ($name)'; \\"
 	;;
       *)
-	echo "	 echo 'int $name();'; \\"
+	echo "	 echo 'int $name (void);'; \\"
 	echo "	 echo 'libc_hidden_proto ($name)'; \\"
 	echo "	 echo 'weak_alias ($strong, $name)'; \\"
 	echo "	 echo 'libc_hidden_weak ($name)'; \\"

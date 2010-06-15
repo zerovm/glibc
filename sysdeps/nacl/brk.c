@@ -11,8 +11,7 @@ weak_alias (__curbrk, ___brk_addr)
 
 int __brk (void *addr)
 {
-  void *(*nacl_sysbrk)(void *addr) = NACL_SYSCALL_ADDR(NACL_sys_sysbrk);
-  void *result = nacl_sysbrk(addr);
+  void *result = NACL_SYSCALL (sysbrk) (addr);
   if ((unsigned int) result > 0xfffff000u) {
     errno = -(int) result;
     return -1;

@@ -14,6 +14,13 @@
 #ifndef NATIVE_CLIENT_SRC_TRUSTED_SERVICE_RUNTIME_INCLUDE_BITS_NACL_SYSCALLS_H_
 #define NATIVE_CLIENT_SRC_TRUSTED_SERVICE_RUNTIME_INCLUDE_BITS_NACL_SYSCALLS_H_
 
+
+#include <stdint.h>
+#include <sys/stat.h>
+#include <sys/types.h>
+#include <time.h>
+
+
 /* intentionally not using zero */
 
 /*
@@ -96,6 +103,81 @@
 
 #define NACL_SYSCALL_ADDR(syscall_number) \
   (0x10000 + ((syscall_number) * 32))
+
+#define NACL_SYSCALL(syscall) \
+  ((TYPE_nacl_ ## syscall) NACL_SYSCALL_ADDR(NACL_sys_ ## syscall))
+
+
+struct NaClImcMsgHdr;
+struct nacl_abi_stat;
+struct timeval;
+struct timespec;
+
+typedef int (*TYPE_nacl_read) (int desc, void *buf, size_t count);
+typedef int (*TYPE_nacl_close) (int desc);
+typedef int (*TYPE_nacl_fstat) (int fd, struct nacl_abi_stat *stbp);
+typedef int (*TYPE_nacl_write) (int desc, void const *buf, size_t count);
+typedef int (*TYPE_nacl_open) (char const *pathname, int flags, mode_t mode);
+typedef off_t (*TYPE_nacl_lseek) (int desc, off_t offset, int whence);
+typedef int (*TYPE_nacl_stat) (const char *file, struct nacl_abi_stat *st);
+
+typedef int (*TYPE_nacl_imc_recvmsg) (int desc,
+                                      struct NaClImcMsgHdr *nmhp,
+                                      int flags);
+typedef int (*TYPE_nacl_imc_sendmsg) (int desc,
+                                      struct NaClImcMsgHdr const *nmhp,
+                                      int flags);
+typedef int (*TYPE_nacl_imc_accept) (int d);
+typedef int (*TYPE_nacl_imc_connect) (int d);
+typedef int (*TYPE_nacl_imc_makeboundsock) (int *dp);
+typedef int (*TYPE_nacl_imc_socketpair) (int *d2);
+typedef int (*TYPE_nacl_imc_mem_obj_create) (size_t nbytes);
+
+typedef void *(*TYPE_nacl_mmap) (void *start, size_t length,
+                                 int prot, int flags, int desc, off_t offset);
+
+typedef int (*TYPE_nacl_munmap) (void *start, size_t length);
+
+typedef void (*TYPE_nacl_thread_exit) (int32_t *stack_flag);
+typedef int (*TYPE_nacl_thread_create) (void *start_user_address,
+                                        void *stack,
+                                        void *tdb,
+                                        size_t tdb_size);
+typedef int (*TYPE_nacl_thread_nice) (const int nice);
+
+typedef int (*TYPE_nacl_mutex_create) (void);
+typedef int (*TYPE_nacl_mutex_lock) (int mutex);
+typedef int (*TYPE_nacl_mutex_unlock) (int mutex);
+typedef int (*TYPE_nacl_mutex_trylock) (int mutex);
+typedef int (*TYPE_nacl_cond_create) (void);
+typedef int (*TYPE_nacl_cond_wait) (int cv, int mutex);
+typedef int (*TYPE_nacl_cond_signal) (int cv);
+typedef int (*TYPE_nacl_cond_broadcast) (int cv);
+typedef int (*TYPE_nacl_cond_timed_wait_abs) (int condvar,
+                                              int mutex,
+                                              struct timespec *abstime);
+typedef int (*TYPE_nacl_sem_create) (int32_t value);
+typedef int (*TYPE_nacl_sem_wait) (int sem);
+typedef int (*TYPE_nacl_sem_post) (int sem);
+
+typedef int (*TYPE_nacl_getdents) (int desc, void *dirp, size_t count);
+typedef int (*TYPE_nacl_gettimeofday) (struct timeval *tv, void *tz);
+typedef int (*TYPE_nacl_sched_yield) (void);
+typedef int (*TYPE_nacl_sysconf) (int name, int *res);
+typedef void *(*TYPE_nacl_sysbrk) (void *p);
+typedef pid_t (*TYPE_nacl_getpid) (void);
+typedef clock_t (*TYPE_nacl_clock) (void);
+typedef int (*TYPE_nacl_nanosleep) (const struct timespec *req,
+                                    struct timespec *rem);
+/* Don't use __attribute__((noreturn)) on this because we want the
+   wrapper to handle it if the syscall does happen to return. */
+typedef void (*TYPE_nacl_exit) (int status);
+typedef void (*TYPE_nacl_null) (void);
+typedef int (*TYPE_nacl_tls_init) (void *tdb, int size);
+typedef void *(*TYPE_nacl_tls_get) (void);
+typedef int (*TYPE_nacl_srpc_get_fd) (void);
+typedef int (*TYPE_nacl_dyncode_copy) (void *dest, const void *src,
+                                       size_t size);
 
 
 #endif

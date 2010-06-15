@@ -17,12 +17,14 @@ cp -a /usr/include/asm /usr/include/asm-generic /usr/include/linux \
 
 source_dir=`pwd`
 
+cflags="-march=i486 -pipe -fno-strict-aliasing -O2 -mno-tls-direct-seg-refs -g"
+
 mkdir -p build
 cd build
 $source_dir/configure \
     --prefix=/usr \
     --host=i486-linux-gnu \
     CC="`which nacl-gcc` -L$source_dir/nacl/dyn-link " \
-    CFLAGS="-march=i486 -pipe -fstrict-aliasing -O2 -mno-tls-direct-seg-refs -g" \
+    CFLAGS="$cflags" \
     --with-headers=$source_dir/kernel-headers \
     --enable-kernel=2.2.0
