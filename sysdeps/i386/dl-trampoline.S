@@ -25,6 +25,18 @@
 	cfi_startproc
 	.align 16
 _dl_runtime_resolve:
+#ifdef __native_client__
+	/* The NaCl version does not preserve registers %eax, %ecx and
+	   %edx, but we cannot preserve all registers because at least
+	   one is needed to perform address alignment when doing an
+	   indirect jump in NaCl.  This means functions called via the
+	   PLT cannot use the "regparm" attribute.  This is mentioned in
+	   gcc's docs for "regparm". */
+	popl %eax
+	popl %edx
+	call _dl_fixup
+	nacljmp %eax
+#else
 	cfi_adjust_cfa_offset (8)
 	pushl %eax		# Preserve registers otherwise clobbered.
 	cfi_adjust_cfa_offset (4)
@@ -41,6 +53,7 @@ _dl_runtime_resolve:
 	movl %eax, (%esp)	# Store the function address.
 	movl 4(%esp), %eax
 	ret $12			# Jump to function address.
+#endif
 	cfi_endproc
 	.size _dl_runtime_resolve, .-_dl_runtime_resolve
 

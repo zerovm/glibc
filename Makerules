@@ -331,7 +331,8 @@ endif # sysd-sorted-done
 # Generate .dT files as we compile.
 compile-mkdep-flags = -MD -MP -MF $@.dt -MT $@
 compile-command.S = @echo building $@ && \
-		$(compile.S) $(OUTPUT_OPTION) $(compile-mkdep-flags)
+		$(compile.S) $(OUTPUT_OPTION) $(compile-mkdep-flags) \
+		-include nacl_asm.h
 compile-command.s = @echo building $@ && \
 		$(COMPILE.s) $< $(OUTPUT_OPTION) $(compile-mkdep-flags)
 compile-command.c = @echo building $@ && \

@@ -46,19 +46,10 @@
 #undef USE_DL_SYSINFO
 
 #if defined NEED_DL_SYSINFO && !defined __ASSEMBLER__
-extern void _dl_sysinfo_int80 (void) attribute_hidden;
+extern int _dl_sysinfo_int80 (void) attribute_hidden;
 # define DL_SYSINFO_DEFAULT (uintptr_t) _dl_sysinfo_int80
 # define DL_SYSINFO_IMPLEMENTATION \
-  asm (".text\n\t"							      \
-       ".type _dl_sysinfo_int80,@function\n\t"				      \
-       ".hidden _dl_sysinfo_int80\n\t"					      \
-       CFI_STARTPROC "\n"						      \
-       "_dl_sysinfo_int80:\n\t"						      \
-       "int $0x80;\n\t"							      \
-       "ret;\n\t"							      \
-       CFI_ENDPROC "\n"							      \
-       ".size _dl_sysinfo_int80,.-_dl_sysinfo_int80\n\t"		      \
-       ".previous;");
+  int _dl_sysinfo_int80 () { return -ENOSYS; }
 #endif
 
 

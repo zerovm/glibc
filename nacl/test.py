@@ -47,8 +47,8 @@ class GlibcTests(unittest.TestCase):
     def test_03_running_libcso(self):
         write_fh, read_fh = make_fh_pair()
         subprocess.check_call(
-            ["env", "NACLDYNCODE=1",
-             "sel_ldr", "-d", "build/elf/runnable-ld.so",
+            ["env", "NACLDYNCODE=1", "NACL_DANGEROUS_ENABLE_FILE_ACCESS=1",
+             "sel_ldr", "-s", "build/elf/runnable-ld.so",
              "build/libc.so"],
             stdout=write_fh)
         output = read_fh.read()
@@ -57,8 +57,8 @@ class GlibcTests(unittest.TestCase):
     def test_04_glibc_dynamic(self):
         write_fh, read_fh = make_fh_pair()
         subprocess.check_call(
-            ["env", "NACLDYNCODE=1",
-             "sel_ldr", "-d", "build/elf/runnable-ld.so",
+            ["env", "NACLDYNCODE=1", "NACL_DANGEROUS_ENABLE_FILE_ACCESS=1",
+             "sel_ldr", "-s", "build/elf/runnable-ld.so",
              "--", "--library-path", "build",
              "build/hellow-dynamic"],
             stdout=write_fh)
