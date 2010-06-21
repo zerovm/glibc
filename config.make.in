@@ -93,6 +93,7 @@ cross-compiling = @cross_compiling@
 force-install = @force_install@
 
 # Build tools.
+LDFLAGS = -L$(..)nacl/dyn-link
 CC = @CC@
 CXX = @CXX@
 BUILD_CC = @BUILD_CC@
