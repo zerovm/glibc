@@ -1012,8 +1012,8 @@ _dl_map_object_from_fd (const char *name, int fd, struct filebuf *fbp,
     /* Scan the program header table, collecting its load commands.  */
     struct loadcmd
       {
-	ElfW(Addr) mapstart, mapend, dataend, allocend;
-	off_t mapoff;
+	ElfW(Addr) mapstart, mapend, datastart, dataend, allocend;
+	off_t mapoff, dataoff;
 	int prot;
       } loadcmds[l->l_phnum], *c;
     size_t nloadcmds = 0;
@@ -1079,9 +1079,11 @@ _dl_map_object_from_fd (const char *name, int fd, struct filebuf *fbp,
 	  c->mapstart = ph->p_vaddr & ~(GLRO(dl_pagesize) - 1);
 	  c->mapend = ((ph->p_vaddr + ph->p_filesz + GLRO(dl_pagesize) - 1)
 		       & ~(GLRO(dl_pagesize) - 1));
+	  c->datastart = ph->p_vaddr;
 	  c->dataend = ph->p_vaddr + ph->p_filesz;
 	  c->allocend = ph->p_vaddr + ph->p_memsz;
 	  c->mapoff = ph->p_offset & ~(GLRO(dl_pagesize) - 1);
+	  c->dataoff = ph->p_offset;
 
 	  /* Determine whether there is a gap between the last segment
 	     and this one.  */
@@ -1296,8 +1298,8 @@ cannot allocate TLS data structures for initial thread");
       {
         if (c->prot & PROT_EXEC)
           {
-            if (nacl_dyncode_map (fd, (void *) (l->l_addr + c->mapstart),
-                                  c->mapoff, c->dataend - c->mapstart) < 0)
+            if (nacl_dyncode_map (fd, (void *) (l->l_addr + c->datastart),
+                                  c->dataoff, c->dataend - c->datastart) < 0)
               {
                 errstring = N_("failed to load code from shared object");
                 goto call_lose_errno;

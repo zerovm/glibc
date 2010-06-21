@@ -64,6 +64,12 @@ class GlibcTests(unittest.TestCase):
             stdout=write_fh)
         self.assertEquals(read_fh.read(), hellow_message)
 
+    def test_05_executable_size(self):
+        subprocess.check_call(["strip", "build/hellow-dynamic",
+                               "-o", "build/hellow-dynamic.stripped"])
+        size = os.stat("build/hellow-dynamic.stripped").st_size
+        assert size < 4000, size
+
 
 if __name__ == "__main__":
     subprocess.check_call(["./nacl/make.sh"])
