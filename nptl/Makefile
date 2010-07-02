@@ -377,12 +377,16 @@ $(inst_libdir)/libpthread.so: $(common-objpfx)format.lds \
 			      $(inst_libdir)/$(patsubst %,$(libtype.oS),\
 							$(libprefix)pthread) \
 			      $(+force)
+	# TODO(mseaborn): I made the paths here non-absolute so that the
+	# install tree is relocatable (by removing the $(slibdir) and $(libdir)
+	# prefixes), but this should be revisited because it means ld will
+	# look in the current directory for the library.
 	(echo '/* GNU ld script';\
 	 echo '   Use the shared library, but some functions are only in';\
 	 echo '   the static library, so try that secondarily.  */';\
 	 cat $<; \
-	 echo 'GROUP ( $(slibdir)/libpthread.so$(libpthread.so-version)' \
-	      '$(libdir)/$(patsubst %,$(libtype.oS),$(libprefix)pthread)'\
+	 echo 'GROUP ( libpthread.so$(libpthread.so-version)' \
+	      '$(patsubst %,$(libtype.oS),$(libprefix)pthread)'\
 	      ')' \
 	) > $@.new
 	mv -f $@.new $@
