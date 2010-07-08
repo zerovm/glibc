@@ -352,7 +352,7 @@ _dl_start_final (void *arg, struct dl_start_final_info *info)
   return start_addr;
 }
 
-static ElfW(Addr) __attribute_used__ internal_function
+static ElfW(Addr) __attribute_used__ internal_asm_function
 _dl_start (void *arg)
 {
 #ifdef DONT_USE_BOOTSTRAP_MAP
