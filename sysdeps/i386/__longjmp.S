@@ -74,5 +74,9 @@ ENTRY (BP_SYM (__longjmp))
 	movl (JB_SP*4)(%ecx), %esp
 #endif
 	/* Jump to saved PC.  */
+#ifdef __native_client__
+	nacljmp %edx
+#else
      	jmp *%edx
+#endif
 END (BP_SYM (__longjmp))

@@ -70,6 +70,22 @@ class GlibcTests(unittest.TestCase):
         size = os.stat("build/hellow-dynamic.stripped").st_size
         assert size < 4000, size
 
+    def test_06_ldso_error_message(self):
+        # Check that we get a reasonable error message from the
+        # dynamic linker if it cannot find the libraries.  Previously
+        # it faulted in longjmp().
+        write_fh, read_fh = make_fh_pair()
+        rc = subprocess.call(
+            ["env", "NACLDYNCODE=1", "NACL_DANGEROUS_ENABLE_FILE_ACCESS=1",
+             "sel_ldr", "-s", "build/elf/runnable-ld.so",
+             "--", "--library-path", "does-not-exist",
+             "build/hellow-dynamic"],
+            stdout=write_fh, stderr=write_fh)
+        self.assertEquals(rc, 127)
+        output = read_fh.read()
+        assert ("error while loading shared libraries: "
+                "libc.so.6: cannot open shared object file" in output), output
+
 
 if __name__ == "__main__":
     subprocess.check_call(["./nacl/make.sh"])
