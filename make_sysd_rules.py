@@ -20,6 +20,43 @@ def parse_syscalls_list(path):
             yield line.split()
 
 
+# This is a list of sources files that take priority over files found
+# via the sysdeps search path.  This allows us, for example, to ignore
+# sysdeps/i386/memcmp.S without overriding
+# sysdeps/i386/dl-trampoline.S.
+# TODO(mseaborn): Make this mechanism less NaCl-specific by moving
+# this list to a file that is found via the search path.
+override_list = [
+    "inet/htonl.c",
+    "inet/htons.c",
+    "io/posix_fadvise64.c",
+    "string/memchr.c",
+    "string/memcmp.c",
+    "string/rawmemchr.c",
+    "string/stpcpy.c",
+    "string/stpncpy.c",
+    "string/strcat.c",
+    "string/strchr.c",
+    "string/strchrnul.c",
+    "string/strcspn.c",
+    "string/strlen.c",
+    "string/strpbrk.c",
+    "string/strrchr.c",
+    "string/strspn.c",
+    "string/strtok.c",
+    "string/strtok_r.c",
+    "sysdeps/posix/writev.c",
+    ]
+
+def get_override_map():
+    override_map = {}
+    for filename in override_list:
+        assert filename[-2:] in source_suffixes, filename
+        assert os.path.exists(filename), filename
+        override_map[os.path.basename(filename[:-2])] = filename
+    return override_map
+
+
 class RuleGenerator(object):
 
     def __init__(self, sysdirs):
@@ -28,6 +65,7 @@ class RuleGenerator(object):
         # Checking all_files is a little faster than os.path.exists().
         self.all_files = set()
         self.autogen_syscalls = set()
+        self.override_map = get_override_map()
 
     def scan_sysdirs(self):
         for subdir in self.sysdirs:
@@ -43,8 +81,12 @@ class RuleGenerator(object):
                         # cause this entry to be overridden by others.
                         name = fields[0]
                         self.autogen_syscalls.add((subdir, name))
+        for leafname in self.override_map.iterkeys():
+            assert leafname in self.all_leafnames
 
     def find_matches(self, leafname):
+        if leafname in self.override_map:
+            yield False, self.override_map[leafname]
         for subdir in self.sysdirs:
             # A syscalls.list entry for "mkdir" (for example) overrides
             # "mkdir.c" in the same directory.

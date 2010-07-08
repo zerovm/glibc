@@ -86,6 +86,16 @@ class GlibcTests(unittest.TestCase):
         assert ("error while loading shared libraries: "
                 "libc.so.6: cannot open shared object file" in output), output
 
+    def test_07_loading_libpthread(self):
+        write_fh, read_fh = make_fh_pair()
+        subprocess.check_call(
+            ["env", "NACLDYNCODE=1", "NACL_DANGEROUS_ENABLE_FILE_ACCESS=1",
+             "sel_ldr", "-s", "build/elf/runnable-ld.so",
+             "--", "--library-path", "build:build/nptl",
+             "build/hellow-dynamic-pthread"],
+            stdout=write_fh)
+        self.assertEquals(read_fh.read(), hellow_message)
+
 
 if __name__ == "__main__":
     subprocess.check_call(["./nacl/make.sh"])
