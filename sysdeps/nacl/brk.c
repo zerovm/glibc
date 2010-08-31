@@ -17,6 +17,10 @@ int __brk (void *addr)
     return -1;
   }
   __curbrk = result;
+  if (result < addr) {
+    errno = ENOMEM;
+    return -1;
+  }
   return 0;
 }
 weak_alias (__brk, brk)
