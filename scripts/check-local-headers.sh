@@ -26,7 +26,7 @@ cd "$objpfx"
 
 # Search all dependency files for file names in the include directory.
 # There are a few system headers we are known to use.
-if fgrep "$includedir" */*.{o,os,oS}.d |
+if fgrep "$includedir" */*.{o,os,ons}.d |
 fgrep -v "$includedir/asm" |
 fgrep -v "$includedir/linux" |
 fgrep -v "$includedir/selinux" |

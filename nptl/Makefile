@@ -374,7 +374,7 @@ install: $(inst_libdir)/libpthread.so
 
 $(inst_libdir)/libpthread.so: $(common-objpfx)format.lds \
 			      $(objpfx)libpthread.so$(libpthread.so-version) \
-			      $(inst_libdir)/$(patsubst %,$(libtype.oS),\
+			      $(inst_libdir)/$(patsubst %,$(libtype.ons),\
 							$(libprefix)pthread) \
 			      $(+force)
 	# TODO(mseaborn): I made the paths here non-absolute so that the
@@ -386,7 +386,7 @@ $(inst_libdir)/libpthread.so: $(common-objpfx)format.lds \
 	 echo '   the static library, so try that secondarily.  */';\
 	 cat $<; \
 	 echo 'GROUP ( libpthread.so$(libpthread.so-version)' \
-	      '$(patsubst %,$(libtype.oS),$(libprefix)pthread)'\
+	      '$(patsubst %,$(libtype.ons),$(libprefix)pthread)'\
 	      ')' \
 	) > $@.new
 	mv -f $@.new $@
