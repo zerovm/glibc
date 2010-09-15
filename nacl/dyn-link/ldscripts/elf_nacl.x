@@ -95,7 +95,7 @@ SECTIONS
     PROVIDE (__tls_template_start = .);
     *(.tdata .tdata.* .gnu.linkonce.td.*)
     PROVIDE (__tls_template_tdata_end = .);
-  }
+  } :seg_rwdata :seg_tls
   .tbss		  : { *(.tbss .tbss.* .gnu.linkonce.tb.*) *(.tcommon) }
   PROVIDE (__tls_template_end = .);
   .preinit_array     :
@@ -103,7 +103,7 @@ SECTIONS
     PROVIDE_HIDDEN (__preinit_array_start = .);
     KEEP (*(.preinit_array))
     PROVIDE_HIDDEN (__preinit_array_end = .);
-  }
+  } :seg_rwdata
   .init_array     :
   {
      PROVIDE_HIDDEN (__init_array_start = .);
