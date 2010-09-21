@@ -145,17 +145,14 @@
    a different, more efficient calling convention.
 
    Under Native Client, we cannot preserve all registers across a PLT
-   call, so we cannot use regparm on function calls between dynamic
-   objects.  We use internal_asm_function for functions that are called
-   from assembly code.  */
+   call, so we cannot use regparm(3) on function calls between dynamic
+   objects.  We use regparm(2) instead.  */
 #if defined USE_REGPARMS && !defined PROF && !defined __BOUNDED_POINTERS__
-# define internal_asm_function __attribute__ ((regparm (3), stdcall))
-#endif
-
 #ifdef __native_client__
-# define internal_function /* empty */
+# define internal_function __attribute__ ((regparm (2), stdcall))
 #else
-# define internal_function internal_asm_function
+# define internal_function __attribute__ ((regparm (3), stdcall))
+#endif
 #endif
 
 /* Linux specific: minimum supported kernel version.  */

@@ -154,7 +154,14 @@ elf_machine_runtime_setup (struct link_map *l, int lazy, int profile)
    destroys the passed register information.  */
 /* GKM FIXME: Fix trampoline to pass bounds so we can do
    without the `__unbounded' qualifier.  */
-#define ARCH_FIXUP_ATTRIBUTE __attribute__ ((regparm (3), stdcall, unused))
+/* Under Native Client, we cannot preserve all registers across a PLT
+   call, so we cannot use regparm(3) on function calls between dynamic
+   objects.  We use regparm(2) instead.  */
+#ifdef __native_client__
+# define ARCH_FIXUP_ATTRIBUTE __attribute__ ((regparm (2), stdcall, unused))
+#else
+# define ARCH_FIXUP_ATTRIBUTE __attribute__ ((regparm (3), stdcall, unused))
+#endif
 
 extern ElfW(Addr) _dl_fixup (struct link_map *__unbounded l,
 			     ElfW(Word) reloc_offset)
@@ -209,18 +216,7 @@ _dl_start_user:\n\
 	# as the application's entry point will see it; it can\n\
 	# switch stacks if it moves these contents over.\n\
 " RTLD_START_SPECIAL_INIT "\n\
-	# Load the parameters again.\n\
-	# (eax, edx, ecx, *--esp) = (_dl_loaded, argc, argv, envp)\n\
-	movl _rtld_local@GOTOFF(%ebx), %eax\n\
-	leal 8(%esp,%edx,4), %esi\n\
-	leal 4(%esp), %ecx\n\
-	movl %esp, %ebp\n\
-	# Make sure _dl_init is run with 16 byte aligned stack.\n\
-	andl $-16, %esp\n\
-	pushl %eax\n\
-	pushl %eax\n\
-	pushl %ebp\n\
-	pushl %esi\n\
+" RTLD_LOAD_DL_INIT_PARAMETERS "\n\
 	# Clear %ebp, so that even constructors have terminated backchain.\n\
 	xorl %ebp, %ebp\n\
 	# Call the function to run the initializers.\n\
@@ -233,6 +229,39 @@ _dl_start_user:\n\
 	nacljmp %edi\n\
 	.previous\n\
 ");
+
+/* Native client PLT does not save %ecx so we cannot use regparm(3). We use
+   regparm(2) instead.  */
+
+#ifdef __native_client__
+#define RTLD_LOAD_DL_INIT_PARAMETERS \
+	"# Load the parameters again.\n\
+	# (eax, edx, *(esp-4), *(esp-8)) = (_dl_loaded, argc, argv, envp)\n\
+	movl _rtld_local@GOTOFF(%ebx), %eax\n\
+	leal 8(%esp,%edx,4), %esi\n\
+	leal 4(%esp), %ecx\n\
+	movl %esp, %ebp\n\
+	# Make sure _dl_init is run with 16 byte aligned stack.\n\
+	andl $-16, %esp\n\
+	pushl %eax\n\
+	pushl %ebp\n\
+	pushl %ecx\n\
+	pushl %esi"
+#else
+#define RTLD_LOAD_DL_INIT_PARAMETERS \
+	"# Load the parameters again.\n\
+	# (eax, edx, ecx, *--esp) = (_dl_loaded, argc, argv, envp)\n\
+	movl _rtld_local@GOTOFF(%ebx), %eax\n\
+	leal 8(%esp,%edx,4), %esi\n\
+	leal 4(%esp), %ecx\n\
+	movl %esp, %ebp\n\
+	# Make sure _dl_init is run with 16 byte aligned stack.\n\
+	andl $-16, %esp\n\
+	pushl %eax\n\
+	pushl %eax\n\
+	pushl %ebp\n\
+	pushl %esi"
+#endif
 
 #ifndef RTLD_START_SPECIAL_INIT
 # define RTLD_START_SPECIAL_INIT /* nothing */

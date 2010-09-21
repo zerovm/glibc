@@ -36,8 +36,17 @@
    that reference the *ABS* segment in their own link maps.  The
    argument is the addend originally stored there.  */
 
+/* Under Native Client, we cannot preserve all registers across a PLT
+   call, so we cannot use regparm(3) on function calls between dynamic
+   objects.  We use regparm(2) instead.  */
+#ifdef __native_client__
+#define internal_hidden_function internal_function attribute_hidden
+#else
+#define internal_hidden_function __attribute__ ((regparm (3))) attribute_hidden
+#endif
+
 void
-__attribute__ ((regparm (3))) attribute_hidden
+internal_hidden_function
 _dl_tlsdesc_resolve_abs_plus_addend_fixup (struct tlsdesc volatile *td,
 					   struct link_map *l,
 					   ptrdiff_t entry_check_offset)
@@ -73,7 +82,7 @@ _dl_tlsdesc_resolve_abs_plus_addend_fixup (struct tlsdesc volatile *td,
    that applies relocations.  */
 
 void
-__attribute__ ((regparm (3))) attribute_hidden
+internal_hidden_function
 _dl_tlsdesc_resolve_rel_fixup (struct tlsdesc volatile *td,
 			       struct link_map *l,
 			       ptrdiff_t entry_check_offset)
@@ -150,7 +159,7 @@ _dl_tlsdesc_resolve_rel_fixup (struct tlsdesc volatile *td,
    The argument location is used to hold a pointer to the relocation.  */
 
 void
-__attribute__ ((regparm (3))) attribute_hidden
+internal_hidden_function
 _dl_tlsdesc_resolve_rela_fixup (struct tlsdesc volatile *td,
 				struct link_map *l,
 				ptrdiff_t entry_check_offset)
@@ -232,7 +241,7 @@ _dl_tlsdesc_resolve_rela_fixup (struct tlsdesc volatile *td,
    lock.  */
 
 void
-__attribute__ ((regparm (3))) attribute_hidden
+internal_hidden_function
 _dl_tlsdesc_resolve_hold_fixup (struct tlsdesc volatile *td,
 				struct link_map *l __attribute__((__unused__)),
 				ptrdiff_t entry_check_offset)

@@ -26,16 +26,25 @@
 	.align 16
 _dl_runtime_resolve:
 #ifdef __native_client__
-	/* The NaCl version does not preserve registers %eax, %ecx and
-	   %edx, but we cannot preserve all registers because at least
-	   one is needed to perform address alignment when doing an
-	   indirect jump in NaCl.  This means functions called via the
-	   PLT cannot use the "regparm" attribute.  This is mentioned in
-	   gcc's docs for "regparm". */
-	popl %eax
+	/* The NaCl version does not preserve register %ecx. We cannot preserve
+	   all registers because at least one is needed to perform address
+	   alignment when doing an indirect jump in NaCl.  This means functions
+	   called via the PLT cannot use the "regparm(3)" attribute. */
+	cfi_adjust_cfa_offset (8)
+	pushl %eax		# Preserve registers otherwise clobbered.
+	cfi_adjust_cfa_offset (4)
+	pushl %edx
+	cfi_adjust_cfa_offset (4)
+	movl 12(%esp), %edx	# Copy args pushed by PLT in register.  Note
+	movl 8(%esp), %eax	# that `fixup' takes its parameters in regs.
+	call _dl_fixup		# Call resolver.
+	movl %eax, %ecx
 	popl %edx
-	call _dl_fixup
-	nacljmp %eax
+	cfi_adjust_cfa_offset (-4)
+	popl %eax
+	cfi_adjust_cfa_offset (-4)
+	add $8, %esp
+	nacljmp %ecx
 #else
 	cfi_adjust_cfa_offset (8)
 	pushl %eax		# Preserve registers otherwise clobbered.

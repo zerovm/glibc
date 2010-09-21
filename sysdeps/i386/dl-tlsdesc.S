@@ -145,7 +145,11 @@ _dl_tlsdesc_dynamic:
 
 	When the actual resolver returns, it will have adjusted the
 	TLS descriptor such that we can tail-call it for it to return
-	the TP offset of the symbol.  */
+	the TP offset of the symbol.
+
+	Note: Native Client does not support GNU2 TLS model yet. Asm
+	wrappers are correct now, but we must fix the C part:
+	_dl_tlsdesc_resolve_abs_plus_addend_fixup function.  */
 
 	.hidden _dl_tlsdesc_resolve_abs_plus_addend
 	.global	_dl_tlsdesc_resolve_abs_plus_addend
@@ -156,21 +160,34 @@ _dl_tlsdesc_resolve_abs_plus_addend:
 0:
 	pushl	%eax
 	cfi_adjust_cfa_offset (4)
+#ifndef __native_client__
 	pushl	%ecx
 	cfi_adjust_cfa_offset (4)
+#endif
 	pushl	%edx
 	cfi_adjust_cfa_offset (4)
+#ifdef __native_client__
+	push	$1f - 0b
+	cfi_adjust_cfa_offset (4)
+#else
 	movl	$1f - 0b, %ecx
+#endif
 	movl	4(%ebx), %edx
 	call	_dl_tlsdesc_resolve_abs_plus_addend_fixup
 1:
 	popl	%edx
 	cfi_adjust_cfa_offset (-4)
+#ifndef __native_client__
 	popl	%ecx
 	cfi_adjust_cfa_offset (-4)
+#endif
 	popl	%eax
 	cfi_adjust_cfa_offset (-4)
+#ifdef __native_client__
+	nacljmp %eax
+#else
 	jmp	*(%eax)
+#endif
 	cfi_endproc
 	.size	_dl_tlsdesc_resolve_abs_plus_addend, .-_dl_tlsdesc_resolve_abs_plus_addend
 
@@ -183,7 +200,11 @@ _dl_tlsdesc_resolve_abs_plus_addend:
 
 	When the actual resolver returns, it will have adjusted the
 	TLS descriptor such that we can tail-call it for it to return
-	the TP offset of the symbol.  */
+	the TP offset of the symbol.
+
+	Note: Native Client does not support GNU2 TLS model yet. Asm
+	wrappers are correct now, but we must fix the C part:
+	_dl_tlsdesc_resolve_rel_fixup function.  */
 
 	.hidden _dl_tlsdesc_resolve_rel
 	.global	_dl_tlsdesc_resolve_rel
@@ -194,21 +215,34 @@ _dl_tlsdesc_resolve_rel:
 0:
 	pushl	%eax
 	cfi_adjust_cfa_offset (4)
+#ifndef __native_client__
 	pushl	%ecx
 	cfi_adjust_cfa_offset (4)
+#endif
 	pushl	%edx
 	cfi_adjust_cfa_offset (4)
+#ifdef __native_client__
+	push	$1f - 0b
+	cfi_adjust_cfa_offset (4)
+#else
 	movl	$1f - 0b, %ecx
+#endif
 	movl	4(%ebx), %edx
 	call	_dl_tlsdesc_resolve_rel_fixup
 1:
 	popl	%edx
 	cfi_adjust_cfa_offset (-4)
+#ifndef __native_client__
 	popl	%ecx
 	cfi_adjust_cfa_offset (-4)
+#endif
 	popl	%eax
 	cfi_adjust_cfa_offset (-4)
+#ifdef __native_client__
+	nacljmp %eax
+#else
 	jmp	*(%eax)
+#endif
 	cfi_endproc
 	.size	_dl_tlsdesc_resolve_rel, .-_dl_tlsdesc_resolve_rel
 
@@ -221,7 +255,11 @@ _dl_tlsdesc_resolve_rel:
 
 	When the actual resolver returns, it will have adjusted the
 	TLS descriptor such that we can tail-call it for it to return
-	the TP offset of the symbol.  */
+	the TP offset of the symbol.
+
+	Note: Native Client does not support GNU2 TLS model yet. Asm
+	wrappers are correct now, but we must fix the C part:
+	_dl_tlsdesc_resolve_rela_fixup function.  */
 
 	.hidden _dl_tlsdesc_resolve_rela
 	.global	_dl_tlsdesc_resolve_rela
@@ -232,21 +270,36 @@ _dl_tlsdesc_resolve_rela:
 0:
 	pushl	%eax
 	cfi_adjust_cfa_offset (4)
+#ifndef __native_client__
+	pushl	%ecx
+	cfi_adjust_cfa_offset (4)
+#endif
 	pushl	%ecx
 	cfi_adjust_cfa_offset (4)
 	pushl	%edx
 	cfi_adjust_cfa_offset (4)
+#ifdef __native_client__
+	push	$1f - 0b
+	cfi_adjust_cfa_offset (4)
+#else
 	movl	$1f - 0b, %ecx
+#endif
 	movl	4(%ebx), %edx
 	call	_dl_tlsdesc_resolve_rela_fixup
 1:
 	popl	%edx
 	cfi_adjust_cfa_offset (-4)
+#ifndef __native_client__
 	popl	%ecx
 	cfi_adjust_cfa_offset (-4)
+#endif
 	popl	%eax
 	cfi_adjust_cfa_offset (-4)
+#ifdef __native_client__
+	nacljmp %eax
+#else
 	jmp	*(%eax)
+#endif
 	cfi_endproc
 	.size	_dl_tlsdesc_resolve_rela, .-_dl_tlsdesc_resolve_rela
 
@@ -259,7 +312,11 @@ _dl_tlsdesc_resolve_rela:
 
 	When the actual resolver returns, it will have adjusted the
 	TLS descriptor such that we can tail-call it for it to return
-	the TP offset of the symbol.  */
+	the TP offset of the symbol.
+
+	Note: Native Client does not support GNU2 TLS model yet. Asm
+	wrappers are correct now, but we must fix the C part:
+	_dl_tlsdesc_resolve_hold_fixup function.  */
 
 	.hidden _dl_tlsdesc_resolve_hold
 	.global	_dl_tlsdesc_resolve_hold
@@ -269,21 +326,34 @@ _dl_tlsdesc_resolve_rela:
 _dl_tlsdesc_resolve_hold:
 0:
 	pushl	%eax
-	cfi_adjust_cfa_offset (4)
+#ifndef __native_client__
 	pushl	%ecx
+	cfi_adjust_cfa_offset (4)
+#endif
 	cfi_adjust_cfa_offset (4)
 	pushl	%edx
 	cfi_adjust_cfa_offset (4)
+#ifdef __native_client__
+	push	$1f - 0b
+	cfi_adjust_cfa_offset (4)
+#else
 	movl	$1f - 0b, %ecx
+#endif
 	movl	4(%ebx), %edx
 	call	_dl_tlsdesc_resolve_hold_fixup
 1:
 	popl	%edx
 	cfi_adjust_cfa_offset (-4)
+#ifndef __native_client__
 	popl	%ecx
 	cfi_adjust_cfa_offset (-4)
+#endif
 	popl	%eax
 	cfi_adjust_cfa_offset (-4)
+#ifdef __native_client__
+	nacljmp %eax
+#else
 	jmp	*(%eax)
+#endif
 	cfi_endproc
 	.size	_dl_tlsdesc_resolve_hold, .-_dl_tlsdesc_resolve_hold

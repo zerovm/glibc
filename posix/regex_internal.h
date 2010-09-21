@@ -379,7 +379,14 @@ typedef struct re_dfa_t re_dfa_t;
 
 #ifndef _LIBC
 # ifdef __i386__
-#  define internal_function   __attribute ((regparm (3), stdcall))
+/* Under Native Client, we cannot preserve all registers across a PLT
+   call, so we cannot use regparm(3) on function calls between dynamic
+   objects.  We use regparm(2) instead.  */
+#  ifdef __native_client__
+#   define internal_function   __attribute ((regparm (2), stdcall))
+#  else
+#   define internal_function   __attribute ((regparm (3), stdcall))
+#  endif
 # else
 #  define internal_function
 # endif
