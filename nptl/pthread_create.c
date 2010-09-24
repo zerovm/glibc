@@ -227,7 +227,7 @@ __free_tcb (struct pthread *pd)
 static int
 start_thread (void *arg)
 {
-  struct pthread *pd = (struct pthread *) arg;
+  struct pthread *pd = THREAD_SELF;
 
 #if HP_TIMING_AVAIL
   /* Remember the time when the thread was started.  */
@@ -393,15 +393,8 @@ start_thread (void *arg)
       pd->setxid_futex = 0;
     }
 
-  /* We cannot call '_exit' here.  '_exit' will terminate the process.
-
-     The 'exit' implementation in the kernel will signal when the
-     process is really dead since 'clone' got passed the CLONE_CLEARTID
-     flag.  The 'tid' field in the TCB will be set to zero.
-
-     The exit code is zero since in case all threads exit by calling
-     'pthread_exit' the exit status must be 0 (zero).  */
-  __exit_thread_inline (0);
+  /* GLibC does not use NaCl-supplied book-keeping of threads. */
+  NACL_SYSCALL (thread_exit) (NULL);
 
   /* NOTREACHED */
   return 0;

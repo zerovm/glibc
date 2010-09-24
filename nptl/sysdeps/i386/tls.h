@@ -377,7 +377,8 @@ union user_desc_init
 		   "pushl %%eax\n\t"					      \
 		   "pushl %%eax\n\t"					      \
 		   "pushl %%gs:%P4\n\t"					      \
-		   "call *%%gs:%P3\n\t"					      \
+		   "movl %%gs:%P3,%%eax\n\t"				      \
+		   "naclcall %%eax\n\t"					      \
 		   "addl $16, %%esp"					      \
 		   : "=a" (__res), "=c" (__ignore1), "=d" (__ignore2)	      \
 		   : "i" (offsetof (struct pthread, start_routine)),	      \
@@ -408,8 +409,11 @@ union user_desc_init
 #define THREAD_GSCOPE_RESET_FLAG() \
   do									      \
     { int __res;							      \
-      asm volatile ("xchgl %0, %%gs:%P1"				      \
-		    : "=r" (__res)					      \
+      int __dummy;							      \
+      asm volatile ("movl %%gs:0,%1\n\t"				      \
+		    "xchgl %0, %P2(%1)"					      \
+		    : "=r" (__res),					      \
+		      "=&r" (__dummy)					      \
 		    : "i" (offsetof (struct pthread, header.gscope_flag)),    \
 		      "0" (THREAD_GSCOPE_FLAG_UNUSED));			      \
       if (__res == THREAD_GSCOPE_FLAG_WAIT)				      \

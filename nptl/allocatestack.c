@@ -30,6 +30,10 @@
 #include <lowlevellock.h>
 #include <kernel-features.h>
 
+/* Disable protecting stack with guard pages.
+ * TODO(khim): re-enable with series of mmaps/munmaps. */
+
+#define mprotect(x, y, z) 0
 
 #ifndef NEED_SEPARATE_REGISTER_STACK
 

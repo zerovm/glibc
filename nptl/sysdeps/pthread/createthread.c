@@ -26,7 +26,8 @@
 #include <tls.h>
 
 #include "kernel-features.h"
-
+#include <nacl_syscalls.h>
+#include "pthreadP.h"
 
 #define CLONE_SIGNAL    	(CLONE_SIGHAND | CLONE_THREAD)
 
@@ -52,7 +53,7 @@ do_clone (struct pthread *pd, const struct pthread_attr *attr,
 	  int clone_flags, int (*fct) (void *), STACK_VARIABLES_PARMS,
 	  int stopped)
 {
-#ifdef PREPARE_CREATE
+#if 0
   PREPARE_CREATE;
 #endif
 
@@ -72,8 +73,8 @@ do_clone (struct pthread *pd, const struct pthread_attr *attr,
      that cares whether the thread count is correct.  */
   atomic_increment (&__nptl_nthreads);
 
-  if (ARCH_CLONE (fct, STACK_VARIABLES_ARGS, clone_flags,
-		  pd, &pd->tid, TLS_VALUE, &pd->tid) == -1)
+  if (NACL_SYSCALL (thread_create) (fct, STACK_VARIABLES_ARGS, pd,
+				    sizeof(struct pthread)) != 0)
     {
       atomic_decrement (&__nptl_nthreads); /* Oops, we lied for a second.  */
 
