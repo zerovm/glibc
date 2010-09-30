@@ -31,11 +31,11 @@ ENTRY(__ieee754_exp)
 	faddp				/* 2^(fract(x * log2(e))) */
 	fscale				/* e^x */
 	fstp	%st(1)
-	ret
+	NACLRET
 
 1:	testl	$0x200, %eax		/* Test sign.  */
 	jz	2f			/* If positive, jump.  */
 	fstp	%st
 	fldz				/* Set result to 0.  */
-2:	ret
+2:	NACLRET
 END (__ieee754_exp)

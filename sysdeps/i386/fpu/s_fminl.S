@@ -39,6 +39,6 @@ ENTRY(__fminl)
 1:	fxch	%st(1)
 2:	fstp	%st(1)
 
-	ret
+	NACLRET
 END(__fminl)
 weak_alias (__fminl, fminl)

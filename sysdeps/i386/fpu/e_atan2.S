@@ -11,5 +11,5 @@ ENTRY(__ieee754_atan2)
 	fldl	 4(%esp)
 	fldl	12(%esp)
 	fpatan
-	ret
+	NACLRET
 END (__ieee754_atan2)

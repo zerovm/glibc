@@ -27,6 +27,6 @@ ENTRY(__ceil)
 	fldcw	4(%esp)			/* restore original control word */
 
 	addl	$8,%esp
-	ret
+	NACLRET
 END (__ceil)
 weak_alias (__ceil, ceil)

@@ -11,6 +11,6 @@ ENTRY(__atan)
 	fldl	4(%esp)
 	fld1
 	fpatan
-	ret
+	NACLRET
 END (__atan)
 weak_alias (__atan, atan)

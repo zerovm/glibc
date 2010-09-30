@@ -27,6 +27,6 @@ ENTRY(__floorf)
 	fldcw	4(%esp)			/* restore original control word */
 
 	addl	$8,%esp
-	ret
+	NACLRET
 END (__floorf)
 weak_alias (__floorf, floorf)

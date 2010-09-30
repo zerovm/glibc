@@ -15,6 +15,6 @@ ENTRY(__copysignf)
 	orl	%edx,%eax
 	movl	%eax,4(%esp)
 	flds	4(%esp)
-	ret
+	NACLRET
 END (__copysignf)
 weak_alias (__copysignf, copysignf)

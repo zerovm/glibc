@@ -45,6 +45,6 @@ ENTRY (BP_SYM (__remquo))
 1:	movl	%eax, (%ecx)
 
 	LEAVE
-	ret
+	NACLRET
 END (BP_SYM (__remquo))
 weak_alias (BP_SYM (__remquo), BP_SYM (remquo))

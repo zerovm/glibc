@@ -119,7 +119,7 @@ ENTRY(__cexpf)
 	cfi_adjust_cfa_offset (-4)
 	popl	%edx
 	cfi_adjust_cfa_offset (-4)
-	ret
+	NACLRET
 
 	/* We have to reduce the argument to fsincos.  */
 	.align ALIGNARG(4)
@@ -141,7 +141,7 @@ ENTRY(__cexpf)
 	cfi_adjust_cfa_offset (-4)
 	popl	%edx
 	cfi_adjust_cfa_offset (-4)
-	ret
+	NACLRET
 
 	/* The real part is +-inf.  We must make further differences.  */
 	.align ALIGNARG(4)
@@ -182,7 +182,7 @@ ENTRY(__cexpf)
 	shll	$23, %eax
 	andl	$0x80000000, %eax
 	orl	%ecx, %eax
-	ret
+	NACLRET
 	/* We must reduce the argument to fsincos.  */
 	.align ALIGNARG(4)
 5:	fldt	MO(twopi)
@@ -208,7 +208,7 @@ ENTRY(__cexpf)
 	shll	$23, %eax
 	andl	$0x80000000, %eax
 	orl	%ecx, %eax
-	ret
+	NACLRET
 
 	/* The real part is +-Inf and the imaginary part is +-0.  So return
 	   +-Inf+-0i.  */
@@ -222,7 +222,7 @@ ENTRY(__cexpf)
 	movl	MOX(huge_nan_null_null,%edx,1), %eax
 	popl	%edx
 	cfi_adjust_cfa_offset (-4)
-	ret
+	NACLRET
 
 	/* The real part is +-Inf, the imaginary is also is not finite.  */
 	.align ALIGNARG(4)
@@ -244,7 +244,7 @@ ENTRY(__cexpf)
 
 	movl	MOX(huge_nan_null_null,%edx,1), %eax
 	movl	MOX(huge_nan_null_null+4,%edx,1), %edx
-	ret
+	NACLRET
 
 	/* The real part is NaN.  */
 	.align ALIGNARG(4)
@@ -255,7 +255,7 @@ ENTRY(__cexpf)
 	fstp	%st(0)
 	movl	MO(huge_nan_null_null+4), %eax
 	movl	%eax, %edx
-	ret
+	NACLRET
 
 END(__cexpf)
 weak_alias (__cexpf, cexpf)

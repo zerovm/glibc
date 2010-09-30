@@ -16,5 +16,5 @@ ENTRY(__ieee754_asin)
 	fsubp				/* 1 - x^2 */
 	fsqrt				/* sqrt (1 - x^2) */
 	fpatan
-	ret
+	NACLRET
 END (__ieee754_asin)

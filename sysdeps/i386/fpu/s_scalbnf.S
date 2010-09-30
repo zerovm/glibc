@@ -12,7 +12,7 @@ ENTRY(__scalbnf)
 	flds	4(%esp)
 	fscale
 	fstp	%st(1)
-	ret
+	NACLRET
 END (__scalbnf)
 weak_alias (__scalbnf, scalbnf)
 strong_alias (__scalbnf, __scalblnf)

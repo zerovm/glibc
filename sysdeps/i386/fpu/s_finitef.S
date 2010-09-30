@@ -10,7 +10,7 @@ ENTRY(__finitef)
 	subl    %eax,%ecx
 	xorl    %ecx,%eax
 	shrl    $31,%eax
-	ret
+	NACLRET
 END (__finitef)
 weak_alias (__finitef, finitef)
 hidden_def (__finitef)

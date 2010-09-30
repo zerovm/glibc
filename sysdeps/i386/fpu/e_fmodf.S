@@ -16,5 +16,5 @@ ENTRY(__ieee754_fmodf)
 	sahf
 	jp	1b
 	fstp	%st(1)
-	ret
+	NACLRET
 END(__ieee754_fmodf)

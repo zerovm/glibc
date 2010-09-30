@@ -31,6 +31,6 @@ ENTRY(__trunc)
 	frndint
 	fldcw	4(%esp)
 	addl	$8, %esp
-	ret
+	NACLRET
 END(__trunc)
 weak_alias (__trunc, trunc)

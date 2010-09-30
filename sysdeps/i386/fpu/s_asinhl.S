@@ -90,16 +90,16 @@ ENTRY(__asinhl)
 	fyl2xp1
 	jecxz	4f
 	fchs
-4:	ret
+4:	NACLRET
 
 7:	fldt	4(%esp)
-	ret
+	NACLRET
 
 6:	faddl	MO(one)
 	fyl2x
 	jecxz	4f
 	fchs
-4:	ret
+4:	NACLRET
 
 	// |x| < 2^-34 => y = x (inexact iff |x| != 0.0)
 	.align ALIGNARG(4)
@@ -113,7 +113,7 @@ ENTRY(__asinhl)
 	fldt	MO(huge)		// huge : x : x
 	faddp				// huge+x : x
 	fstp	%st(0)			// x
-	ret
+	NACLRET
 
 	// |x| > 2^34 => y = sign(x) * (log(|x|) + log(2))
 	.align ALIGNARG(4)
@@ -122,7 +122,7 @@ ENTRY(__asinhl)
 	faddp				// log(|x|)+log(2)
 	jecxz	4f
 	fchs
-4:	ret
+4:	NACLRET
 
 	// |x| > 2 => y = sign(x) * log(2*|x| + 1/(|x|+sqrt(x*x+1)))
 	.align ALIGNARG(4)
@@ -138,6 +138,6 @@ ENTRY(__asinhl)
 	fyl2x				// log(2*|x|+1/(|x|+sqrt(1+|x|^2)))
 	jecxz	4f
 	fchs
-4:	ret
+4:	NACLRET
 END(__asinhl)
 weak_alias (__asinhl, asinhl)

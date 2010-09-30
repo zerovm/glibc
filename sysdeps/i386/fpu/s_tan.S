@@ -14,7 +14,7 @@ ENTRY(__tan)
 	testl	$0x400,%eax
 	jnz	1f
 	fstp	%st(0)
-	ret
+	NACLRET
 1:	fldpi
 	fadd	%st(0)
 	fxch	%st(1)
@@ -25,6 +25,6 @@ ENTRY(__tan)
 	fstp	%st(1)
 	fptan
 	fstp	%st(0)
-	ret
+	NACLRET
 END (__tan)
 weak_alias (__tan, tan)

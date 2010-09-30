@@ -38,7 +38,7 @@ ENTRY(__ieee754_hypotf)
 	fmul	%st(0)		// x * x : y * y
 	faddp			// x * x + y * y
 	fsqrt
-2:	ret
+2:	NACLRET
 
 	// We have to test whether any of the parameters is Inf.
 	// In this case the result is infinity.

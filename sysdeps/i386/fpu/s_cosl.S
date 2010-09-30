@@ -15,7 +15,7 @@ ENTRY(__cosl)
 	fnstsw	%ax
 	testl	$0x400,%eax
 	jnz	1f
-	ret
+	NACLRET
 	.align ALIGNARG(4)
 1:	fldpi
 	fadd	%st(0)
@@ -26,6 +26,6 @@ ENTRY(__cosl)
 	jnz	2b
 	fstp	%st(1)
 	fcos
-	ret
+	NACLRET
 END (__cosl)
 weak_alias (__cosl, cosl)

@@ -39,6 +39,6 @@ ENTRY(__fmax)
 	fxch	%st(1)
 1:	fstp	%st(1)
 
-	ret
+	NACLRET
 END(__fmax)
 weak_alias (__fmax, fmax)

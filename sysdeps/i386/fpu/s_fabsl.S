@@ -4,6 +4,6 @@
 ENTRY(__fabsl)
 	fldt	4(%esp)
 	fabs
-	ret
+	NACLRET
 END(__fabsl)
 weak_alias (__fabsl, fabsl)

@@ -68,18 +68,18 @@ ENTRY(__ieee754_acoshf)
 	sahf
 	ja	2f
 	fyl2xp1				// log1p(x-1+sqrt(2*(x-1)+(x-1)^2))
-	ret
+	NACLRET
 
 2:	faddl	MO(one)			// x+sqrt(2*(x-1)+(x-1)^2) : log(2)
 	fyl2x				// log(x+sqrt(2*(x-1)+(x-1)^2))
-	ret
+	NACLRET
 
 	// x > 2^14 => y = log(x) + log(2)
 	.align ALIGNARG(4)
 3:	fyl2x				// log(x)
 	fldln2				// log(2) : log(x)
 	faddp				// log(x)+log(2)
-	ret
+	NACLRET
 
 	// 2^28 > x > 2 => y = log(2*x - 1/(x+sqrt(x*x-1)))
 	.align ALIGNARG(4)
@@ -93,11 +93,11 @@ ENTRY(__ieee754_acoshf)
 	fdivrl	MO(one)			// 1/(x+sqrt(x^2-1)) : 2*x : log(2)
 	fsubrp				// 2*x+1/(x+sqrt(x^2)-1) : log(2)
 	fyl2x				// log(2*x+1/(x+sqrt(x^2-1)))
-	ret
+	NACLRET
 
 	// x < 1 => NaN
 	.align ALIGNARG(4)
 5:	fldz
 	fdiv	%st, %st(0)
-	ret
+	NACLRET
 END(__ieee754_acoshf)

@@ -55,15 +55,15 @@ ENTRY(__log1p)
 	faddl	one
 #endif
 	fyl2x
-	ret
+	NACLRET
 
 2:	fyl2xp1
-	ret
+	NACLRET
 
 3:	jp	4b		// in case x is ±Inf
 	fstp	%st(1)
 	fstp	%st(1)
-	ret
+	NACLRET
 
 END (__log1p)
 weak_alias (__log1p, log1p)

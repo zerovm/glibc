@@ -13,7 +13,7 @@ ENTRY(__sinf)
 	fnstsw	%ax
 	testl	$0x400,%eax
 	jnz	1f
-	ret
+	NACLRET
 	.align ALIGNARG(4)
 1:	fldpi
 	fadd	%st(0)
@@ -24,6 +24,6 @@ ENTRY(__sinf)
 	jnz	2b
 	fstp	%st(1)
 	fsin
-	ret
+	NACLRET
 END (__sinf)
 weak_alias (__sinf, sinf)

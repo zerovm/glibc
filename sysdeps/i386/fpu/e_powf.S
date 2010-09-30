@@ -137,7 +137,7 @@ ENTRY(__ieee754_powf)
 	testl	%edx, %edx
 	jnz	6b
 	fstp	%st(0)		// ST*x
-	ret
+	NACLRET
 
 	/* y is ±NAN */
 30:	flds	4(%esp)		// x : y
@@ -148,7 +148,7 @@ ENTRY(__ieee754_powf)
 	je	31f
 	fxch			// y : x
 31:	fstp	%st(1)
-	ret
+	NACLRET
 
 	cfi_adjust_cfa_offset (4)
 	.align ALIGNARG(4)
@@ -180,14 +180,14 @@ ENTRY(__ieee754_powf)
 	addl	$4, %esp
 	cfi_adjust_cfa_offset (-4)
 	fstp	%st(1)		// 2^fract(y*log2(x))*2^int(y*log2(x))
-	ret
+	NACLRET
 
 
 	// pow(x,±0) = 1
 	.align ALIGNARG(4)
 11:	fstp	%st(0)		// pop y
 	fldl	MO(one)
-	ret
+	NACLRET
 
 	// y == ±inf
 	.align ALIGNARG(4)
@@ -208,15 +208,15 @@ ENTRY(__ieee754_powf)
 	xorb	%ah, %dl
 	andl	$2, %edx
 	fldl	MOX(inf_zero, %edx, 4)
-	ret
+	NACLRET
 
 	.align ALIGNARG(4)
 14:	fldl	MO(one)
-	ret
+	NACLRET
 
 	.align ALIGNARG(4)
 13:	flds	4(%esp)		// load x == NaN
-	ret
+	NACLRET
 
 	cfi_adjust_cfa_offset (4)
 	.align ALIGNARG(4)
@@ -249,7 +249,7 @@ ENTRY(__ieee754_powf)
 	// It's an odd integer.
 	shrl	$31, %edx
 	fldl	MOX(minf_mzero, %edx, 8)
-	ret
+	NACLRET
 
 	cfi_adjust_cfa_offset (4)
 	.align ALIGNARG(4)
@@ -260,7 +260,7 @@ ENTRY(__ieee754_powf)
 	shrl	$5, %eax
 	andl	$8, %eax
 	fldl	MOX(inf_zero, %eax, 1)
-	ret
+	NACLRET
 
 	cfi_adjust_cfa_offset (4)
 	.align ALIGNARG(4)
@@ -269,7 +269,7 @@ ENTRY(__ieee754_powf)
 	cfi_adjust_cfa_offset (-4)
 18:	shrl	$31, %edx
 	fldl	MOX(inf_zero, %edx, 8)
-	ret
+	NACLRET
 
 	cfi_adjust_cfa_offset (4)
 	.align ALIGNARG(4)
@@ -303,7 +303,7 @@ ENTRY(__ieee754_powf)
 	fldl	MO(one)
 	fdivl	MO(zero)
 	fchs
-	ret
+	NACLRET
 
 	cfi_adjust_cfa_offset (4)
 25:	fstp	%st(0)
@@ -312,7 +312,7 @@ ENTRY(__ieee754_powf)
 27:	// Raise divide-by-zero exception and get infinity value.
 	fldl	MO(one)
 	fdivl	MO(zero)
-	ret
+	NACLRET
 
 	cfi_adjust_cfa_offset (4)
 	.align ALIGNARG(4)
@@ -338,13 +338,13 @@ ENTRY(__ieee754_powf)
 	jae	24f		// does not fit in mantissa bits
 	// It's an odd integer.
 	fldl	MO(mzero)
-	ret
+	NACLRET
 
 	cfi_adjust_cfa_offset (4)
 22:	fstp	%st(0)
 23:	addl	$4, %esp	// Don't use pop.
 	cfi_adjust_cfa_offset (-4)
 24:	fldl	MO(zero)
-	ret
+	NACLRET
 
 END(__ieee754_powf)

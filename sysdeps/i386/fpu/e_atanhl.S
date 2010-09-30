@@ -91,14 +91,14 @@ ENTRY(__ieee754_atanhl)
 	fyl2xp1			// 0.5*ln2*ld(1+2*|x|+(2*|x|^2)/(1-|x|))
 	jecxz	3f
 	fchs			// 0.5*ln2*ld(1+2*x+(2*x^2)/(1-x))
-3:	ret
+3:	NACLRET
 
 	.align ALIGNARG(4)
 4:	faddl	MO(one)		// 1+2*|x|+(2*|x|^2)/(1-|x|) : 0.5*ln2
 	fyl2x			// 0.5*ln2*ld(1+2*|x|+(2*|x|^2)/(1-|x|))
 	jecxz	3f
 	fchs			// 0.5*ln2*ld(1+2*x+(2*x^2)/(1-x))
-3:	ret
+3:	NACLRET
 
 	.align ALIGNARG(4)
 2:	faddl	MO(one)		// 1+|x| : |x| : 0.5*ln2
@@ -108,7 +108,7 @@ ENTRY(__ieee754_atanhl)
 	fyl2x			// 0.5*ln2*ld((1+|x|)/(1-|x|))
 	jecxz	3f
 	fchs			// 0.5*ln2*ld((1+x)/(1-x))
-3:	ret
+3:	NACLRET
 
 	// x == NaN or ±Inf
 5:	cmpl	$0x80000000, 8(%esp)
@@ -116,5 +116,5 @@ ENTRY(__ieee754_atanhl)
 	cmpl	$0, 4(%esp)
 	je	7b
 6:	fldt	4(%esp)
-	ret
+	NACLRET
 END(__ieee754_atanhl)

@@ -30,6 +30,6 @@ ENTRY(__lrint)
 	fwait
 	popl	%eax
 	cfi_adjust_cfa_offset (-4)
-	ret
+	NACLRET
 END(__lrint)
 weak_alias (__lrint, lrint)

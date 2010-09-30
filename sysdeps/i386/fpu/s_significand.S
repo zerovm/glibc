@@ -11,6 +11,6 @@ ENTRY(__significand)
 	fldl	4(%esp)
 	fxtract
 	fstp	%st(1)
-	ret
+	NACLRET
 END (__significand)
 weak_alias (__significand, significand)

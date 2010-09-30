@@ -90,6 +90,6 @@ ENTRY (BP_SYM (__frexpl))
 	movl	%ecx, (%eax)
 
 	LEAVE
-	ret
+	NACLRET
 END (BP_SYM (__frexpl))
 weak_alias (BP_SYM (__frexpl), BP_SYM (frexpl))

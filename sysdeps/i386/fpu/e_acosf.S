@@ -18,5 +18,5 @@ ENTRY(__ieee754_acosf)
 	fsqrt				/* sqrt (1 - x^2) */
 	fxch	%st(1)
 	fpatan
-	ret
+	NACLRET
 END (__ieee754_acosf)

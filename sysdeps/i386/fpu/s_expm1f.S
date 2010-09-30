@@ -75,12 +75,12 @@ ENTRY(__expm1f)
 	fsubrl	MO(one)		// 1-2^int(log2(e)*x) : int(log2(e)*x) : 2^(log2(e)*x)-2^int(log2(e)*x)
 	fstp	%st(1)		// 1-2^int(log2(e)*x) : 2^(log2(e)*x)-2^int(log2(e)*x)
 	fsubrp	%st, %st(1)	// 2^(log2(e)*x)
-	ret
+	NACLRET
 
 2:	testl	$0x200, %eax	// Test sign.
 	jz	3f		// If positive, jump.
 	fstp	%st
 	fldl	MO(minus1)	// Set result to -1.0.
-3:	ret
+3:	NACLRET
 END(__expm1f)
 weak_alias (__expm1f, expm1f)

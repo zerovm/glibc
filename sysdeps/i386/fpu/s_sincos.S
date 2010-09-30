@@ -44,7 +44,7 @@ ENTRY (BP_SYM (__sincos))
 	fstpl	(%ecx)
 
 	LEAVE
-	ret
+	NACLRET
 
 	.align ALIGNARG(4)
 1:	fldpi
@@ -60,6 +60,6 @@ ENTRY (BP_SYM (__sincos))
 	fstpl	(%ecx)
 
 	LEAVE
-	ret
+	NACLRET
 END (BP_SYM (__sincos))
 weak_alias (BP_SYM (__sincos), BP_SYM (sincos))

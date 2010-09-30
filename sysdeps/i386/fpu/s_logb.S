@@ -11,6 +11,6 @@ ENTRY(__logb)
 	fldl	4(%esp)
 	fxtract
 	fstp	%st
-	ret
+	NACLRET
 END (__logb)
 weak_alias (__logb, logb)

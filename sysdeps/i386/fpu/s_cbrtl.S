@@ -224,10 +224,10 @@ ENTRY(__cbrtl)
 	fstp	%st(1)
 	jz	4f
 	fchs
-4:	ret
+4:	NACLRET
 
 	/* Return the argument.  */
 1:	fldt	4(%esp)
-	ret
+	NACLRET
 END(__cbrtl)
 weak_alias (__cbrtl, cbrtl)

@@ -54,14 +54,14 @@ ENTRY(__ieee754_logf)
 	jz	2f
 	fstp	%st(1)		// x-1 : log(2)
 	fyl2xp1			// log(x)
-	ret
+	NACLRET
 
 2:	fstp	%st(0)		// x : log(2)
 	fyl2x			// log(x)
-	ret
+	NACLRET
 
 3:	jp	4b		// in case x is +-Inf
 	fstp	%st(1)
 	fstp	%st(1)
-	ret
+	NACLRET
 END (__ieee754_logf)

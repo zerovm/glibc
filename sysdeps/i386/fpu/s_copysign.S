@@ -15,6 +15,6 @@ ENTRY(__copysign)
 	orl	%edx,%eax
 	movl	%eax,8(%esp)
 	fldl	4(%esp)
-	ret
+	NACLRET
 END (__copysign)
 weak_alias (__copysign, copysign)

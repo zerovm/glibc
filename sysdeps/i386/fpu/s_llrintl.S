@@ -32,6 +32,6 @@ ENTRY(__llrintl)
 	cfi_adjust_cfa_offset (-4)
 	popl	%edx
 	cfi_adjust_cfa_offset (-4)
-	ret
+	NACLRET
 END(__llrintl)
 weak_alias (__llrintl, llrintl)

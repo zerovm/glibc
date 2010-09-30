@@ -37,7 +37,7 @@ ENTRY(__fdim)
 	jmp	2f
 
 3:	fsubrp	%st, %st(1)
-	ret
+	NACLRET
 
 1:	fxam
 	fnstsw
@@ -47,6 +47,6 @@ ENTRY(__fdim)
 
 	fxch
 2:	fstp	%st(1)
-	ret
+	NACLRET
 END(__fdim)
 weak_alias (__fdim, fdim)

@@ -143,7 +143,7 @@ ENTRY(__ieee754_pow)
 	orl	%edx, %ecx
 	jnz	6b
 	fstp	%st(0)		// ST*x
-	ret
+	NACLRET
 
 	/* y is ±NAN */
 30:	fldl	4(%esp)		// x : y
@@ -154,7 +154,7 @@ ENTRY(__ieee754_pow)
 	je	31f
 	fxch			// y : x
 31:	fstp	%st(1)
-	ret
+	NACLRET
 
 	cfi_adjust_cfa_offset (8)
 	.align ALIGNARG(4)
@@ -186,14 +186,14 @@ ENTRY(__ieee754_pow)
 	addl	$8, %esp
 	cfi_adjust_cfa_offset (-8)
 	fstp	%st(1)		// 2^fract(y*log2(x))*2^int(y*log2(x))
-	ret
+	NACLRET
 
 
 	// pow(x,±0) = 1
 	.align ALIGNARG(4)
 11:	fstp	%st(0)		// pop y
 	fldl	MO(one)
-	ret
+	NACLRET
 
 	// y == ±inf
 	.align ALIGNARG(4)
@@ -214,15 +214,15 @@ ENTRY(__ieee754_pow)
 	xorb	%ah, %dl
 	andl	$2, %edx
 	fldl	MOX(inf_zero, %edx, 4)
-	ret
+	NACLRET
 
 	.align ALIGNARG(4)
 14:	fldl	MO(one)
-	ret
+	NACLRET
 
 	.align ALIGNARG(4)
 13:	fldl	4(%esp)		// load x == NaN
-	ret
+	NACLRET
 
 	cfi_adjust_cfa_offset (8)
 	.align ALIGNARG(4)
@@ -257,7 +257,7 @@ ENTRY(__ieee754_pow)
 	// It's an odd integer.
 	shrl	$31, %edx
 	fldl	MOX(minf_mzero, %edx, 8)
-	ret
+	NACLRET
 
 	cfi_adjust_cfa_offset (8)
 	.align ALIGNARG(4)
@@ -268,7 +268,7 @@ ENTRY(__ieee754_pow)
 	shrl	$5, %eax
 	andl	$8, %eax
 	fldl	MOX(inf_zero, %eax, 1)
-	ret
+	NACLRET
 
 	cfi_adjust_cfa_offset (8)
 	.align ALIGNARG(4)
@@ -277,7 +277,7 @@ ENTRY(__ieee754_pow)
 	cfi_adjust_cfa_offset (-8)
 18:	shrl	$31, %edx
 	fldl	MOX(inf_zero, %edx, 8)
-	ret
+	NACLRET
 
 	cfi_adjust_cfa_offset (8)
 	.align ALIGNARG(4)
@@ -313,7 +313,7 @@ ENTRY(__ieee754_pow)
 	fldl	MO(one)
 	fdivl	MO(zero)
 	fchs
-	ret
+	NACLRET
 
 	cfi_adjust_cfa_offset (8)
 25:	fstp	%st(0)
@@ -322,7 +322,7 @@ ENTRY(__ieee754_pow)
 27:	// Raise divide-by-zero exception and get infinity value.
 	fldl	MO(one)
 	fdivl	MO(zero)
-	ret
+	NACLRET
 
 	cfi_adjust_cfa_offset (8)
 	.align ALIGNARG(4)
@@ -350,13 +350,13 @@ ENTRY(__ieee754_pow)
 	jae	24f		// does not fit in mantissa bits
 	// It's an odd integer.
 	fldl	MO(mzero)
-	ret
+	NACLRET
 
 	cfi_adjust_cfa_offset (8)
 22:	fstp	%st(0)
 23:	addl	$8, %esp	// Don't use 2 x pop
 	cfi_adjust_cfa_offset (-8)
 24:	fldl	MO(zero)
-	ret
+	NACLRET
 
 END(__ieee754_pow)
