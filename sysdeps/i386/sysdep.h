@@ -146,8 +146,8 @@ lose: SYSCALL_PIC_SETUP							      \
   .hidden __i686.get_pc_thunk.reg;					      \
   .type __i686.get_pc_thunk.reg,@function;				      \
 __i686.get_pc_thunk.reg:						      \
-  movl (%esp), %e##reg;							      \
-  ret;									      \
+  popl %e##reg;								      \
+  nacljmp %e##reg;							      \
   .size __i686.get_pc_thunk.reg, . - __i686.get_pc_thunk.reg;		      \
   .previous;								      \
   .endif;								      \
