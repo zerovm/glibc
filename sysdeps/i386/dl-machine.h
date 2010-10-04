@@ -236,17 +236,17 @@ _dl_start_user:\n\
 #ifdef __native_client__
 #define RTLD_LOAD_DL_INIT_PARAMETERS \
 	"# Load the parameters again.\n\
-	# (eax, edx, *(esp-4), *(esp-8)) = (_dl_loaded, argc, argv, envp)\n\
+	# (eax, edx, *--esp, *--esp) = (_dl_loaded, argc, argv, envp)\n\
 	movl _rtld_local@GOTOFF(%ebx), %eax\n\
 	leal 8(%esp,%edx,4), %esi\n\
 	leal 4(%esp), %ecx\n\
 	movl %esp, %ebp\n\
 	# Make sure _dl_init is run with 16 byte aligned stack.\n\
 	andl $-16, %esp\n\
-	pushl %eax\n\
-	pushl %ebp\n\
-	pushl %ecx\n\
-	pushl %esi"
+	pushl %eax  # Padding\n\
+	pushl %ebp  # Save value of %esp before alignment\n\
+	pushl %esi  # envp argument\n\
+	pushl %ecx  # argv argument"
 #else
 #define RTLD_LOAD_DL_INIT_PARAMETERS \
 	"# Load the parameters again.\n\
@@ -257,10 +257,10 @@ _dl_start_user:\n\
 	movl %esp, %ebp\n\
 	# Make sure _dl_init is run with 16 byte aligned stack.\n\
 	andl $-16, %esp\n\
-	pushl %eax\n\
-	pushl %eax\n\
-	pushl %ebp\n\
-	pushl %esi"
+	pushl %eax  # Padding\n\
+	pushl %eax  # Padding\n\
+	pushl %ebp  # Save value of %esp before alignment\n\
+	pushl %esi  # envp argument"
 #endif
 
 #ifndef RTLD_START_SPECIAL_INIT
