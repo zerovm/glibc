@@ -344,6 +344,8 @@ union user_desc_init
 
 
 /* Atomic compare and exchange on TLS, returning old value.  */
+/* This instruction is not allowed by Native Client's validator.  */
+#ifndef __native_client__
 #define THREAD_ATOMIC_CMPXCHG_VAL(descr, member, newval, oldval) \
   ({ __typeof (descr->member) __ret;					      \
      __typeof (oldval) __old = (oldval);				      \
@@ -356,9 +358,12 @@ union user_desc_init
        /* Not necessary for other sizes in the moment.  */		      \
        abort ();							      \
      __ret; })
+#endif
 
 
 /* Atomic set bit.  */
+/* This instruction is not allowed by Native Client's validator.  */
+#ifndef __native_client__
 #define THREAD_ATOMIC_BIT_SET(descr, member, bit) \
   (void) ({ if (sizeof ((descr)->member) == 4)				      \
 	      asm volatile (LOCK_PREFIX "orl %1, %%gs:%P0"		      \
@@ -367,6 +372,7 @@ union user_desc_init
 	    else							      \
 	      /* Not necessary for other sizes in the moment.  */	      \
 	      abort (); })
+#endif
 
 
 /* Call the user-provided thread function.  */

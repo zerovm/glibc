@@ -73,9 +73,14 @@ do_clone (struct pthread *pd, const struct pthread_attr *attr,
      that cares whether the thread count is correct.  */
   atomic_increment (&__nptl_nthreads);
 
+  /* Native Client does not have a notion of a thread ID, so we make
+     one up.  This must be positive to mark the thread as not
+     exited.  */
+  pd->tid = ((unsigned int) pd) >> 2;
   if (NACL_SYSCALL (thread_create) (fct, STACK_VARIABLES_ARGS, pd,
 				    sizeof(struct pthread)) != 0)
     {
+      pd->tid = 0;
       atomic_decrement (&__nptl_nthreads); /* Oops, we lied for a second.  */
 
       /* Failed.  If the thread is detached, remove the TCB here since

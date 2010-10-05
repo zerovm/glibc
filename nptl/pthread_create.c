@@ -393,8 +393,7 @@ start_thread (void *arg)
       pd->setxid_futex = 0;
     }
 
-  /* GLibC does not use NaCl-supplied book-keeping of threads. */
-  NACL_SYSCALL (thread_exit) (NULL);
+  NACL_SYSCALL (thread_exit) (&pd->tid);
 
   /* NOTREACHED */
   return 0;

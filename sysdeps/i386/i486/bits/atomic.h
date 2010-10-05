@@ -478,6 +478,8 @@ typedef uintmax_t uatomic_max_t;
   } while (0)
 
 
+/* These instructions are not allowed by Native Client's validator.  */
+#ifndef __native_client__
 #define atomic_bit_test_set(mem, bit) \
   ({ unsigned char __result;						      \
      if (sizeof (*mem) == 1)						      \
@@ -495,6 +497,7 @@ typedef uintmax_t uatomic_max_t;
      else							      	      \
        abort ();							      \
      __result; })
+#endif
 
 
 #define atomic_delay() asm ("rep; nop")

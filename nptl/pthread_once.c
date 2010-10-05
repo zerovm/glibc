@@ -21,6 +21,7 @@
 #include <lowlevellock.h>
 
 
+unsigned int __fork_generation attribute_hidden;
 
 static int once_lock = LLL_LOCK_INITIALIZER;
 
@@ -52,3 +53,4 @@ __pthread_once (once_control, init_routine)
   return 0;
 }
 strong_alias (__pthread_once, pthread_once)
+strong_alias (__pthread_once, __pthread_once_internal)
