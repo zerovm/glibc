@@ -514,6 +514,9 @@ asm (".L__X'%ebx = 1\n\t"
 # define EXTRAVAR_5
 #endif
 
+/* Disable this for Native Client because it uses two disallowed
+   instructions but does not look very useful.  */
+#ifndef __native_client__
 /* Consistency check for position-independent code.  */
 #ifdef __PIC__
 # define check_consistency()						      \
@@ -535,6 +538,7 @@ asm (".L__X'%ebx = 1\n\t"
 	".previous"							      \
 	: "=c" (__res));						      \
      __res; })
+#endif
 #endif
 
 #endif	/* __ASSEMBLER__ */
