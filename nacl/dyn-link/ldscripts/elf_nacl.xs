@@ -83,7 +83,17 @@ SECTIONS
   .rodata         : { *(.rodata .rodata.* .gnu.linkonce.r.*) }
   .rodata1        : { *(.rodata1) }
   .eh_frame_hdr : { *(.eh_frame_hdr) }
-  . = ALIGN(CONSTANT (MAXPAGESIZE)); /* nacl wants page alignment */
+
+  /* TODO(mseaborn): Apply the following line only when linking ld.so.
+     Aligning to a page boundary is only necessary for executables
+     loaded by sel_ldr, which is extra strict (see
+     http://code.google.com/p/nativeclient/issues/detail?id=193), but
+     it increases the file size by adding padding.  libc.so and other
+     libraries do not need this. */
+  . = ALIGN(CONSTANT (MAXPAGESIZE));
+
+  /* TODO(mseaborn): These two should be in seg_rodata instead.
+     However, that requires fixing some other cases. */
   .eh_frame       : ONLY_IF_RO { KEEP (*(.eh_frame)) } :seg_rwdata
   .gcc_except_table   : ONLY_IF_RO { *(.gcc_except_table .gcc_except_table.*) }
   /* Adjust the address for the data segment.  We want to adjust up to
