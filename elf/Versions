@@ -48,6 +48,11 @@ ld {
     __stack_chk_guard;
   }
   GLIBC_PRIVATE {
+    # Futex emulation: used by libc and NPTL.
+    __nacl_futex_wait;
+    __nacl_futex_wake;
+    __nacl_futex_wake_op;
+    __nacl_futex_cmp_requeue;
     # Those are in the dynamic linker, but used by libc.so.
     __libc_enable_secure;
     _dl_argv;

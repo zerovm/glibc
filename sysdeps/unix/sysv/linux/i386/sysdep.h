@@ -356,6 +356,7 @@ asm (".L__X'%ebx = 1\n\t"
 
    The _NCS variant allows non-constant syscall numbers but it is not
    possible to use more than four parameters.  */
+#ifndef __native_client__
 #undef INTERNAL_SYSCALL
 #ifdef I386_USE_SYSENTER
 # ifdef SHARED
@@ -409,11 +410,7 @@ asm (".L__X'%ebx = 1\n\t"
     : "0" (name) ASMFMT_##nr(args) : "memory", "cc");			      \
     (int) resultvar; })
 # endif
-#else
-/* TODO(mseaborn): Don't use these in the NaCl build, or at least
-   don't hard code the value of ENOSYS. */
-# define INTERNAL_SYSCALL(name, err, nr, args...) (-38 /* ENOSYS */)
-# define INTERNAL_SYSCALL_NCS(name, err, nr, args...) (-38 /* ENOSYS */)
+#endif
 #endif
 
 #undef INTERNAL_SYSCALL_DECL

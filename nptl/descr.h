@@ -366,6 +366,11 @@ struct pthread
   /* Resolver state.  */
   struct __res_state res;
 
+#ifdef __native_client__
+  /* Futex emulation support.  */
+  struct thread_wait_list_node thread_wait_list_node;
+#endif
+
   /* This member must be last.  */
   char end_padding[];
 

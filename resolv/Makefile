@@ -92,7 +92,7 @@ $(objpfx)libnss_dns.so: $(objpfx)libresolv.so $(common-objpfx)libc.so \
 
 # The asynchronous name lookup code needs the thread library.
 $(objpfx)libanl.so: $(common-objpfx)libc.so $(common-objpfx)libc_nonshared.a \
-		    $(shared-thread-library)
+		    $(shared-thread-library) $(elfobjdir)/ld.so
 
 $(objpfx)ga_test: $(objpfx)libanl.so $(shared-thread-library)
 

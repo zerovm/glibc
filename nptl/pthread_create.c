@@ -393,6 +393,14 @@ start_thread (void *arg)
       pd->setxid_futex = 0;
     }
 
+  if (!IS_DETACHED (pd))
+    {
+      /* We are about to die: make our pd "almost free" and wake up waiter. */
+      pd->tid = -2;
+
+      __nacl_futex_wake (&pd->tid, INT_MAX, __FUTEX_BITSET_MATCH_ANY);
+    }
+
   NACL_SYSCALL (thread_exit) (&pd->tid);
 
   /* NOTREACHED */

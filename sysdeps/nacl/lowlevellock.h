@@ -23,9 +23,7 @@
 #include <time.h>
 #include <sys/param.h>
 #include <bits/pthreadtypes.h>
-#include <atomic.h>
 #include <kernel-features.h>
-#include <errno.h>
 
 #define FUTEX_WAIT		0
 #define FUTEX_WAKE		1
@@ -37,6 +35,11 @@
 #define FUTEX_UNLOCK_PI		7
 #define FUTEX_TRYLOCK_PI	8
 #define FUTEX_PRIVATE_FLAG	128
+
+/* Atomic and errno need TLS, TLS needs futex emulation so first define
+   constants, then include these files.  */
+# include <errno.h>
+# include <atomic.h>
 
 /* Values for 'private' parameter of locking macros.  Yes, the
    definition seems to be backwards.  But it is not.  The bit will be
@@ -251,16 +254,18 @@ extern int __lll_robust_timedlock_wait (int *futex, const struct timespec *,
 #define LLL_LOCK_INITIALIZER		(0)
 #define LLL_LOCK_INITIALIZER_LOCKED	(1)
 
-/* The kernel notifies a process with uses CLONE_CLEARTID via futex
-   wakeup when the clone terminates.  The memory location contains the
-   thread ID while the clone is running and is reset to zero
-   afterwards.	*/
+/* NaCl can not wake up us after the death of the thread.  Instead thread
+   which is about to die changes tid to -2, wakes us up and then calls TCB.
+   TCB will clear the tid field and this is when the thread is truly dead.
+   We are waiting in a tight loop here (note: tid filed is volatile).  */
 #define lll_wait_tid(tid) \
   do							\
     {							\
       __typeof (tid) __tid;				\
-      while ((__tid = (tid)) != 0)			\
-	lll_futex_wait (&(tid), __tid, LLL_SHARED);	\
+      volatile __typeof (tid) *__ptid = &tid;		\
+      while ((__tid = (*__ptid)) != 0)			\
+	if (__tid != -2)				\
+	  lll_futex_wait (&(tid), __tid, LLL_SHARED);	\
     }							\
   while (0)
 
