@@ -23,8 +23,7 @@ subdir		:= elf
 headers		= elf.h bits/elfclass.h link.h bits/link.h
 routines	= $(dl-routines) dl-support dl-iteratephdr \
 		  dl-addr enbl-secure dl-profstub \
-		  dl-origin dl-libc dl-sym dl-tsd dl-sysdep \
-		  futex_emulation
+		  dl-origin dl-libc dl-sym dl-tsd dl-sysdep
 
 # The core dynamic linking functions are in libc for the static and
 # profiled libraries.
@@ -33,7 +32,8 @@ dl-routines	= $(addprefix dl-,load cache lookup object reloc deps \
 				  version profile conflict tls origin \
 				  execstack caller open close trampoline) \
 		  nacl_tls_init \
-		  nacl_dyncode_copy nacl_dyncode_map nacl_dyncode_alloc
+		  nacl_dyncode_copy nacl_dyncode_map nacl_dyncode_alloc \
+		  futex_emulation
 all-dl-routines = $(dl-routines) $(sysdep-dl-routines)
 # But they are absent from the shared libc, because that code is in ld.so.
 elide-routines.os = $(all-dl-routines) dl-support enbl-secure dl-origin \
