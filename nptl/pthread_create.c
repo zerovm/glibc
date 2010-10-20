@@ -224,7 +224,7 @@ __free_tcb (struct pthread *pd)
 }
 
 
-static int
+static int __attribute__((force_align_arg_pointer))
 start_thread (void *arg)
 {
   struct pthread *pd = THREAD_SELF;
