@@ -1,15 +1,17 @@
 #include <futex_emulation.h>
+
+#include <assert.h>
 #include <errno.h>
 #include <nacl_syscalls.h>
 #include <tls.h>
 
 
-static int global_futex_emulation_mutex_desc;
+static int global_futex_emulation_mutex_desc = -1;
 static LIST_HEAD (waiters_list);
 
 void __nacl_futex_init (void)
 {
-  INIT_LIST_HEAD (&waiters_list);
+  assert (global_futex_emulation_mutex_desc == -1);
   global_futex_emulation_mutex_desc = NACL_SYSCALL (mutex_create) ();
 }
 

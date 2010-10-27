@@ -95,10 +95,6 @@ _dl_init (struct link_map *main_map, int argc, char **argv, char **env)
   ElfW(Dyn) *preinit_array_size = main_map->l_info[DT_PREINIT_ARRAYSZ];
   unsigned int i;
 
-#ifdef __native_client__
-  __nacl_futex_init ();
-#endif
-
   if (__builtin_expect (GL(dl_initfirst) != NULL, 0))
     {
       call_init (GL(dl_initfirst), argc, argv, env);

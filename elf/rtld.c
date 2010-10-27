@@ -1280,6 +1280,12 @@ of this helper program; chances are you did not intend to run this program.\n\
       _exit (has_interp ? 0 : 2);
     }
 
+  /* TODO(mseaborn): Initialising futexes here will not work for
+     statically linked executables.  */
+#ifdef __native_client__
+  __nacl_futex_init ();
+#endif
+
   struct link_map **first_preload = &GL(dl_rtld_map).l_next;
 #if defined NEED_DL_SYSINFO || defined NEED_DL_SYSINFO_DSO
   /* Set up the data structures for the system-supplied DSO early,
