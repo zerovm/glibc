@@ -207,8 +207,15 @@ extern int __pthread_debug attribute_hidden;
 /* Simplified test.  This will not catch all invalid descriptors but
    is better than nothing.  And if the test triggers the thread
    descriptor is guaranteed to be invalid.  */
+/* Returns true if the thread has exited, regardless of whether it has
+   been joined or detached.  */
 # define INVALID_TD_P(pd) __builtin_expect ((pd)->tid <= 0, 0)
-# define INVALID_NOT_TERMINATED_TD_P(pd) __builtin_expect ((pd)->tid < 0, 0)
+/* Returns true if the thread has exited and has been joined.
+   Note that "tid" goes from positive (while running), to -2 (during
+   exit, under NaCl), to 0 (when exited).  "tid" is set to -1 on join.
+   We could return true for values < -2 here, but glibc does not use
+   such values.  */
+# define INVALID_NOT_TERMINATED_TD_P(pd) __builtin_expect ((pd)->tid == -1, 0)
 #endif
 
 
