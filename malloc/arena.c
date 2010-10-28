@@ -693,7 +693,7 @@ new_heap(size, top_pad) size_t size, top_pad;
       }
     }
   }
-  if(mprotect(p2, size, PROT_READ|PROT_WRITE) != 0) {
+  if(MMAP(p2, size, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_FIXED) != p2) {
     munmap(p2, HEAP_MAX_SIZE);
     return 0;
   }
@@ -722,9 +722,11 @@ grow_heap(h, diff) heap_info *h; long diff;
   if((unsigned long) new_size > (unsigned long) HEAP_MAX_SIZE)
     return -1;
   if((unsigned long) new_size > h->mprotect_size) {
-    if (mprotect((char *)h + h->mprotect_size,
-		 (unsigned long) new_size - h->mprotect_size,
-		 PROT_READ|PROT_WRITE) != 0)
+    void *grow_addr = (char *)h + h->mprotect_size;
+    if (MMAP(grow_addr,
+             (unsigned long) new_size - h->mprotect_size,
+             PROT_READ|PROT_WRITE,
+             MAP_PRIVATE|MAP_FIXED) != grow_addr)
       return -2;
     h->mprotect_size = new_size;
   }
@@ -749,23 +751,10 @@ shrink_heap(h, diff) heap_info *h; long diff;
     return -1;
   /* Try to re-map the extra heap space freshly to save memory, and
      make it inaccessible. */
-#ifdef _LIBC
-  if (__builtin_expect (__libc_enable_secure, 0))
-#else
-  if (1)
-#endif
-    {
-      if((char *)MMAP((char *)h + new_size, diff, PROT_NONE,
-		      MAP_PRIVATE|MAP_FIXED) == (char *) MAP_FAILED)
-	return -2;
-      h->mprotect_size = new_size;
-    }
-#ifdef _LIBC
-  else
-    madvise ((char *)h + new_size, diff, MADV_DONTNEED);
-#endif
-  /*fprintf(stderr, "shrink %p %08lx\n", h, new_size);*/
-
+  if((char *)MMAP((char *)h + new_size, diff, PROT_NONE,
+                  MAP_PRIVATE|MAP_FIXED|MAP_NORESERVE) == (char *) MAP_FAILED)
+    return -2;
+  h->mprotect_size = new_size;
   h->size = new_size;
   return 0;
 }
