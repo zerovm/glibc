@@ -1,0 +1,5 @@
+# This file is used by git-cl to get repository specific information.
+CODE_REVIEW_SERVER: codereview.chromium.org
+CC_LIST: native-client-reviews@googlegroups.com,mseaborn@chromium.org
+STATUS: http://nativeclient-status.appspot.com/status
+VIEW_VC: http://git.chromium.org/gitweb/?p=nacl-glibc.git;a=commit;h=
