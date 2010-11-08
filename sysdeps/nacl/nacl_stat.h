@@ -95,5 +95,8 @@ struct nacl_abi_stat {  /* must be renamed when ABI is exported */
   nacl_abi_time_t    nacl_abi_st_ctime;    /* inode change time */
 };
 
+/* Converts struct nacl_abi_stat to struct stat64. Implemented in fxstat64.c */
+void __nacl_abi_stat_to_stat64 (struct nacl_abi_stat *nacl_st,
+                                struct stat64 *st);
 
 #endif
