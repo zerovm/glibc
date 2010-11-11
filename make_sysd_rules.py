@@ -106,8 +106,6 @@ class RuleGenerator(object):
                         # cause this entry to be overridden by others.
                         name = fields[0]
                         self.autogen_syscalls.add((subdir, name))
-        for leafname in self.override_map.iterkeys():
-            assert leafname in self.all_leafnames
 
     def find_matches(self, leafname):
         if leafname in self.override_map:
@@ -157,6 +155,12 @@ class RuleGenerator(object):
         # Object files for libc.so/libc.a and other libraries
         put_lib_rules(leafname, "")
 
+    def put_override_warnings(self, stream):
+        for leafname in sorted(self.override_map.iterkeys()):
+            if leafname not in self.all_leafnames:
+                stream.write(
+                    "\n### Warning: nothing to override for %s." % leafname)
+
     def put_rules(self, stream):
         for leafname in sorted(self.all_leafnames):
             self.put_leafname_rules(stream, leafname)
@@ -165,6 +169,7 @@ class RuleGenerator(object):
 def main(args):
     generator = RuleGenerator(args)
     generator.scan_sysdirs()
+    generator.put_override_warnings(sys.stdout)
     generator.put_rules(sys.stdout)
 
 

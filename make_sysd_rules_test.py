@@ -19,8 +19,13 @@ sysdirs = [
     "sysdeps/i386/i486",
     "sysdeps/i386/fpu",
     "sysdeps/i386",
+    "nptl/sysdeps/unix/sysv/linux/i386/i686",
+    "nptl/sysdeps/unix/sysv/linux/i386",
     ]
 
+warnings_sysdirs = [
+    "sysdeps/unix",
+    ]
 
 def get_matches(name):
     generator = make_sysd_rules.RuleGenerator(sysdirs)
@@ -33,6 +38,14 @@ def get_rules(name):
     generator.scan_sysdirs()
     stream = StringIO.StringIO()
     generator.put_leafname_rules(stream, name)
+    return stream.getvalue()
+
+
+def get_warnings(name):
+    generator = make_sysd_rules.RuleGenerator(warnings_sysdirs)
+    generator.scan_sysdirs()
+    stream = StringIO.StringIO()
+    generator.put_override_warnings(stream)
     return stream.getvalue()
 
 
@@ -67,8 +80,13 @@ $(objpfx)mmap.os: $(..)sysdeps/unix/sysv/linux/i386/mmap.S $(before-compile)
 
     def test_memcmp(self):
         self.assertEquals(get_matches("memcmp"),
-                          [(False, "sysdeps/i386/i686/memcmp.S"),
-                           (False, "sysdeps/i386/memcmp.S")])
+                          [(False, "string/memcmp.c"),
+                           (False, "sysdeps/i386/i686/memcmp.S"),
+                           (False, "sysdeps/i386/memcmp.S"),
+                           ])
+        self.assertTrue(
+            "### Warning: nothing to override for memcmp." in
+                get_warnings("memcmp"))
 
     def test_open(self):
         self.assertEquals(get_matches("open"),
