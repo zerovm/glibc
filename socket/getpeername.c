@@ -30,6 +30,7 @@ getpeername (fd, addr, len)
   __set_errno (ENOSYS);
   return -1;
 }
+strong_alias (getpeername, __getpeername)
 
 
 stub_warning (getpeername)

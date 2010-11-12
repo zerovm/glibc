@@ -19,6 +19,8 @@
 #include <errno.h>
 #include <sys/socket.h>
 
+#undef __connect
+
 /* Open a connection on socket FD to peer at ADDR (which LEN bytes long).
    For connectionless socket types, just set the default address to send to
    and the only address from which to accept transmissions.
@@ -32,6 +34,7 @@ __connect (fd, addr, len)
   __set_errno (ENOSYS);
   return -1;
 }
+INTDEF (__connect)
 weak_alias (__connect, connect)
 
 stub_warning (connect)

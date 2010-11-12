@@ -33,6 +33,7 @@ getsockopt (fd, level, optname, optval, optlen)
   __set_errno (ENOSYS);
   return -1;
 }
+strong_alias (getsockopt, __getsockopt)
 
 stub_warning (getsockopt)
 #include <stub-tag.h>
