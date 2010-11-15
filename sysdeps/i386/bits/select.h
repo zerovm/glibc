@@ -21,7 +21,10 @@
 #endif
 
 
-#if defined __GNUC__ && __GNUC__ >= 2
+/* The BTS and BTR instructions are currently not allowed by the NaCl
+   validator.  See
+   http://code.google.com/p/nativeclient/issues/detail?id=688  */
+#if defined __GNUC__ && __GNUC__ >= 2 && !defined(__native_client__)
 
 # define __FD_ZERO(fdsp) \
   do {									      \
