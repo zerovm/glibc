@@ -9,7 +9,8 @@
 
 
 void __nacl_abi_stat_to_stat64 (struct nacl_abi_stat *nacl_st,
-                                struct stat64 *st) {
+                                struct stat64 *st)
+{
   st->st_dev = nacl_st->nacl_abi_st_dev;
 #ifdef _HAVE_STAT64___PAD1
   st->__pad1 = 0;
