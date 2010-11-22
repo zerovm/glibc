@@ -51,7 +51,11 @@ _dl_runtime_resolve:
 	movq (%rsp), %rax
 	addq $72, %rsp		# Adjust stack(PLT did 2 pushes)
 	cfi_adjust_cfa_offset(-72)
-	jmp *%r11		# Jump to function address.
+#ifdef __native_client__
+	nacljmp %r11d, %r15
+#else
+	jmp *%r11               # Jump to function address.
+#endif
 	cfi_endproc
 	.size _dl_runtime_resolve, .-_dl_runtime_resolve
 
@@ -89,7 +93,11 @@ _dl_runtime_profile:
 	movq 16(%rsp), %r8
 	movq 24(%rsp), %r9
 	movq (%rsp),%rax
+#ifdef __native_client__
+	movslq 72(%rsp), %r10
+#else
 	movq 72(%rsp), %r10
+#endif
 	testq %r10, %r10
 	jns 1f
 	movq 32(%rsp), %rcx
@@ -97,7 +105,11 @@ _dl_runtime_profile:
 	movq 48(%rsp), %rdi
 	addq $104,%rsp		# Adjust stack
 	cfi_adjust_cfa_offset (-104)
+#ifdef __native_client__
+	nacljmp %r11d, %r15
+#else
 	jmp *%r11		# Jump to function address.
+#endif
 
 	/*
 	    +104     return address
@@ -127,12 +139,20 @@ _dl_runtime_profile:
 	subq %r10, %rsp
 	movq %rsp, %rdi
 	shrq $3, %rcx
+#ifdef __native_client__
+	rep movsq %nacl:(%rsi), %nacl:(%rdi),%r15
+#else
 	rep
 	movsq
+#endif
 	movq 32(%rbx), %rcx
 	movq 40(%rbx), %rsi
 	movq 48(%rbx), %rdi
+#ifdef __native_client__
+	naclcall %r11d,%r15
+#else
 	call *%r11
+#endif
 	movq %rbx, %rsp
 	cfi_def_cfa_register (%rsp)
 	subq $72, %rsp

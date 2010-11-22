@@ -20,7 +20,7 @@
 #include <ucontext.h>
 
 int
-setcontext (ucp)
+__setcontext (ucp)
      const ucontext_t *ucp;
 {
   __set_errno (ENOSYS);
@@ -30,3 +30,5 @@ setcontext (ucp)
 
 stub_warning (setcontext)
 #include <stub-tag.h>
+
+weak_alias (__setcontext, setcontext)

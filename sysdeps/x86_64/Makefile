@@ -1,5 +1,5 @@
-# The i387 `long double' is a distinct type we support.
-long-double-fcts = yes
+# In Native Client `long double' == `double`.
+long-double-fcts = no
 
 ifeq ($(subdir),csu)
 sysdep_routines += hp-timing

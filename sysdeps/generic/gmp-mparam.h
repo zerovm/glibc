@@ -20,9 +20,15 @@ MA 02111-1307, USA. */
 
 #include <bits/wordsize.h>
 
+#ifdef __native_client__
+#define BITS_PER_MP_LIMB	32
+#define BYTES_PER_MP_LIMB	(32 / 8)
+#define BITS_PER_LONGINT	32
+#else
 #define BITS_PER_MP_LIMB	__WORDSIZE
 #define BYTES_PER_MP_LIMB	(__WORDSIZE / 8)
 #define BITS_PER_LONGINT	__WORDSIZE
 #define BITS_PER_INT		32
 #define BITS_PER_SHORTINT	16
 #define BITS_PER_CHAR		8
+#endif  /* __native_client__ */

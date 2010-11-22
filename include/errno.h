@@ -1,5 +1,12 @@
 #ifndef _ERRNO_H
 
+/* TLS_HACK */
+#if defined __native_client__ && defined __x86_64__
+#ifndef __thread
+#define __thread __attribute__ ((nocommon))
+#endif
+#endif
+
 #include <stdlib/errno.h>
 
 #if defined _ERRNO_H && !defined _ISOMAC && !defined __cplusplus

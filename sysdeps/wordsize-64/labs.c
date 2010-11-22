@@ -20,4 +20,7 @@
 
 #include <stdlib/labs.c>
 
+#ifndef __native_client__
+/* On x86-64 NaCl sizeof(long long) > sizeof(long). */
 weak_alias (labs, imaxabs)
+#endif

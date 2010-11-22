@@ -20,6 +20,13 @@
 #ifndef _TLS_H
 #define _TLS_H	1
 
+/* TLS_HACK: Horrible hack: disabling TLS in x86-64 NaCl. */
+#if defined __native_client && defined __x86_64__
+#ifndef __thread
+#define __thread __attribute__ ((nocommon))
+#endif
+#endif
+
 #ifndef __ASSEMBLER__
 # include <asm/prctl.h>	/* For ARCH_SET_FS.  */
 # include <stdbool.h>

@@ -44,6 +44,12 @@
    * crtn.s puts the corresponding function epilogues
    in the .init and .fini sections. */
 
+#ifndef __native_client__
+#define ASM_RET_STR "ret\n"
+#else
+#define ASM_RET_STR "pop %r11\n\tnacljmp %r11d, %r15\n"
+#endif
+
 __asm__ ("\n\
 #include \"defs.h\"\n\
 \n\
@@ -60,7 +66,7 @@ call_gmon_start:\n\
 	call	*%rax\n\
 .L22:\n\
 	addq	$8, %rsp\n\
-	ret\n\
+	" ASM_RET_STR "\
 \n\
 	.section .init\n\
 	.align 4\n\
@@ -77,7 +83,7 @@ _init:\n\
 /*@_init_EPILOG_BEGINS*/\n\
 	.section .init\n\
 	addq	$8, %rsp\n\
-	ret\n\
+	" ASM_RET_STR "\
 	END_INIT\n\
 \n\
 /*@_init_EPILOG_ENDS*/\n\
@@ -98,7 +104,7 @@ _fini:\n\
 /*@_fini_EPILOG_BEGINS*/\n\
 	.section .fini\n\
 	addq	$8, %rsp\n\
-	ret\n\
+	" ASM_RET_STR "\
 	END_FINI\n\
 \n\
 /*@_fini_EPILOG_ENDS*/\n\

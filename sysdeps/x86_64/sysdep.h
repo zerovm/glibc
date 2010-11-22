@@ -19,6 +19,13 @@
 
 #include <sysdeps/generic/sysdep.h>
 
+/* TLS_HACK */
+#if defined __native_client__ && defined __x86_64__
+#ifndef __thread
+#define __thread __attribute__ ((nocommon))
+#endif
+#endif
+
 #ifdef	__ASSEMBLER__
 
 /* Syntactic details of assembler.  */

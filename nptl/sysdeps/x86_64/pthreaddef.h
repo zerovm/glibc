@@ -32,8 +32,13 @@
 
 
 /* Location of current stack frame.  The frame pointer is not usable.  */
+#ifdef __native_client__
+#define CURRENT_STACK_FRAME \
+  ({ char *frame; asm ("movl %%esp, %0" : "=r" (frame)); frame; })
+#else
 #define CURRENT_STACK_FRAME \
   ({ char *frame; asm ("movq %%rsp, %0" : "=r" (frame)); frame; })
+#endif
 
 
 /* XXX Until we have a better place keep the definitions here.  */

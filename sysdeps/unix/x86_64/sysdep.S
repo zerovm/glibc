@@ -50,7 +50,10 @@ notb:
 	movq C_SYMBOL_NAME(errno@GOTTPOFF)(%rip), %rcx
 	movl %eax, %fs:0(%rcx)
 # else
+#  ifndef __native_client__
+        /* TLS_HACK: removing all TLS references to errno. */
 	movl %eax, %fs:C_SYMBOL_NAME(errno@TPOFF)
+#  endif
 # endif
 #elif !defined PIC
 # ifndef _LIBC_REENTRANT

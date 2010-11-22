@@ -29,3 +29,6 @@ llabs (i)
 {
   return i < 0 ? -i : i;
 }
+#if defined __native_client__ && defined __x86_64__
+weak_alias (llabs, imaxabs)
+#endif

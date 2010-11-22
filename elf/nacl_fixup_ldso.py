@@ -11,7 +11,12 @@ import sys
 
 
 offset_e_type = 16
-offset_e_phnum = 44
+offset_e_phnum32 = 44
+offset_e_phnum64 = 56
+
+offset_ei_class = 4
+elfclass32 = "\001"
+elfclass64 = "\002"
 
 ET_EXEC = 2
 ET_DYN = 3
@@ -40,8 +45,16 @@ def main(args):
 
     # sel_ldr rejects ELF Program Headers other than PT_LOAD.
     # Drop PT_DYNAMIC, PT_GNU_STACK and PT_TLS.
-    check("H", offset_e_phnum, 6)
-    replace("H", offset_e_phnum, 3)
+    fh.seek(offset_ei_class)
+    elfclass = fh.read(1)
+    if elfclass == elfclass32:
+        check("H", offset_e_phnum32, 6)
+        replace("H", offset_e_phnum32, 3)
+    elif elfclass == elfclass64:
+        check("H", offset_e_phnum64, 6)
+        replace("H", offset_e_phnum64, 3)
+    else:
+        raise AssertionError("Unknown ELF class in file %s." % filename)
 
     fh.close()
 

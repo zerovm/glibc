@@ -63,12 +63,22 @@ void *__libc_stack_end attribute_relro = NULL;
 rtld_hidden_data_def(__libc_stack_end)
 static ElfW(auxv_t) *_dl_auxv attribute_relro;
 
+/* Argc is pushed on stack. In x86-64 NaCl the size of the pushed value
+   is 64bit, but the pointer size is 32bit. We take lower half of argc, argv
+   starts after a gap.  See: 
+   http://code.google.com/p/nativeclient/issues/detail?id=1131  */
+#if defined __native_client__ && defined __x86_64__
+#define WORDS_ARGC 2
+#else
+#define WORDS_ARGC 1
+#endif
+
 #ifndef DL_FIND_ARG_COMPONENTS
 # define DL_FIND_ARG_COMPONENTS(cookie, argc, argv, envp, auxp)	\
   do {									      \
     void **_tmp;							      \
     (argc) = *(long int *) cookie;					      \
-    (argv) = (char **) ((long int *) cookie + 1);			      \
+    (argv) = (char **) ((long int *) cookie + WORDS_ARGC);		      \
     (envp) = (argv) + (argc) + 1;					      \
     for (_tmp = (void **) (envp); *_tmp; ++_tmp)			      \
       continue;								      \

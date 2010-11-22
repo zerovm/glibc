@@ -142,6 +142,12 @@ elf_machine_runtime_setup (struct link_map *l, int lazy, int profile)
 /* Initial entry point code for the dynamic linker.
    The C function `_dl_start' is the real entry point;
    its return value is the user program's entry point.  */
+#ifdef __native_client__
+#define STACK_ADJUSTARGS_SKIP "4"
+#else
+#define STACK_ADJUSTARGS_SKIP "8"
+#endif
+
 #define RTLD_START asm ("\n\
 .text\n\
 	.align 16\n\
@@ -159,7 +165,7 @@ _dl_start_user:\n\
 	# Pop the original argument count.\n\
 	popq %rdx\n\
 	# Adjust the stack pointer to skip _dl_skip_args words.\n\
-	leaq (%rsp,%rax,8), %rsp\n\
+	leaq (%rsp,%rax," STACK_ADJUSTARGS_SKIP "), %rsp\n\
 	# Subtract _dl_skip_args from argc.\n\
 	subl %eax, %edx\n\
 	# Push argc back on the stack.\n\
@@ -186,7 +192,7 @@ _dl_start_user:\n\
 	# And make sure %rsp points to argc stored on the stack.\n\
 	movq %r13, %rsp\n\
 	# Jump to the user's entry point.\n\
-	jmp *%r12\n\
+	nacljmp %r12d, %r15\n\
 .previous\n\
 ");
 
@@ -297,8 +303,12 @@ elf_machine_rela (struct link_map *map, const Elf64_Rela *reloc,
 			  : (Elf64_Addr) sym_map->l_addr + sym->st_value);
 
 #if defined RTLD_BOOTSTRAP && !USE___THREAD
-      assert (r_type == R_X86_64_GLOB_DAT || r_type == R_X86_64_JUMP_SLOT);
-      *reloc_addr = value + reloc->r_addend;
+      assert (r_type == R_X86_64_GLOB_DAT || r_type == R_X86_64_JUMP_SLOT ||
+              r_type == R_X86_64_32);
+      if (r_type == R_X86_64_32)
+        *(unsigned int *) reloc_addr = value + reloc->r_addend;
+      else
+        *reloc_addr = value + reloc->r_addend;
 #else
       switch (r_type)
 	{

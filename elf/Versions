@@ -46,6 +46,11 @@ ld {
   GLIBC_2.4 {
     # stack canary
     __stack_chk_guard;
+
+    # NaCl x86-64 TLS access helper.
+    # TODO(pasko): decide whether NaCl needs a version string
+    # such as NACL_GLIBC_0.X.
+    __nacl_read_tp;
   }
   GLIBC_PRIVATE {
     # Futex emulation: used by libc and NPTL.

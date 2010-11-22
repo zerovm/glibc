@@ -6,7 +6,7 @@
 #include <nacl_syscalls.h>
 
 
-int __write(int desc, void const *buf, size_t count)
+ssize_t __write(int desc, void const *buf, size_t count)
 {
   int result = NACL_SYSCALL (write) (desc, buf, count);
   if (result < 0) {

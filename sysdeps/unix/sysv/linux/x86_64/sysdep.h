@@ -132,7 +132,8 @@
 #  endif
 #  define SYSCALL_ERROR_HANDLER			\
 0:						\
-  movq SYSCALL_ERROR_ERRNO@GOTTPOFF(%rip), %rcx;\
+  /* TLS_HACK: movq SYSCALL_ERROR_ERRNO@GOTTPOFF(%rip), %rcx; */ \
+  movq $0, %rcx;                                \
   xorl %edx, %edx;				\
   subq %rax, %rdx;				\
   movl %edx, %fs:(%rcx);			\
@@ -145,13 +146,13 @@
 0:						\
   xorl %edx, %edx;				\
   subq %rax, %rdx;				\
-  pushq %rdx;					\
+  /* TLS_HACK: pushq %rdx;					\
   cfi_adjust_cfa_offset(8);			\
   PUSH_ERRNO_LOCATION_RETURN;			\
   call BP_SYM (__errno_location)@PLT;		\
   POP_ERRNO_LOCATION_RETURN;			\
   popq %rdx;					\
-  cfi_adjust_cfa_offset(-8);			\
+  cfi_adjust_cfa_offset(-8);*/			\
   movl %edx, (%rax);				\
   orq $-1, %rax;				\
   jmp L(pseudo_end);
@@ -370,6 +371,12 @@
 
 
 /* Pointer mangling support.  */
+#ifdef __native_client__
+# ifndef __ASSEMBLER__
+#  define PTR_MANGLE(var)	(void) (var)
+#  define PTR_DEMANGLE(var)	(void) (var)
+# endif
+#else
 #if defined NOT_IN_libc && defined IS_IN_rtld
 /* We cannot use the thread descriptor because in ld.so we use setjmp
    earlier than the descriptor is initialized.  */
@@ -393,19 +400,20 @@
 #  define PTR_DEMANGLE(reg)	rorq $17, reg;				      \
 				xorq %fs:POINTER_GUARD, reg
 # else
-#  define PTR_MANGLE(var)	asm ("xorq %%fs:%c2, %0\n"		      \
+#    define PTR_MANGLE(var)	asm ("xorq %%fs:%c2, %0\n"		      \
 				     "rolq $17, %0"			      \
 				     : "=r" (var)			      \
 				     : "0" (var),			      \
 				       "i" (offsetof (tcbhead_t,	      \
 						      pointer_guard)))
-#  define PTR_DEMANGLE(var)	asm ("rorq $17, %0\n"			      \
+#    define PTR_DEMANGLE(var)	asm ("rorq $17, %0\n"			      \
 				     "xorq %%fs:%c2, %0"		      \
 				     : "=r" (var)			      \
 				     : "0" (var),			      \
 				       "i" (offsetof (tcbhead_t,	      \
 						      pointer_guard)))
 # endif
+#endif
 #endif
 
 #endif /* linux/x86_64/sysdep.h */
