@@ -246,7 +246,7 @@ _dl_fini (void)
 		  /* Next try the old-style destructor.  */
                   /* Do not invoke this destruction mechanism for x86-64 NaCl
                      because it currently faults.  TODO(pasko): investigate. */
-#if defined __native_client__ && !defined __x86_64__
+#if !defined __native_client__ || !defined __x86_64__
 		  if (l->l_info[DT_FINI] != NULL)
 		    ((fini_t) DL_DT_FINI_ADDRESS (l, l->l_addr + l->l_info[DT_FINI]->d_un.d_ptr)) ();
 #endif

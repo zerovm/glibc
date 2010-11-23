@@ -21,7 +21,7 @@
 #define _TLS_H	1
 
 /* TLS_HACK: Horrible hack: disabling TLS in x86-64 NaCl. */
-#if defined __native_client && defined __x86_64__
+#if defined __native_client__ && defined __x86_64__
 #ifndef __thread
 #define __thread __attribute__ ((nocommon))
 #endif
