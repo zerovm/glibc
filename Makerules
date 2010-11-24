@@ -330,15 +330,11 @@ endif # sysd-sorted-done
 
 # Generate .dT files as we compile.
 compile-mkdep-flags = -MD -MP -MF $@.dt -MT $@
-compile-command.S = @echo building $@ && \
-		$(compile.S) $(OUTPUT_OPTION) $(compile-mkdep-flags) \
+compile-command.S = $(compile.S) $(OUTPUT_OPTION) $(compile-mkdep-flags) \
 		-include nacl_asm.h
-compile-command.s = @echo building $@ && \
-		$(COMPILE.s) $< $(OUTPUT_OPTION) $(compile-mkdep-flags)
-compile-command.c = @echo building $@ && \
-		$(compile.c) $(OUTPUT_OPTION) $(compile-mkdep-flags)
-compile-command.cc = @echo building $@ && \
-		$(compile.cc) $(OUTPUT_OPTION) $(compile-mkdep-flags)
+compile-command.s = $(COMPILE.s) $< $(OUTPUT_OPTION) $(compile-mkdep-flags)
+compile-command.c = $(compile.c) $(OUTPUT_OPTION) $(compile-mkdep-flags)
+compile-command.cc = $(compile.cc) $(OUTPUT_OPTION) $(compile-mkdep-flags)
 
 # GCC can grok options after the file name, and it looks nicer that way.
 compile.c = $(CC) $< -c $(CFLAGS) $(CPPFLAGS)
