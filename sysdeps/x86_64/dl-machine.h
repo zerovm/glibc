@@ -142,10 +142,13 @@ elf_machine_runtime_setup (struct link_map *l, int lazy, int profile)
 /* Initial entry point code for the dynamic linker.
    The C function `_dl_start' is the real entry point;
    its return value is the user program's entry point.  */
+
 #ifdef __native_client__
-#define STACK_ADJUSTARGS_SKIP "4"
+#define ARGV_ENTRY_SIZE_STR "4"
+#define ARGC_SIZE_PLUS_ARGV_ENTRY_SIZE_STR "12"
 #else
-#define STACK_ADJUSTARGS_SKIP "8"
+#define ARGV_ENTRY_SIZE_STR "8"
+#define ARGC_SIZE_PLUS_ARGV_ENTRY_SIZE_STR "16"
 #endif
 
 #define RTLD_START asm ("\n\
@@ -165,7 +168,7 @@ _dl_start_user:\n\
 	# Pop the original argument count.\n\
 	popq %rdx\n\
 	# Adjust the stack pointer to skip _dl_skip_args words.\n\
-	leaq (%rsp,%rax," STACK_ADJUSTARGS_SKIP "), %rsp\n\
+	leaq (%rsp,%rax,"ARGV_ENTRY_SIZE_STR"), %rsp\n\
 	# Subtract _dl_skip_args from argc.\n\
 	subl %eax, %edx\n\
 	# Push argc back on the stack.\n\
@@ -180,7 +183,7 @@ _dl_start_user:\n\
 	# _dl_loaded -> rdi\n\
 	movq _rtld_local(%rip), %rdi\n\
 	# env -> rcx\n\
-	leaq 16(%r13,%rdx,8), %rcx\n\
+	leaq "ARGC_SIZE_PLUS_ARGV_ENTRY_SIZE_STR"(%r13,%rdx,"ARGV_ENTRY_SIZE_STR"), %rcx\n\
 	# argv -> rdx\n\
 	leaq 8(%r13), %rdx\n\
 	# Clear %rbp to mark outermost frame obviously even for constructors.\n\
