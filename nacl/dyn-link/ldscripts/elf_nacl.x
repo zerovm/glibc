@@ -3,7 +3,6 @@ OUTPUT_FORMAT("elf32-nacl", "elf32-nacl",
 	      "elf32-nacl")
 OUTPUT_ARCH(i386)
 ENTRY(_start)
-SEARCH_DIR("/usr/i386-linux-gnu/lib32"); SEARCH_DIR("/usr/local/lib32"); SEARCH_DIR("/lib32"); SEARCH_DIR("/usr/lib32"); SEARCH_DIR("/usr/i386-linux-gnu/lib"); SEARCH_DIR("/usr/local/lib"); SEARCH_DIR("/lib"); SEARCH_DIR("/usr/lib");
 PHDRS
 {
   seg_code     PT_LOAD FLAGS(5) ;       /* read + execute */
