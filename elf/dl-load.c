@@ -1208,27 +1208,6 @@ cannot allocate TLS data structures for initial thread");
     /* Length of the sections to be loaded.  */
     maplength = loadcmds[nloadcmds - 1].allocend - c->mapstart;
 
-    if (__builtin_expect (type, ET_DYN) == ET_DYN)
-      {
-        size_t code_size = loadcmds[0].allocend - loadcmds[0].mapstart;
-        size_t data_size = 0;
-        size_t data_offset = 0;
-        if (nloadcmds > 1)
-          {
-            data_size = loadcmds[nloadcmds - 1].allocend - loadcmds[1].mapstart;
-            data_offset = loadcmds[1].mapstart - loadcmds[0].mapstart;
-          }
-        l->l_map_start =
-          (ElfW(Addr)) nacl_dyncode_alloc (code_size, data_size, data_offset);
-        if (l->l_map_start == 0)
-          {
-            errstring = N_("failed to allocate code and data space");
-            goto call_lose;
-          }
-
-        l->l_addr = l->l_map_start - c->mapstart;
-      }
-
 #ifndef __native_client__
     if (__builtin_expect (type, ET_DYN) == ET_DYN)
       {
@@ -1277,9 +1256,49 @@ cannot allocate TLS data structures for initial thread");
 
 	goto postmap;
       }
-#endif
 
-    if (__builtin_expect (type, ET_DYN) != ET_DYN)
+    /* This object is loaded at a fixed address.  This must never
+       happen for objects loaded with dlopen().  */
+    if (__builtin_expect ((mode & __RTLD_OPENEXEC) == 0, 0))
+      {
+	errstring = N_("cannot dynamically load executable");
+	goto call_lose;
+      }
+
+    /* Notify ELF_PREFERRED_ADDRESS that we have to load this one
+       fixed.  */
+    ELF_FIXED_ADDRESS (loader, c->mapstart);
+
+
+    /* Remember which part of the address space this object uses.  */
+    l->l_map_start = c->mapstart + l->l_addr;
+    l->l_map_end = l->l_map_start + maplength;
+    l->l_contiguous = !has_holes;
+#else
+  {
+    size_t code_size = loadcmds[0].allocend - loadcmds[0].mapstart;
+    size_t data_size = 0;
+    size_t data_offset = 0;
+
+    if (nloadcmds > 1)
+      {
+        data_size = loadcmds[nloadcmds - 1].allocend - loadcmds[1].mapstart;
+        data_offset = loadcmds[1].mapstart - loadcmds[0].mapstart;
+      }
+
+    if (__builtin_expect (type, ET_DYN) == ET_DYN)
+      {
+        l->l_map_start =
+          (ElfW(Addr)) nacl_dyncode_alloc (code_size, data_size, data_offset);
+        if (l->l_map_start == 0)
+          {
+            errstring = N_("failed to allocate code and data space");
+            goto call_lose;
+          }
+
+        l->l_addr = l->l_map_start - c->mapstart;
+      }
+    else
       {
         /* This object is loaded at a fixed address.  This must never
            happen for objects loaded with dlopen().  */
@@ -1288,11 +1307,26 @@ cannot allocate TLS data structures for initial thread");
             errstring = N_("cannot dynamically load executable");
             goto call_lose;
           }
+
+        /* For an object loaded at a fixed address, l->l_addr remains 0, and
+           the actual address of the first segment is c->datastart.
+           Segments never share memory page, so we allocate with page
+           granularity.  */
+        l->l_map_start = c->mapstart;
+        if (nacl_dyncode_alloc_fixed (c->mapstart, code_size,
+                                      data_size, data_offset) == 0)
+          {
+            errstring
+              = N_("failed to allocate code and data space for executable");
+            goto call_lose;
+          }
       }
 
     /* Remember which part of the address space this object uses.  */
     l->l_map_end = l->l_map_start + maplength;
     l->l_contiguous = !has_holes;
+  }
+#endif
 
     while (c < &loadcmds[nloadcmds])
       {
