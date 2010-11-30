@@ -43,9 +43,7 @@ SECTIONS
   PROVIDE (_etext = .);
   PROVIDE (etext = .);
 
-  /* TODO(pasko): fix dyncode allocation to coexist with executable start.
-   * See allocation strategy at nacl_dyncode_alloc.c:72. */
-  . = 0x14000000 + (. & (CONSTANT (MAXPAGESIZE) - 1));
+  . = 0x11000000 + (. & (CONSTANT (MAXPAGESIZE) - 1));
   .note.gnu.build-id : { *(.note.gnu.build-id) } :seg_rodata
   .hash           : { *(.hash) }
   .gnu.hash       : { *(.gnu.hash) }
