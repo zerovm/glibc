@@ -106,6 +106,12 @@ init_static_tls (size_t memsz, size_t align)
   GL(dl_tls_static_nelem) = GL(dl_tls_max_dtv_idx);
 }
 
+#ifdef __native_client__
+extern unsigned char __tls_template_start[];
+extern unsigned char __tls_template_tdata_end[];
+extern unsigned char __tls_template_end[];
+#endif
+
 void
 __libc_setup_tls (size_t tcbsize, size_t tcbalign)
 {
@@ -118,6 +124,19 @@ __libc_setup_tls (size_t tcbsize, size_t tcbalign)
   size_t tcb_offset;
   ElfW(Phdr) *phdr;
 
+#ifdef __native_client__
+  /* For a Native Client statically linked executable, the ELF Program
+     Headers are not easily available to the executable at run time.
+     We use these symbols instead, which are defined by the linker
+     script.  */
+  initimage = __tls_template_start;
+  memsz = __tls_template_end - __tls_template_start;
+  filesz = __tls_template_tdata_end - __tls_template_start;
+  /* TODO(mseaborn): Support larger alignments properly.  We might be
+     able to use ALIGNOF in the linker script to record the
+     alignment.  */
+  align = 16;
+#else
   /* Look through the TLS segment if there is any.  */
   if (_dl_phdr != NULL)
     for (phdr = _dl_phdr; phdr < &_dl_phdr[_dl_phnum]; ++phdr)
@@ -132,6 +151,7 @@ __libc_setup_tls (size_t tcbsize, size_t tcbalign)
 	    max_align = phdr->p_align;
 	  break;
 	}
+#endif
 
   /* We have to set up the TCB block which also (possibly) contains
      'errno'.  Therefore we avoid 'malloc' which might touch 'errno'.

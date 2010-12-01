@@ -75,7 +75,8 @@ SECTIONS
     PROVIDE (__tls_template_tdata_end = .);
   }
   .tbss		  : { *(.tbss .tbss.* .gnu.linkonce.tb.*) *(.tcommon) }
-  PROVIDE (__tls_template_end = .);
+  /* "." does not advance for tbss because tbss is not loaded. */
+  PROVIDE (__tls_template_end = . + SIZEOF(.tbss));
   . = ALIGN(CONSTANT (MAXPAGESIZE)); /* nacl wants page alignment */
   .preinit_array     :
   {
