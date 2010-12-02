@@ -6,7 +6,7 @@ srcdir=nacl
 builddir=build
 
 nacl-gcc -g -Wall $srcdir/hellow.c \
-    -static -nostdlib -Wl,-T,$srcdir/elf_i386.x \
+    -static -nostdlib -Wl,-T,$srcdir/dyn-link/ldscripts/elf_nacl.x.static \
     '-Wl,-(' \
     -lgcc \
     $builddir/csu/crt1.o \
