@@ -46,7 +46,7 @@ typedef wchar_t __gwchar_t;
    defined if explicitly requested.  */
 #if !defined __cplusplus || defined __STDC_FORMAT_MACROS
 
-# if __WORDSIZE == 64
+# if __WORDSIZE == 64 && !defined __native_client__
 #  define __PRI64_PREFIX	"l"
 #  define __PRIPTR_PREFIX	"l"
 # else
