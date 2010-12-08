@@ -1,4 +1,10 @@
-/* Default linker script, for normal executables */
+/* Linker script for glibc static linking.
+   Usage: path_to_sdk/bin/nacl-gcc [usual options] -static
+              -T path_to_sdk/nacl[64]/lib/ldscripts/elf_nacl.x.static
+
+   TODO(mseaborn): Make this work with "-static" on its own.
+   See http://code.google.com/p/nativeclient/issues/detail?id=1198
+*/
 OUTPUT_FORMAT("elf32-nacl", "elf32-nacl",
 	      "elf32-nacl")
 OUTPUT_ARCH(i386)
