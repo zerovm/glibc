@@ -1280,8 +1280,10 @@ of this helper program; chances are you did not intend to run this program.\n\
       _exit (has_interp ? 0 : 2);
     }
 
-  /* TODO(mseaborn): Initialising futexes here will not work for
-     statically linked executables.  */
+  /* TODO(mseaborn): In the long term we could implement a futex
+     syscall for NaCl and so this ad-hoc initialisation would not be
+     necessary.  See:
+     http://code.google.com/p/nativeclient/issues/detail?id=1244  */
 #ifdef __native_client__
   __nacl_futex_init ();
 #endif
