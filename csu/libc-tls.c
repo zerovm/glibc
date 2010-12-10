@@ -132,10 +132,11 @@ __libc_setup_tls (size_t tcbsize, size_t tcbalign)
   initimage = __tls_template_start;
   memsz = __tls_template_end - __tls_template_start;
   filesz = __tls_template_tdata_end - __tls_template_start;
-  /* TODO(mseaborn): Support larger alignments properly.  We might be
-     able to use ALIGNOF in the linker script to record the
+  /* TODO(mseaborn): Support larger alignments properly.  See
+     http://code.google.com/p/nativeclient/issues/detail?id=1240.  We
+     might be able to use ALIGNOF in the linker script to record the
      alignment.  */
-  align = 16;
+  align = 4;
 #else
   /* Look through the TLS segment if there is any.  */
   if (_dl_phdr != NULL)
