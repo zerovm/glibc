@@ -146,9 +146,20 @@ elf_machine_runtime_setup (struct link_map *l, int lazy, int profile)
 #ifdef __native_client__
 #define ARGV_ENTRY_SIZE_STR "4"
 #define ARGC_SIZE_PLUS_ARGV_ENTRY_SIZE_STR "12"
+#define ADJUST_SP_MOV_SP_R13 \
+    "leaq (%rsp,%rax,"ARGV_ENTRY_SIZE_STR"), %r13\nnaclrestsp %r13d, %r15"
+#define CLEAR_BP "naclrestbp $0, %r15"
+#define MOV_R13_SP "naclrestsp %r13d, %r15"
+#define JMP_R12 "nacljmp %r12d, %r15"
+
 #else
 #define ARGV_ENTRY_SIZE_STR "8"
 #define ARGC_SIZE_PLUS_ARGV_ENTRY_SIZE_STR "16"
+#define ADJUST_SP_MOV_SP_R13 \
+    "leaq (%rsp,%rax,"ARGV_ENTRY_SIZE_STR"), %r13\nmovq %rsp, %r13"
+#define CLEAR_BP "xorl %ebp, %ebp"
+#define MOV_R13_SP "movq %r13, %rsp"
+#define JMP_R12 "jmp *%r12"
 #endif
 
 #define RTLD_START asm ("\n\
@@ -168,7 +179,7 @@ _dl_start_user:\n\
 	# Pop the original argument count.\n\
 	popq %rdx\n\
 	# Adjust the stack pointer to skip _dl_skip_args words.\n\
-	leaq (%rsp,%rax,"ARGV_ENTRY_SIZE_STR"), %rsp\n\
+	"ADJUST_SP_MOV_SP_R13"\n\
 	# Subtract _dl_skip_args from argc.\n\
 	subl %eax, %edx\n\
 	# Push argc back on the stack.\n\
@@ -176,8 +187,6 @@ _dl_start_user:\n\
 	# Call _dl_init (struct link_map *main_map, int argc, char **argv, char **env)\n\
 	# argc -> rsi\n\
 	movq %rdx, %rsi\n\
-	# Save %rsp value in %r13.\n\
-	movq %rsp, %r13\n\
 	# And align stack for the _dl_init_internal call. \n\
 	andq $-16, %rsp\n\
 	# _dl_loaded -> rdi\n\
@@ -187,15 +196,15 @@ _dl_start_user:\n\
 	# argv -> rdx\n\
 	leaq 8(%r13), %rdx\n\
 	# Clear %rbp to mark outermost frame obviously even for constructors.\n\
-	xorl %ebp, %ebp\n\
+	"CLEAR_BP"\n\
 	# Call the function to run the initializers.\n\
 	call _dl_init_internal@PLT\n\
 	# Pass our finalizer function to the user in %rdx, as per ELF ABI.\n\
 	leaq _dl_fini(%rip), %rdx\n\
 	# And make sure %rsp points to argc stored on the stack.\n\
-	movq %r13, %rsp\n\
+	"MOV_R13_SP"\n\
 	# Jump to the user's entry point.\n\
-	nacljmp %r12d, %r15\n\
+	"JMP_R12"\n\
 .previous\n\
 ");
 

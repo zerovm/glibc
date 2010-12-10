@@ -107,6 +107,7 @@ override_list = [
     "string/strspn.c",
     "string/strtok.c",
     "string/strtok_r.c",
+    "sysdeps/generic/initfini.c",
     "sysdeps/posix/writev.c",
     "sysvipc/semtimedop.c",
     "sysdeps/ieee754/ldbl-96/s_logbl.c",

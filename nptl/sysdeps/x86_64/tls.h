@@ -334,6 +334,14 @@ typedef struct
      __res; })
 
 
+/* TLS_HACK: Disable stack protector in Native Client. */
+#ifdef __native_client__
+# define THREAD_SET_STACK_GUARD(value)
+# define THREAD_COPY_STACK_GUARD(descr)
+# define THREAD_SET_POINTER_GUARD(value)
+# define THREAD_COPY_POINTER_GUARD(descr)
+#else
+
 /* Set the stack guard field in TCB head.  */
 # define THREAD_SET_STACK_GUARD(value) \
     THREAD_SETMEM (THREAD_SELF, header.stack_guard, value)
@@ -348,6 +356,7 @@ typedef struct
 #define THREAD_COPY_POINTER_GUARD(descr) \
   ((descr)->header.pointer_guard					      \
    = THREAD_GETMEM (THREAD_SELF, header.pointer_guard))
+#endif
 
 
 /* Get and set the global scope generation counter in the TCB head.  */
