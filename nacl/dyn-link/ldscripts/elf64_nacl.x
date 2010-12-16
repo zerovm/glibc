@@ -16,6 +16,7 @@ PHDRS
 SECTIONS
 {
   PROVIDE (__executable_start = 0x1000000); . = 0x1000000 + SIZEOF_HEADERS;
+  . = ALIGN(32);
   /* The ALIGN(32) instructions below are workarounds.
      TODO(mseaborn): Get the object files to include the correct
      alignments and padding themselves.
