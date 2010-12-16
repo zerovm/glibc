@@ -146,8 +146,9 @@ elf_machine_runtime_setup (struct link_map *l, int lazy, int profile)
 #ifdef __native_client__
 #define ARGV_ENTRY_SIZE_STR "4"
 #define ARGC_SIZE_PLUS_ARGV_ENTRY_SIZE_STR "12"
-#define ADJUST_SP_MOV_SP_R13 \
-    "leaq (%rsp,%rax,"ARGV_ENTRY_SIZE_STR"), %r13\nnaclrestsp %r13d, %r15"
+#define ADJUST_SP \
+    "leaq (%rsp,%rax,"ARGV_ENTRY_SIZE_STR"), %r13\n" \
+    "naclrestsp %r13d, %r15"
 #define CLEAR_BP "naclrestbp $0, %r15"
 #define MOV_R13_SP "naclrestsp %r13d, %r15"
 #define JMP_R12 "nacljmp %r12d, %r15"
@@ -155,8 +156,8 @@ elf_machine_runtime_setup (struct link_map *l, int lazy, int profile)
 #else
 #define ARGV_ENTRY_SIZE_STR "8"
 #define ARGC_SIZE_PLUS_ARGV_ENTRY_SIZE_STR "16"
-#define ADJUST_SP_MOV_SP_R13 \
-    "leaq (%rsp,%rax,"ARGV_ENTRY_SIZE_STR"), %r13\nmovq %rsp, %r13"
+#define ADJUST_SP \
+    "leaq (%rsp,%rax,"ARGV_ENTRY_SIZE_STR"), %rsp"
 #define CLEAR_BP "xorl %ebp, %ebp"
 #define MOV_R13_SP "movq %r13, %rsp"
 #define JMP_R12 "jmp *%r12"
@@ -179,7 +180,7 @@ _dl_start_user:\n\
 	# Pop the original argument count.\n\
 	popq %rdx\n\
 	# Adjust the stack pointer to skip _dl_skip_args words.\n\
-	"ADJUST_SP_MOV_SP_R13"\n\
+	"ADJUST_SP"\n\
 	# Subtract _dl_skip_args from argc.\n\
 	subl %eax, %edx\n\
 	# Push argc back on the stack.\n\
@@ -187,6 +188,8 @@ _dl_start_user:\n\
 	# Call _dl_init (struct link_map *main_map, int argc, char **argv, char **env)\n\
 	# argc -> rsi\n\
 	movq %rdx, %rsi\n\
+	# Save %rsp value in %r13.\n\
+	movq %rsp, %r13\n\
 	# And align stack for the _dl_init_internal call. \n\
 	andq $-16, %rsp\n\
 	# _dl_loaded -> rdi\n\
