@@ -176,17 +176,26 @@ typedef struct
    assignments like
         pthread_descr self = thread_self();
    do not get optimized away.  */
+#ifdef __native_client__
+void *__nacl_read_tp () __attribute__ ((const));
+# define THREAD_SELF ((struct pthread *)__nacl_read_tp ())
+#else
 # define THREAD_SELF \
   ({ struct pthread *__self;						      \
      asm ("movq %%fs:%c1,%q0" : "=r" (__self)				      \
 	  : "i" (offsetof (struct pthread, header.self)));	 	      \
      __self;})
+#endif
 
 /* Magic for libthread_db to know how to do THREAD_SELF.  */
 # define DB_THREAD_SELF_INCLUDE  <sys/reg.h> /* For the FS constant.  */
 # define DB_THREAD_SELF CONST_THREAD_AREA (64, FS)
 
 /* Read member of the thread descriptor directly.  */
+#ifdef __native_client__
+/* TLS_HACK */
+# define THREAD_GETMEM(descr, member) ((__typeof (descr->member))0)
+#else
 # define THREAD_GETMEM(descr, member) \
   ({ __typeof (descr->member) __value;					      \
      if (sizeof (__value) == 1)						      \
@@ -209,6 +218,7 @@ typedef struct
 		       : "i" (offsetof (struct pthread, member)));	      \
        }								      \
      __value; })
+#endif
 
 
 /* Same as THREAD_GETMEM, but the member offset can be non-constant.  */
@@ -248,6 +258,10 @@ typedef struct
 
 
 /* Same as THREAD_SETMEM, but the member offset can be non-constant.  */
+#ifdef __native_client__
+/* TLS_HACK */
+# define THREAD_SETMEM(descr, member, value)
+#else
 # define THREAD_SETMEM(descr, member, value) \
   ({ if (sizeof (descr->member) == 1)					      \
        asm volatile ("movb %b0,%%fs:%P1" :				      \
@@ -268,6 +282,7 @@ typedef struct
 		       : IMM_MODE ((unsigned long int) value),		      \
 			 "i" (offsetof (struct pthread, member)));	      \
        }})
+#endif
 
 
 /* Set member of the thread descriptor directly.  */

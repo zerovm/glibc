@@ -45,7 +45,9 @@ _libc_vdso_platform_setup (void)
   __GI___vdso_clock_gettime = p;
 }
 
+#ifndef __native_client__
 # define VDSO_SETUP _libc_vdso_platform_setup
+#endif
 #endif
 
 #include "../init-first.c"

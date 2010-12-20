@@ -236,6 +236,7 @@
 # undef INTERNAL_SYSCALL_DECL
 # define INTERNAL_SYSCALL_DECL(err) do { } while (0)
 
+#ifndef __native_client__
 # define INTERNAL_SYSCALL_NCS(name, err, nr, args...) \
   ({									      \
     unsigned long int resultvar;					      \
@@ -249,6 +250,7 @@
 # undef INTERNAL_SYSCALL
 # define INTERNAL_SYSCALL(name, err, nr, args...) \
   INTERNAL_SYSCALL_NCS (__NR_##name, err, nr, ##args)
+#endif
 
 # undef INTERNAL_SYSCALL_ERROR_P
 # define INTERNAL_SYSCALL_ERROR_P(val, err) \

@@ -62,7 +62,11 @@
 _start:
 	/* Clear the frame pointer.  The ABI suggests this be done, to mark
 	   the outermost frame obviously.  */
+#ifndef __native_client__
 	xorl %ebp, %ebp
+#else
+	naclrestbp $0, %r15
+#endif
 
 	/* Extract the arguments as encoded on the stack and set up
 	   the arguments for __libc_start_main (int (*main) (int, char **, char **),
@@ -83,7 +87,13 @@ _start:
 	popq %rsi		/* Pop the argument count.  */
 	movq %rsp, %rdx		/* argv starts just at the current stack top.  */
 	/* Align the stack to a 16 byte boundary to follow the ABI.  */
+#ifndef __native_client__
 	andq  $~15, %rsp
+#else
+	movl %esp, %r11d
+	andl $~15, %r11d
+	naclrestsp %r11d, %r15
+#endif
 
 	pushq %rax		/* Push garbage because we push 8 more bytes.  */
 

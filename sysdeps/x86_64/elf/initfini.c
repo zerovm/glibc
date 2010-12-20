@@ -46,8 +46,14 @@
 
 #ifndef __native_client__
 #define ASM_RET_STR "ret\n"
+#define SUB_8_SP "subq    $8, %rsp\n"
+#define ADD_8_SP "addq    $8, %rsp\n"
+#define CALL_RAX "call   *%rax\n"
 #else
 #define ASM_RET_STR "pop %r11\n\tnacljmp %r11d, %r15\n"
+#define SUB_8_SP "naclssp $8, %r15\n"
+#define ADD_8_SP "naclasp $8, %r15\n"
+#define CALL_RAX "naclcall %eax, %r15\n"
 #endif
 
 __asm__ ("\n\
@@ -59,31 +65,31 @@ __asm__ ("\n\
 	.align 4\n\
 	.type	call_gmon_start,@function\n\
 call_gmon_start:\n\
-	subq	$8, %rsp\n\
+        " SUB_8_SP "\
 	movq	__gmon_start__@GOTPCREL(%rip), %rax\n\
 	testq	%rax, %rax\n\
-	je	.L22\n\
-	call	*%rax\n\
-.L22:\n\
-	addq	$8, %rsp\n\
-	" ASM_RET_STR "\
+	je	.L22\n"
+        CALL_RAX
+".L22:\n"
+	ADD_8_SP
+	ASM_RET_STR "\
 \n\
 	.section .init\n\
 	.align 4\n\
 .globl _init\n\
 	.type	_init,@function\n\
 _init:\n\
-	subq	$8, %rsp\n\
+	" SUB_8_SP "\
 	call	call_gmon_start\n\
-	ALIGN\n\
+	.p2align 5\n\
 	END_INIT\n\
 \n\
 /*@_init_PROLOG_ENDS*/\n\
 \n\
 /*@_init_EPILOG_BEGINS*/\n\
 	.section .init\n\
-	addq	$8, %rsp\n\
-	" ASM_RET_STR "\
+	" ADD_8_SP
+	ASM_RET_STR "\
 	END_INIT\n\
 \n\
 /*@_init_EPILOG_ENDS*/\n\
@@ -94,8 +100,8 @@ _init:\n\
 .globl _fini\n\
 	.type	_fini,@function\n\
 _fini:\n\
-	subq	$8, %rsp\n\
-	ALIGN\n\
+	" SUB_8_SP "\
+	.p2align 5\n\
 	END_FINI\n\
 \n\
 /*@_fini_PROLOG_ENDS*/\n\
@@ -103,8 +109,8 @@ _fini:\n\
 \n\
 /*@_fini_EPILOG_BEGINS*/\n\
 	.section .fini\n\
-	addq	$8, %rsp\n\
-	" ASM_RET_STR "\
+	" ADD_8_SP
+	ASM_RET_STR "\
 	END_FINI\n\
 \n\
 /*@_fini_EPILOG_ENDS*/\n\
