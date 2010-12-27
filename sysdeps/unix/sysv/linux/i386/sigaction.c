@@ -175,7 +175,7 @@ asm						\
    "	int  $0x80"				\
    );
 
-#ifdef __NR_rt_sigaction
+#if defined(__NR_rt_sigaction) && !defined(__native_client__)
 /* The return code for realtime-signals.  */
 RESTORE (restore_rt, __NR_rt_sigreturn)
 #endif
@@ -193,4 +193,6 @@ asm						\
    "	int  $0x80"				\
    );
 
+#ifndef __native_client__
 RESTORE (restore, __NR_sigreturn)
+#endif

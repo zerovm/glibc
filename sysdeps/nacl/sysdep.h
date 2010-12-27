@@ -138,6 +138,7 @@
 #define INTERNAL_SYSCALL_statfs64(err, nr, args...) (-38 /* ENOSYS */)
 #define INTERNAL_SYSCALL_symlink(err, nr, args...) (-38 /* ENOSYS */)
 #define INTERNAL_SYSCALL_symlinkat(err, nr, args...) (-38 /* ENOSYS */)
+#define INTERNAL_SYSCALL_sync_file_range(err, nr, args...) (-38 /* ENOSYS */)
 #define INTERNAL_SYSCALL__sysctl(err, nr, args...) (-38 /* ENOSYS */)
 #define INTERNAL_SYSCALL_tgkill(err, nr, args...) (-38 /* ENOSYS */)
 #define INTERNAL_SYSCALL_time(err, nr, args...) (-38 /* ENOSYS */)
@@ -289,5 +290,50 @@ INTERNAL_SYSCALL_futex6 (union __attribute__ ((__transparent_union__))
 #endif
 
 #include_next <sysdep.h>
+
+#undef __NR_fallocate
+#undef __NR_pselect6
+#undef __NR_rt_sigaction
+
+#undef	PSEUDO
+#define	PSEUDO(name, syscall_name, args)	\
+  .text;					\
+  ENTRY (name)					\
+    mov $-38, %eax;				\
+  L(pseudo_end):				\
+    NACLRET
+
+#undef	PSEUDO_END
+#define	PSEUDO_END(name)			\
+    SYSCALL_ERROR_HANDLER			\
+  END (name)
+
+#undef  PSEUDO_NOERRNO
+#define PSEUDO_NOERRNO(name, syscall_name, args)\
+  .text;					\
+  ENTRY (name)					\
+    mov $-38, %eax
+
+#undef  PSEUDO_END_NOERRNO
+#define PSEUDO_END_NOERRNO(name)		\
+  END (name)
+
+#define ret_NOERRNO NACLRET
+
+/* The function has to return the error code.  */
+#undef  PSEUDO_ERRVAL
+#define PSEUDO_ERRVAL(name, syscall_name, args)	\
+  .text;					\
+  ENTRY (name)					\
+    mov $38, %eax
+
+#undef  PSEUDO_END_ERRVAL
+#define PSEUDO_END_ERRVAL(name)			\
+  END (name)
+
+#undef SYSCALL_ERROR_HANDLER_TLS_STORE
+#define SYSCALL_ERROR_HANDLER_TLS_STORE(src, destoff)	\
+  movl %gs:0, %eax;					\
+  movl src, (%eax,destoff)
 
 #endif

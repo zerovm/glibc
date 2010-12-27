@@ -66,5 +66,5 @@ ENTRY (BP_SYM (setjmp))
 	cfi_adjust_cfa_offset (-4)
 	popl %edx
 	cfi_adjust_cfa_offset (-4)
-	ret
+	NACLRET
 END (BP_SYM (setjmp))

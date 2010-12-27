@@ -73,6 +73,9 @@ _dl_runtime_resolve:
 	cfi_startproc
 	.align 16
 _dl_runtime_profile:
+#ifdef __native_client__
+	hlt
+#else
 	cfi_adjust_cfa_offset (8)
 	pushl %esp
 	cfi_adjust_cfa_offset (4)
@@ -203,6 +206,7 @@ _dl_runtime_profile:
 	addl $60, %esp
 	cfi_adjust_cfa_offset (-60)
 	ret
+#endif
 	cfi_endproc
 	.size _dl_runtime_profile, .-_dl_runtime_profile
 #endif

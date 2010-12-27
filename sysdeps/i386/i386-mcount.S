@@ -31,6 +31,9 @@
 	ASM_TYPE_DIRECTIVE(C_SYMBOL_NAME(_mcount), @function)
 	.align ALIGNARG(4)
 C_LABEL(_mcount)
+#ifdef __native_client__
+	hlt
+#else
 	/* Save the caller-clobbered registers.  */
 	pushl %eax
 	pushl %ecx
@@ -49,6 +52,7 @@ C_LABEL(_mcount)
 	popl %ecx
 	popl %eax
 	ret
+#endif
 	ASM_SIZE_DIRECTIVE(C_SYMBOL_NAME(_mcount))
 
 #undef mcount

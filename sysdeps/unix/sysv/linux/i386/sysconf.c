@@ -364,6 +364,15 @@ handle_amd (int name)
 }
 
 
+#ifdef __native_client__
+/* Native Client does not support pushf/popf, but it does not support i386
+   CPU either.  */
+static int
+i386_i486_test (void)
+{
+  return 1;
+}
+#else
 static int
 i386_i486_test (void)
 {
@@ -384,6 +393,7 @@ i386_i486_test (void)
 
   return ac;
 }
+#endif
 
 
 /* Get the value of the system variable NAME.  */

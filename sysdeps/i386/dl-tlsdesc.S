@@ -38,8 +38,12 @@
 	cfi_startproc
 	.align 16
 _dl_tlsdesc_return:
+#ifdef __native_client__
+	hlt
+#else
 	movl	4(%eax), %eax
 	ret
+#endif
 	cfi_endproc
 	.size	_dl_tlsdesc_return, .-_dl_tlsdesc_return
 
@@ -59,9 +63,13 @@ _dl_tlsdesc_return:
 	cfi_startproc
 	.align 16
 _dl_tlsdesc_undefweak:
+#ifdef __native_client__
+	hlt
+#else
 	movl	4(%eax), %eax
 	subl	%gs:0, %eax
 	ret
+#endif
 	cfi_endproc
 	.size	_dl_tlsdesc_undefweak, .-_dl_tlsdesc_undefweak
 
@@ -102,6 +110,9 @@ _dl_tlsdesc_dynamic (struct tlsdesc *tdp)
 _dl_tlsdesc_dynamic:
 	/* Like all TLS resolvers, preserve call-clobbered registers.
 	   We need two scratch regs anyway.  */
+#ifdef __native_client__
+	hlt
+#else
 	subl	$28, %esp
 	cfi_adjust_cfa_offset (28)
 	movl	%ecx, 20(%esp)
@@ -132,6 +143,7 @@ _dl_tlsdesc_dynamic:
 	call	___tls_get_addr@PLT
 	movl	16(%esp), %ebx
 	jmp	.Lret
+#endif
 	cfi_endproc
 	.size	_dl_tlsdesc_dynamic, .-_dl_tlsdesc_dynamic
 #endif /* SHARED */

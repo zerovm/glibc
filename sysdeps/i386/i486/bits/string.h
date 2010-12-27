@@ -1377,6 +1377,7 @@ __strchrnul_g (__const char *__s, int __c)
 #endif
 
 
+#ifndef __native_client__
 /* Find the last occurrence of C in S.  */
 #define _HAVE_STRING_ARCH_strrchr 1
 #define strrchr(s, c) \
@@ -1479,7 +1480,7 @@ __strrchr_g (__const char *__s, int __c)
   return __res;
 }
 #endif
-
+#endif
 
 #if defined __USE_BSD || defined __USE_XOPEN_EXTENDED
 /* Find the last occurrence of C in S.  This is the BSD name.  */
@@ -1491,6 +1492,7 @@ __strrchr_g (__const char *__s, int __c)
 #endif
 
 
+#ifndef __native_client__
 /* Return the length of the initial segment of S which
    consists entirely of characters not in REJECT.  */
 #define _HAVE_STRING_ARCH_strcspn 1
@@ -1610,8 +1612,10 @@ __strcspn_g (__const char *__s, __const char *__reject)
   return (__res - 1) - __s;
 }
 #endif
+#endif
 
 
+#ifndef __native_client__
 /* Return the length of the initial segment of S which
    consists entirely of characters in ACCEPT.  */
 #define _HAVE_STRING_ARCH_strspn 1
@@ -1731,8 +1735,10 @@ __strspn_g (__const char *__s, __const char *__accept)
   return (__res - 1) - __s;
 }
 #endif
+#endif
 
 
+#ifndef __native_client__
 /* Find the first occurrence in S of any character in ACCEPT.  */
 #define _HAVE_STRING_ARCH_strpbrk 1
 #define strpbrk(s, accept) \
@@ -1837,6 +1843,7 @@ __strpbrk_g (__const char *__s, __const char *__accept)
      : "memory", "cc");
   return __res;
 }
+#endif
 #endif
 
 
