@@ -115,15 +115,12 @@ void
 internal_function __attribute_noinline__
 _dl_allocate_static_tls (struct link_map *map)
 {
-    /* TLS_HACK */
-#if !defined __native_client__ || !defined __x86_64__
   if (map->l_tls_offset == FORCED_DYNAMIC_TLS_OFFSET
       || _dl_try_allocate_static_tls (map))
     {
       _dl_signal_error (0, map->l_name, NULL, N_("\
 cannot allocate memory in static TLS block"));
     }
-#endif
 }
 
 /* Initialize static TLS area and DTV for current (only) thread.

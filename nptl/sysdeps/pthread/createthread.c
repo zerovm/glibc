@@ -73,10 +73,23 @@ do_clone (struct pthread *pd, const struct pthread_attr *attr,
      that cares whether the thread count is correct.  */
   atomic_increment (&__nptl_nthreads);
 
+#ifndef __native_client__
+#error "This code was changed to work only in Native Client"
+#endif
+
   /* Native Client does not have a notion of a thread ID, so we make
      one up.  This must be positive to mark the thread as not
      exited.  */
   pd->tid = ((unsigned int) pd) >> 2;
+
+  /* Native Client syscall thread_create does not push return address onto stack
+     as opposed to the kernel.  We emulate this behavior on x86-64 to meet the
+     ABI requirement ((%rsp + 8) mod 16 == 0).  On x86-32 the attribute
+     'force_align_arg_pointer' does the same for start_thread ().  */
+#ifdef __x86_64__
+  STACK_VARIABLES_ARGS -= 8;
+#endif
+
   if (NACL_SYSCALL (thread_create) (fct, STACK_VARIABLES_ARGS, pd,
 				    sizeof(struct pthread)) != 0)
     {

@@ -20,13 +20,6 @@
 #ifndef _TLS_H
 #define _TLS_H	1
 
-/* TLS_HACK: Horrible hack: disabling TLS in x86-64 NaCl. */
-#if defined __native_client__ && defined __x86_64__
-#ifndef __thread
-#define __thread __attribute__ ((nocommon))
-#endif
-#endif
-
 #ifndef __ASSEMBLER__
 # include <asm/prctl.h>	/* For ARCH_SET_FS.  */
 # include <stdbool.h>
@@ -137,6 +130,20 @@ typedef struct
   __asm ("movl %0, %%fs" :: "q" (val))
 
 
+#ifdef __native_client__
+#define TLS_INIT_TP_SYSCALL \
+   _result = __nacl_tls_init (_thrdescr);
+#else
+#define TLS_INIT_TP_SYSCALL \
+     /* It is a simple syscall to set the %fs value for the thread.  */	      \
+     asm volatile ("syscall"						      \
+		   : "=a" (_result)					      \
+		   : "0" ((unsigned long int) __NR_arch_prctl),		      \
+		     "D" ((unsigned long int) ARCH_SET_FS),		      \
+		     "S" (_thrdescr)					      \
+		   : "memory", "cc", "r11", "cx");
+#endif
+
 /* Code to initially initialize the thread pointer.  This might need
    special attention since 'errno' is not yet available and if the
    operation can cause a failure 'errno' must not be touched.
@@ -152,22 +159,21 @@ typedef struct
      /* For now the thread descriptor is at the same address.  */	      \
      _head->self = _thrdescr;						      \
 									      \
-     /* It is a simple syscall to set the %fs value for the thread.  */	      \
-     asm volatile ("syscall"						      \
-		   : "=a" (_result)					      \
-		   : "0" ((unsigned long int) __NR_arch_prctl),		      \
-		     "D" ((unsigned long int) ARCH_SET_FS),		      \
-		     "S" (_thrdescr)					      \
-		   : "memory", "cc", "r11", "cx");			      \
-									      \
+     TLS_INIT_TP_SYSCALL						      \
     _result ? "cannot set %fs base address for thread-local storage" : 0;     \
   })
 
 
 /* Return the address of the dtv for the current thread.  */
+#ifndef __native_client__
 # define THREAD_DTV() \
   ({ struct pthread *__pd;						      \
      THREAD_GETMEM (__pd, header.dtv); })
+#else
+# define THREAD_DTV() \
+  ({ struct pthread *__pd = THREAD_SELF;				      \
+     THREAD_GETMEM (__pd, header.dtv); })
+#endif
 
 
 /* Return the thread descriptor for the current thread.
@@ -177,7 +183,7 @@ typedef struct
         pthread_descr self = thread_self();
    do not get optimized away.  */
 #ifdef __native_client__
-void *__nacl_read_tp () __attribute__ ((const));
+void* __nacl_read_tp (void) __attribute__ ((const));
 # define THREAD_SELF ((struct pthread *)__nacl_read_tp ())
 #else
 # define THREAD_SELF \
@@ -193,8 +199,10 @@ void *__nacl_read_tp () __attribute__ ((const));
 
 /* Read member of the thread descriptor directly.  */
 #ifdef __native_client__
-/* TLS_HACK */
-# define THREAD_GETMEM(descr, member) ((__typeof (descr->member))0)
+# define THREAD_GETMEM(descr, member) \
+  descr->member
+#define THREAD_GETMEM_NC(descr, member, idx) \
+  descr->member[idx]
 #else
 # define THREAD_GETMEM(descr, member) \
   ({ __typeof (descr->member) __value;					      \
@@ -218,7 +226,6 @@ void *__nacl_read_tp () __attribute__ ((const));
 		       : "i" (offsetof (struct pthread, member)));	      \
        }								      \
      __value; })
-#endif
 
 
 /* Same as THREAD_GETMEM, but the member offset can be non-constant.  */
@@ -246,6 +253,7 @@ void *__nacl_read_tp () __attribute__ ((const));
 			 "r" (idx));					      \
        }								      \
      __value; })
+#endif
 
 
 /* Loading addresses of objects on x86-64 needs to be treated special
@@ -259,8 +267,10 @@ void *__nacl_read_tp () __attribute__ ((const));
 
 /* Same as THREAD_SETMEM, but the member offset can be non-constant.  */
 #ifdef __native_client__
-/* TLS_HACK */
-# define THREAD_SETMEM(descr, member, value)
+# define THREAD_SETMEM(descr, member, value) \
+  descr->member = (value)
+#define THREAD_SETMEM_NC(descr, member, idx, value) \
+  descr->member[idx] = (value)
 #else
 # define THREAD_SETMEM(descr, member, value) \
   ({ if (sizeof (descr->member) == 1)					      \
@@ -282,7 +292,6 @@ void *__nacl_read_tp () __attribute__ ((const));
 		       : IMM_MODE ((unsigned long int) value),		      \
 			 "i" (offsetof (struct pthread, member)));	      \
        }})
-#endif
 
 
 /* Set member of the thread descriptor directly.  */
@@ -309,9 +318,11 @@ void *__nacl_read_tp () __attribute__ ((const));
 			 "i" (offsetof (struct pthread, member[0])),	      \
 			 "r" (idx));					      \
        }})
+#endif
 
 
 /* Atomic compare and exchange on TLS, returning old value.  */
+#ifndef __native_client__
 #define THREAD_ATOMIC_CMPXCHG_VAL(descr, member, newval, oldval) \
   ({ __typeof (descr->member) __ret;					      \
      __typeof (oldval) __old = (oldval);				      \
@@ -324,9 +335,15 @@ void *__nacl_read_tp () __attribute__ ((const));
        /* Not necessary for other sizes in the moment.  */		      \
        abort ();							      \
      __ret; })
+#else
+#ifdef THREAD_ATOMIC_CMPXCHG_VAL
+#undef THREAD_ATOMIC_CMPXCHG_VAL
+#endif
+#endif
 
 
 /* Atomic set bit.  */
+#ifndef __native_client__
 #define THREAD_ATOMIC_BIT_SET(descr, member, bit) \
   (void) ({ if (sizeof ((descr)->member) == 4)				      \
 	      asm volatile (LOCK_PREFIX "orl %1, %%fs:%P0"		      \
@@ -335,8 +352,10 @@ void *__nacl_read_tp () __attribute__ ((const));
 	    else							      \
 	      /* Not necessary for other sizes in the moment.  */	      \
 	      abort (); })
+#endif
 
 
+#ifndef __native_client__
 #define CALL_THREAD_FCT(descr) \
   ({ void *__res;							      \
      asm volatile ("movq %%fs:%P2, %%rdi\n\t"				      \
@@ -347,15 +366,8 @@ void *__nacl_read_tp () __attribute__ ((const));
 		   : "di", "si", "cx", "dx", "r8", "r9", "r10", "r11",	      \
 		     "memory", "cc");					      \
      __res; })
+#endif
 
-
-/* TLS_HACK: Disable stack protector in Native Client. */
-#ifdef __native_client__
-# define THREAD_SET_STACK_GUARD(value)
-# define THREAD_COPY_STACK_GUARD(descr)
-# define THREAD_SET_POINTER_GUARD(value)
-# define THREAD_COPY_POINTER_GUARD(descr)
-#else
 
 /* Set the stack guard field in TCB head.  */
 # define THREAD_SET_STACK_GUARD(value) \
@@ -371,13 +383,13 @@ void *__nacl_read_tp () __attribute__ ((const));
 #define THREAD_COPY_POINTER_GUARD(descr) \
   ((descr)->header.pointer_guard					      \
    = THREAD_GETMEM (THREAD_SELF, header.pointer_guard))
-#endif
 
 
 /* Get and set the global scope generation counter in the TCB head.  */
 #define THREAD_GSCOPE_FLAG_UNUSED 0
 #define THREAD_GSCOPE_FLAG_USED   1
 #define THREAD_GSCOPE_FLAG_WAIT   2
+#ifndef __native_client__
 #define THREAD_GSCOPE_RESET_FLAG() \
   do									      \
     { int __res;							      \
@@ -389,6 +401,17 @@ void *__nacl_read_tp () __attribute__ ((const));
 	lll_futex_wake (&THREAD_SELF->header.gscope_flag, 1, LLL_PRIVATE);    \
     }									      \
   while (0)
+#else
+#define THREAD_GSCOPE_RESET_FLAG() \
+  do									     \
+    { int __res								     \
+	= atomic_exchange_rel (&THREAD_SELF->header.gscope_flag,	     \
+			       THREAD_GSCOPE_FLAG_UNUSED);		     \
+      if (__res == THREAD_GSCOPE_FLAG_WAIT)				     \
+	lll_futex_wake (&THREAD_SELF->header.gscope_flag, 1, LLL_PRIVATE);   \
+    }									     \
+  while (0)
+#endif
 #define THREAD_GSCOPE_SET_FLAG() \
   THREAD_SETMEM (THREAD_SELF, header.gscope_flag, THREAD_GSCOPE_FLAG_USED)
 #define THREAD_GSCOPE_WAIT() \

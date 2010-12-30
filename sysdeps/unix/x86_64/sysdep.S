@@ -50,10 +50,9 @@ notb:
 	movq C_SYMBOL_NAME(errno@GOTTPOFF)(%rip), %rcx
 	movl %eax, %fs:0(%rcx)
 # else
-#  ifndef __native_client__
-        /* TLS_HACK: removing all TLS references to errno. */
+	/* TODO(pasko): construct a proper nacl64 sequence, without TLS
+           reference GAS generate a global, non-tls symbol for errno.  */
 	movl %eax, %fs:C_SYMBOL_NAME(errno@TPOFF)
-#  endif
 # endif
 #elif !defined PIC
 # ifndef _LIBC_REENTRANT

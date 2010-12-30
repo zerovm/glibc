@@ -93,12 +93,22 @@ typedef uintmax_t uatomic_max_t;
 #endif
 
 
+#ifndef __native_client__
+#define COND_LOCK_PREFIX \
+    "cmpl $0, %%fs:%P5\n\t"						      \
+    "je 0f\n\t"								      \
+    "lock\n"								      \
+    "0:\t"
+#else
+/* In Native Client lock unconditionally. Jumping over the lock prefix might
+   make sense when TLS access gets cheaper than a syscall.  */
+#define COND_LOCK_PREFIX "lock\t"
+#endif
+
 #define __arch_c_compare_and_exchange_val_8_acq(mem, newval, oldval) \
   ({ __typeof (*mem) ret;						      \
-    __asm __volatile ("cmpl $0, %%fs:%P5\n\t"				      \
-		      "je 0f\n\t"					      \
-		      "lock\n"						      \
-		       "0:\tcmpxchgb %b2, %1"				      \
+    __asm __volatile (COND_LOCK_PREFIX					      \
+		      "cmpxchgb %b2, %1"				      \
 		       : "=a" (ret), "=m" (*mem)			      \
 		       : "q" (newval), "m" (*mem), "0" (oldval),	      \
 			 "i" (offsetof (tcbhead_t, multiple_threads)));	      \
@@ -106,10 +116,8 @@ typedef uintmax_t uatomic_max_t;
 
 #define __arch_c_compare_and_exchange_val_16_acq(mem, newval, oldval) \
   ({ __typeof (*mem) ret;						      \
-    __asm __volatile ("cmpl $0, %%fs:%P5\n\t"				      \
-		      "je 0f\n\t"					      \
-		      "lock\n"						      \
-		       "0:\tcmpxchgw %w2, %1"				      \
+    __asm __volatile (COND_LOCK_PREFIX					      \
+		       "cmpxchgw %w2, %1"				      \
 		       : "=a" (ret), "=m" (*mem)			      \
 		       : "q" (newval), "m" (*mem), "0" (oldval),	      \
 			 "i" (offsetof (tcbhead_t, multiple_threads)));	      \
@@ -117,10 +125,8 @@ typedef uintmax_t uatomic_max_t;
 
 #define __arch_c_compare_and_exchange_val_32_acq(mem, newval, oldval) \
   ({ __typeof (*mem) ret;						      \
-    __asm __volatile ("cmpl $0, %%fs:%P5\n\t"				      \
-		      "je 0f\n\t"					      \
-		      "lock\n"						      \
-		       "0:\tcmpxchgl %2, %1"				      \
+    __asm __volatile (COND_LOCK_PREFIX					      \
+		       "cmpxchgl %2, %1"				      \
 		       : "=a" (ret), "=m" (*mem)			      \
 		       : "q" (newval), "m" (*mem), "0" (oldval),	      \
 			 "i" (offsetof (tcbhead_t, multiple_threads)));	      \
@@ -128,10 +134,8 @@ typedef uintmax_t uatomic_max_t;
 
 #define __arch_c_compare_and_exchange_val_64_acq(mem, newval, oldval) \
   ({ __typeof (*mem) ret;						      \
-     __asm __volatile ("cmpl $0, %%fs:%P5\n\t"				      \
-		       "je 0f\n\t"					      \
-		       "lock\n"						      \
-		       "0:\tcmpxchgq %q2, %1"				      \
+     __asm __volatile (COND_LOCK_PREFIX					      \
+		       "cmpxchgq %q2, %1"				      \
 		       : "=a" (ret), "=m" (*mem)			      \
 		       : "q" ((long int) (newval)), "m" (*mem),		      \
 			 "0" ((long int)oldval),			      \
@@ -193,8 +197,13 @@ typedef uintmax_t uatomic_max_t;
   __arch_exchange_and_add_body (LOCK_PREFIX, mem, value)
 #endif
 
+#ifndef __native_client__
 #define __arch_exchange_and_add_cprefix \
   "cmpl $0, %%fs:%P4\n\tje 0f\n\tlock\n0:\t"
+#else
+#define __arch_exchange_and_add_cprefix \
+  "lock\t"
+#endif
 
 #define catomic_exchange_and_add(mem, value) \
   __arch_exchange_and_add_body (__arch_exchange_and_add_cprefix, mem, value)
@@ -231,8 +240,13 @@ typedef uintmax_t uatomic_max_t;
 #define atomic_add(mem, value) \
   __arch_add_body (LOCK_PREFIX, atomic, mem, value)
 
+#ifndef __native_client__
 #define __arch_add_cprefix \
   "cmpl $0, %%fs:%P3\n\tje 0f\n\tlock\n0:\t"
+#else
+#define __arch_add_cprefix \
+  "lock\t"
+#endif
 
 #define catomic_add(mem, value) \
   __arch_add_body (__arch_add_cprefix, catomic, mem, value)
@@ -306,8 +320,13 @@ typedef uintmax_t uatomic_max_t;
 
 #define atomic_increment(mem) __arch_increment_body (LOCK_PREFIX, mem)
 
+#ifndef __native_client__
 #define __arch_increment_cprefix \
   "cmpl $0, %%fs:%P2\n\tje 0f\n\tlock\n0:\t"
+#else
+#define __arch_increment_cprefix \
+  "lock\t"
+#endif
 
 #define catomic_increment(mem) \
   __arch_increment_body (__arch_increment_cprefix, mem)
@@ -360,8 +379,13 @@ typedef uintmax_t uatomic_max_t;
 
 #define atomic_decrement(mem) __arch_decrement_body (LOCK_PREFIX, mem)
 
+#ifndef __native_client__
 #define __arch_decrement_cprefix \
   "cmpl $0, %%fs:%P2\n\tje 0f\n\tlock\n0:\t"
+#else
+#define __arch_decrement_cprefix \
+  "lock\t"
+#endif
 
 #define catomic_decrement(mem) \
   __arch_decrement_body (__arch_decrement_cprefix, mem)
@@ -484,7 +508,12 @@ typedef uintmax_t uatomic_max_t;
 
 #define atomic_or(mem, mask) __arch_or_body (LOCK_PREFIX, mem, mask)
 
+#ifndef __native_client__
 #define __arch_or_cprefix \
   "cmpl $0, %%fs:%P3\n\tje 0f\n\tlock\n0:\t"
+#else
+#define __arch_or_cprefix \
+  "lock\t"
+#endif
 
 #define catomic_or(mem, mask) __arch_or_body (__arch_or_cprefix, mem, mask)

@@ -1866,11 +1866,8 @@ ERROR: ld.so: object '%s' cannot be loaded as audit interface: %s; ignored.\n",
      used.  Trying to do it lazily is too hairy to try when there could be
      multiple threads (from a non-TLS-using libpthread).  */
   bool was_tls_init_tp_called = tls_init_tp_called;
-  /* TLS_HACK */
-#if !defined __native_client__ || !defined __x86_64__
   if (tcbp == NULL)
     tcbp = init_tls ();
-#endif
 
   if (__builtin_expect (audit_list == NULL, 1))
     /* Initialize security features.  But only if we have not done it
@@ -2286,8 +2283,6 @@ ERROR: ld.so: object '%s' cannot be loaded as audit interface: %s; ignored.\n",
 
   /* And finally install it for the main thread.  If ld.so itself uses
      TLS we know the thread pointer was initialized earlier.  */
-  /* TLS_HACK */
-#if !defined __native_client__ || !defined __x86_64__
   if (! tls_init_tp_called)
     {
       const char *lossage = TLS_INIT_TP (tcbp, USE___THREAD);
@@ -2295,7 +2290,6 @@ ERROR: ld.so: object '%s' cannot be loaded as audit interface: %s; ignored.\n",
 	_dl_fatal_printf ("cannot set up thread-local storage: %s\n",
 			  lossage);
     }
-#endif
 
   if (! prelinked && rtld_multiple_ref)
     {
