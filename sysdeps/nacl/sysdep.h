@@ -295,6 +295,7 @@ INTERNAL_SYSCALL_futex6 (union __attribute__ ((__transparent_union__))
 #undef __NR_pselect6
 #undef __NR_rt_sigaction
 
+#ifndef __x86_64__
 #undef	PSEUDO
 #define	PSEUDO(name, syscall_name, args)	\
   .text;					\
@@ -336,4 +337,5 @@ INTERNAL_SYSCALL_futex6 (union __attribute__ ((__transparent_union__))
   movl %gs:0, %eax;					\
   movl src, (%eax,destoff)
 
+#endif
 #endif
