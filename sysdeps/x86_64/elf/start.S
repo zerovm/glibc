@@ -82,8 +82,13 @@ _start:
 	rtld_fini:	%r9
 	stack_end:	stack.	*/
 
+#ifndef __native_client__
 	movq %rdx, %r9		/* Address of the shared library termination
 				   function.  */
+#else
+	/* Under NaCl, %rdx is undefined on process start. */
+	mov $0, %r9
+#endif
 	popq %rsi		/* Pop the argument count.  */
 	movq %rsp, %rdx		/* argv starts just at the current stack top.  */
 	/* Align the stack to a 16 byte boundary to follow the ABI.  */
