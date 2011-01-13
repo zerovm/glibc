@@ -7,12 +7,13 @@
 
 off_t __lseek (int fd, off_t offset, int whence)
 {
-  off_t result = NACL_SYSCALL (lseek) (fd, offset, whence);
-  if ((unsigned int) result > 0xfffff000u) {
+  nacl_abi_off_t nacl_offset = offset;
+  int result = NACL_SYSCALL (lseek) (fd, &nacl_offset, whence);
+  if (result < 0) {
     errno = -result;
     return -1;
   }
-  return result;
+  return nacl_offset;
 }
 libc_hidden_def (__lseek)
 weak_alias (__lseek, lseek)

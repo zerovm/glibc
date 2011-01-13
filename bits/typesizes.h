@@ -47,7 +47,11 @@
 #define	__FSFILCNT64_T_TYPE	__UQUAD_TYPE
 #define	__ID_T_TYPE		__U32_TYPE
 #define __CLOCK_T_TYPE		__SLONGWORD_TYPE
-#define __TIME_T_TYPE		__SLONGWORD_TYPE
+#ifdef __native_client__
+# define __TIME_T_TYPE		__SQUAD_TYPE
+#else
+# define __TIME_T_TYPE		__SLONGWORD_TYPE
+#endif
 #define __USECONDS_T_TYPE	__U32_TYPE
 #define __SUSECONDS_T_TYPE	__SLONGWORD_TYPE
 #define __DADDR_T_TYPE		__S32_TYPE

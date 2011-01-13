@@ -15,6 +15,7 @@
 #define NATIVE_CLIENT_SRC_TRUSTED_SERVICE_RUNTIME_INCLUDE_BITS_NACL_SYSCALLS_H_
 
 
+#include <nacl_stat.h>
 #include <stdint.h>
 #include <sys/stat.h>
 #include <sys/types.h>
@@ -118,7 +119,7 @@ typedef int (*TYPE_nacl_close) (int desc);
 typedef int (*TYPE_nacl_fstat) (int fd, struct nacl_abi_stat *stbp);
 typedef int (*TYPE_nacl_write) (int desc, void const *buf, size_t count);
 typedef int (*TYPE_nacl_open) (char const *pathname, int flags, mode_t mode);
-typedef off_t (*TYPE_nacl_lseek) (int desc, off_t offset, int whence);
+typedef int (*TYPE_nacl_lseek) (int desc, nacl_abi_off_t *offset, int whence);
 typedef int (*TYPE_nacl_stat) (const char *file, struct nacl_abi_stat *st);
 
 typedef int (*TYPE_nacl_imc_recvmsg) (int desc,
@@ -134,7 +135,8 @@ typedef int (*TYPE_nacl_imc_socketpair) (int *d2);
 typedef int (*TYPE_nacl_imc_mem_obj_create) (size_t nbytes);
 
 typedef void *(*TYPE_nacl_mmap) (void *start, size_t length,
-                                 int prot, int flags, int desc, off_t offset);
+                                 int prot, int flags, int desc,
+                                 nacl_abi_off_t *offset);
 
 typedef int (*TYPE_nacl_munmap) (void *start, size_t length);
 
