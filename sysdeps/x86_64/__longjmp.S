@@ -25,6 +25,11 @@
    void __longjmp (__jmp_buf env, int val).  */
 ENTRY(__longjmp)
 	/* Restore registers.  */
+#ifdef __native_client__
+	movq (JB_RSP*8)(%r15,%rdi),%r8
+	movq (JB_RBP*8)(%r15,%rdi),%r9
+	movq (JB_PC*8)(%r15,%rdi),%rdx
+#else
 	movq (JB_RSP*8)(%rdi),%r8
 	movq (JB_RBP*8)(%rdi),%r9
 	movq (JB_PC*8)(%rdi),%rdx
@@ -32,6 +37,7 @@ ENTRY(__longjmp)
 	PTR_DEMANGLE (%r8)
 	PTR_DEMANGLE (%r9)
 	PTR_DEMANGLE (%rdx)
+#endif
 #endif
 	/* We add unwind information for the target here.  */
 	cfi_def_cfa(%rdi, 0)
@@ -43,15 +49,28 @@ ENTRY(__longjmp)
 	cfi_offset(%r12,JB_R12*8)
 	cfi_offset(%r13,JB_R13*8)
 	cfi_offset(%r14,JB_R14*8)
+#ifndef __native_client__
 	cfi_offset(%r15,JB_R15*8)
+#endif
+#ifdef __native_client__
+	movq (JB_RBX*8)(%r15,%rdi),%rbx
+	movq (JB_R12*8)(%r15,%rdi),%r12
+	movq (JB_R13*8)(%r15,%rdi),%r13
+	movq (JB_R14*8)(%r15,%rdi),%r14
+#else
 	movq (JB_RBX*8)(%rdi),%rbx
 	movq (JB_R12*8)(%rdi),%r12
 	movq (JB_R13*8)(%rdi),%r13
 	movq (JB_R14*8)(%rdi),%r14
 	movq (JB_R15*8)(%rdi),%r15
+#endif
 	/* Set return value for setjmp.  */
 	mov %esi, %eax
 	movq %r8,%rsp
 	movq %r9,%rbp
+#ifdef __native_client__
+	nacljmp %edx,%r15
+#else
 	jmpq *%rdx
+#endif
 END (BP_SYM (__longjmp))

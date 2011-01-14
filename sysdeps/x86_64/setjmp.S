@@ -29,7 +29,6 @@ ENTRY (__sigsetjmp)
 	movq %r12, %nacl:(JB_R12*8)(%r15,%rdi)
 	movq %r13, %nacl:(JB_R13*8)(%r15,%rdi)
 	movq %r14, %nacl:(JB_R14*8)(%r15,%rdi)
-	movq %r15, %nacl:(JB_R15*8)(%r15,%rdi)
 #else
 	movq %rbx, (JB_RBX*8)(%rdi)
 #ifdef PTR_MANGLE
