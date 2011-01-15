@@ -182,4 +182,22 @@ typedef int (*TYPE_nacl_dyncode_copy) (void *dest, const void *src,
                                        size_t size);
 
 
+struct NaClImcMsgIoVec {
+  void    *base;
+  size_t  length;
+};
+
+struct NaClImcMsgHdr {
+  struct NaClImcMsgIoVec  *iov;
+  size_t                  iov_length;
+  int                     *descv;
+  size_t                  desc_length;
+  int                     flags;
+};
+
+
+ssize_t imc_sendmsg (int fd, const struct NaClImcMsgHdr *msg, int flags);
+ssize_t imc_recvmsg (int fd, struct NaClImcMsgHdr *msg, int flags);
+
+
 #endif
