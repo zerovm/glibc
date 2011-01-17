@@ -393,7 +393,7 @@ extern int futimens (int __fd, __const struct timespec __times[2]) __THROW;
 #endif
 
 /* Wrappers for stat and mknod system calls.  */
-#ifndef __USE_FILE_OFFSET64
+#if !defined __USE_FILE_OFFSET64 || defined __native_client__
 extern int __fxstat (int __ver, int __fildes, struct stat *__stat_buf)
      __THROW __nonnull ((3));
 extern int __xstat (int __ver, __const char *__filename,
@@ -428,6 +428,9 @@ extern int __REDIRECT_NTH (__fxstatat, (int __ver, int __fildes,
 
 #ifdef __USE_LARGEFILE64
 extern int __fxstat64 (int __ver, int __fildes, struct stat64 *__stat_buf)
+#if defined __native_client__ && (!defined SHARED || defined NOT_IN_libc)
+     __asm__ ("__fxstat")
+#endif
      __THROW __nonnull ((3));
 extern int __xstat64 (int __ver, __const char *__filename,
 		      struct stat64 *__stat_buf) __THROW __nonnull ((2, 3));

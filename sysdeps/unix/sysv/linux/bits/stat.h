@@ -31,7 +31,80 @@
 #define _MKNOD_VER_LINUX	1
 #define _MKNOD_VER_SVR4		2
 #define _MKNOD_VER		_MKNOD_VER_LINUX /* The bits defined below.  */
+#ifdef __native_client__
+#ifdef __USE_LARGEFILE64
+struct stat64
+  {
+    __dev_t st_dev;			/* Device.  */
+    __ino64_t st_ino;			/* file serial number.	*/
+    __mode_t st_mode;			/* File mode.  */
+    __nlink_t st_nlink;			/* Link count.  */
+    __uid_t st_uid;			/* User ID of the file's owner.	*/
+    __gid_t st_gid;			/* Group ID of the file's group.*/
+    __dev_t st_rdev;			/* Device number, if device.  */
+    __off64_t st_size;			/* Size of file, in bytes.  */
+    __blksize_t st_blksize;		/* Optimal block size for I/O.  */
 
+    __blkcnt64_t st_blocks;		/* Number 512-byte blocks allocated. */
+#ifdef __USE_MISC
+    /* Nanosecond resolution timestamps are stored in a format
+       equivalent to 'struct timespec'.  This is the type used
+       whenever possible but the Unix namespace rules do not allow the
+       identifier 'timespec' to appear in the <sys/stat.h> header.
+       Therefore we have to handle the use of this header in strictly
+       standard-compliant sources special.  */
+    struct timespec st_atim;		/* Time of last access.  */
+    struct timespec st_mtim;		/* Time of last modification.  */
+    struct timespec st_ctim;		/* Time of last status change.  */
+# define st_atime st_atim.tv_sec	/* Backward compatibility.  */
+# define st_mtime st_mtim.tv_sec
+# define st_ctime st_ctim.tv_sec
+#else
+    __time_t st_atime;			/* Time of last access.  */
+    unsigned long int st_atimensec;	/* Nscecs of last access.  */
+    __time_t st_mtime;			/* Time of last modification.  */
+    unsigned long int st_mtimensec;	/* Nsecs of last modification.  */
+    __time_t st_ctime;			/* Time of last status change.  */
+    unsigned long int st_ctimensec;	/* Nsecs of last status change.  */
+#endif
+  };
+#endif
+struct stat
+  {
+    __dev_t st_dev;			/* Device.  */
+    __ino64_t st_ino;			/* file serial number.	*/
+    __mode_t st_mode;			/* File mode.  */
+    __nlink_t st_nlink;			/* Link count.  */
+    __uid_t st_uid;			/* User ID of the file's owner.	*/
+    __gid_t st_gid;			/* Group ID of the file's group.*/
+    __dev_t st_rdev;			/* Device number, if device.  */
+    __off64_t st_size;			/* Size of file, in bytes.  */
+    __blksize_t st_blksize;		/* Optimal block size for I/O.  */
+
+    __blkcnt64_t st_blocks;		/* Number 512-byte blocks allocated. */
+#ifdef __USE_MISC
+    /* Nanosecond resolution timestamps are stored in a format
+       equivalent to 'struct timespec'.  This is the type used
+       whenever possible but the Unix namespace rules do not allow the
+       identifier 'timespec' to appear in the <sys/stat.h> header.
+       Therefore we have to handle the use of this header in strictly
+       standard-compliant sources special.  */
+    struct timespec st_atim;		/* Time of last access.  */
+    struct timespec st_mtim;		/* Time of last modification.  */
+    struct timespec st_ctim;		/* Time of last status change.  */
+# define st_atime st_atim.tv_sec	/* Backward compatibility.  */
+# define st_mtime st_mtim.tv_sec
+# define st_ctime st_ctim.tv_sec
+#else
+    __time_t st_atime;			/* Time of last access.  */
+    unsigned long int st_atimensec;	/* Nscecs of last access.  */
+    __time_t st_mtime;			/* Time of last modification.  */
+    unsigned long int st_mtimensec;	/* Nsecs of last modification.  */
+    __time_t st_ctime;			/* Time of last status change.  */
+    unsigned long int st_ctimensec;	/* Nsecs of last status change.  */
+#endif
+  };
+#else
 
 struct stat
   {
@@ -127,6 +200,7 @@ struct stat64
     __ino64_t st_ino;			/* File serial number.		*/
   };
 #endif
+#endif /* native_client */
 
 /* Tell code we have these members.  */
 #define	_STATBUF_ST_BLKSIZE

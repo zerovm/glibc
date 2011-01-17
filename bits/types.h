@@ -40,7 +40,7 @@ typedef signed short int __int16_t;
 typedef unsigned short int __uint16_t;
 typedef signed int __int32_t;
 typedef unsigned int __uint32_t;
-#if __WORDSIZE == 64
+#if __WORDSIZE == 64 && !defined __native_client__
 typedef signed long int __int64_t;
 typedef unsigned long int __uint64_t;
 #elif defined __GLIBC_HAVE_LONG_LONG
@@ -49,7 +49,7 @@ __extension__ typedef unsigned long long int __uint64_t;
 #endif
 
 /* quad_t is also 64 bits.  */
-#if __WORDSIZE == 64
+#if __WORDSIZE == 64 && !defined __native_client__
 typedef long int __quad_t;
 typedef unsigned long int __u_quad_t;
 #elif defined __GLIBC_HAVE_LONG_LONG
@@ -102,7 +102,7 @@ typedef struct
 #define __U32_TYPE		unsigned int
 #define __SLONGWORD_TYPE	long int
 #define __ULONGWORD_TYPE	unsigned long int
-#if __WORDSIZE == 32
+#if __WORDSIZE == 32 || defined __native_client__
 # define __SQUAD_TYPE		__quad_t
 # define __UQUAD_TYPE		__u_quad_t
 # define __SWORD_TYPE		int

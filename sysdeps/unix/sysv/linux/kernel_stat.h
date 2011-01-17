@@ -23,13 +23,14 @@ struct kernel_stat
     unsigned long int __unused5;
 #define _HAVE___UNUSED5
   };
-
+#ifndef __native_client__
 #define _HAVE_STAT___UNUSED4
 #define _HAVE_STAT___UNUSED5
 #define _HAVE_STAT___PAD1
 #define _HAVE_STAT___PAD2
-#define _HAVE_STAT_NSEC
 #define _HAVE_STAT64___PAD1
 #define _HAVE_STAT64___PAD2
 #define _HAVE_STAT64___ST_INO
+#endif
+#define _HAVE_STAT_NSEC
 #define _HAVE_STAT64_NSEC

@@ -97,8 +97,10 @@ struct nacl_abi_stat {  /* must be renamed when ABI is exported */
   int64_t            nacl_abi_st_ctimensec; /* possibly just pad */
 };
 
-/* Converts struct nacl_abi_stat to struct stat64. Implemented in fxstat64.c */
+/* Converts struct nacl_abi_stat to struct stat64. Implemented in fxstat.c */
 void __nacl_abi_stat_to_stat64 (struct nacl_abi_stat *nacl_st,
                                 struct stat64 *st);
-
+/* Converts struct nacl_abi_stat to struct stat. Implemented in fxstat.c */
+void __nacl_abi_stat_to_stat (struct nacl_abi_stat *nacl_st,
+                                struct stat *st);
 #endif

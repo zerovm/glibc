@@ -113,6 +113,18 @@
 #undef	__FAVOR_BSD
 #undef	__KERNEL_STRICT_NAMES
 
+/* Set _FILE_OFFSET_BITS to 64 for user programs and produce an error if it
+   set to other value. */
+#ifdef __native_client__
+# ifndef _LIBC
+#  ifndef _FILE_OFFSET_BITS
+#    define _FILE_OFFSET_BITS 64
+#  elif _FILE_OFFSET_BITS != 64
+#   error "native client requires _FILE_OFFSET_BITS == 64"
+#  endif
+# endif
+#endif
+
 /* Suppress kernel-name space pollution unless user expressedly asks
    for it.  */
 #ifndef _LOOSE_KERNEL_NAMES
@@ -250,7 +262,11 @@
 #endif
 
 #ifdef _LARGEFILE64_SOURCE
-# define __USE_LARGEFILE64	1
+/* Native client applications shouldn't use functions with 64 suffix.
+   Unfortunately, we can't make glibc itself to live without them. */
+# if !defined __native_client__ || defined _LIBC
+#  define __USE_LARGEFILE64	1
+# endif
 #endif
 
 #if defined _FILE_OFFSET_BITS && _FILE_OFFSET_BITS == 64
