@@ -26,9 +26,9 @@
 ENTRY(__longjmp)
 	/* Restore registers.  */
 #ifdef __native_client__
-	movq (JB_RSP*8)(%r15,%rdi),%r8
-	movq (JB_RBP*8)(%r15,%rdi),%r9
-	movq (JB_PC*8)(%r15,%rdi),%rdx
+	movq %nacl:(JB_RSP*8)(%r15,%rdi),%r8
+	movq %nacl:(JB_RBP*8)(%r15,%rdi),%r9
+	movq %nacl:(JB_PC*8)(%r15,%rdi),%rdx
 #else
 	movq (JB_RSP*8)(%rdi),%r8
 	movq (JB_RBP*8)(%rdi),%r9
@@ -53,10 +53,10 @@ ENTRY(__longjmp)
 	cfi_offset(%r15,JB_R15*8)
 #endif
 #ifdef __native_client__
-	movq (JB_RBX*8)(%r15,%rdi),%rbx
-	movq (JB_R12*8)(%r15,%rdi),%r12
-	movq (JB_R13*8)(%r15,%rdi),%r13
-	movq (JB_R14*8)(%r15,%rdi),%r14
+	movq %nacl:(JB_RBX*8)(%r15,%rdi),%rbx
+	movq %nacl:(JB_R12*8)(%r15,%rdi),%r12
+	movq %nacl:(JB_R13*8)(%r15,%rdi),%r13
+	movq %nacl:(JB_R14*8)(%r15,%rdi),%r14
 #else
 	movq (JB_RBX*8)(%rdi),%rbx
 	movq (JB_R12*8)(%rdi),%r12
@@ -66,11 +66,13 @@ ENTRY(__longjmp)
 #endif
 	/* Set return value for setjmp.  */
 	mov %esi, %eax
-	movq %r8,%rsp
-	movq %r9,%rbp
 #ifdef __native_client__
+	naclrestsp %r8d,%r15
+	naclrestbp %r9d,%r15
 	nacljmp %edx,%r15
 #else
+	movq %r8,%rsp
+	movq %r9,%rbp
 	jmpq *%rdx
 #endif
 END (BP_SYM (__longjmp))
