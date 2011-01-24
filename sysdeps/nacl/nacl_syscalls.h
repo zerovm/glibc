@@ -198,6 +198,7 @@ struct NaClImcMsgHdr {
 
 ssize_t imc_sendmsg (int fd, const struct NaClImcMsgHdr *msg, int flags);
 ssize_t imc_recvmsg (int fd, struct NaClImcMsgHdr *msg, int flags);
+int imc_accept (int fd);
 
 
 #endif
