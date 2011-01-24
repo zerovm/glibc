@@ -124,6 +124,7 @@ override_list = [
     "sysdeps/ieee754/ldbl-96/s_logbl.c",
     "sysdeps/ieee754/ldbl-96/s_rintl.c",
     "sysdeps/nacl/umount.c",
+    "sysdeps/posix/libc_fatal.c",
     "sysdeps/unix/sysv/linux/epoll_pwait.c",
     "sysdeps/unix/sysv/linux/sync_file_range.c",
     "sysdeps/unix/time.c",
