@@ -40,6 +40,7 @@
 #include <dl-osinfo.h>
 #include <dl-procinfo.h>
 #include <tls.h>
+#include "receive_args.h"
 
 #include <assert.h>
 
@@ -548,6 +549,18 @@ _dl_start (void *arg)
      header table in core.  Put the rest of _dl_start into a separate
      function, that way the compiler cannot put accesses to the GOT
      before ELF_DYNAMIC_RELOCATE.  */
+
+  struct process_args *ipc_args = argmsg_fetch ();
+  if (ipc_args != NULL)
+    {
+      /* Because code following the ELF ABI expects to find the argv
+         and env arrays on the stack, this is a little convoluted
+         because we have to allocate stack space here.  */
+      size_t size = argmsg_get_size_on_stack (ipc_args);
+      arg = alloca (size);
+      argmsg_move_to_stack (ipc_args, arg, size);
+    }
+
   {
 #ifdef DONT_USE_BOOTSTRAP_MAP
     ElfW(Addr) entry = _dl_start_final (arg);
@@ -559,7 +572,28 @@ _dl_start (void *arg)
 # define ELF_MACHINE_START_ADDRESS(map, start) (start)
 #endif
 
-    return ELF_MACHINE_START_ADDRESS (GL(dl_ns)[LM_ID_BASE]._ns_loaded, entry);
+    struct link_map *main_map = GL(dl_ns)[LM_ID_BASE]._ns_loaded;
+    uintptr_t entry_point = ELF_MACHINE_START_ADDRESS (main_map, entry);
+
+    if (ipc_args != NULL)
+      {
+        /* This copies the logic of _start in dl-machine.h, but in C
+           rather than assembly.  */
+
+        /* Adjust for skipped arguments.  */
+        int argc = *(argc_type *) arg;
+        argc -= _dl_skip_args;
+        arg = (char **) arg + _dl_skip_args;
+        *(argc_type *) arg = argc;
+
+        char **argv = (char **) ((argc_type *) arg + 1);
+        char **envp = argv + argc;
+        _dl_init (main_map, argc, argv, envp);
+
+        jump_to_elf_start (arg, entry_point, (uintptr_t) _dl_fini);
+      }
+    else
+      return entry_point;
   }
 }
 
