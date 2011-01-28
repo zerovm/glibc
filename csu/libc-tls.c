@@ -163,7 +163,7 @@ __libc_setup_tls (size_t tcbsize, size_t tcbalign)
      to request some surplus that permits dynamic loading of modules with
      IE-model TLS.  */
 #if TLS_TCB_AT_TP
-  tcb_offset = roundup (memsz + GL(dl_tls_static_size), tcbalign);
+  tcb_offset = roundup (memsz + GL(dl_tls_static_size), max_align);
   tlsblock = __sbrk (tcb_offset + tcbsize + max_align);
 #elif TLS_DTV_AT_TP
   tcb_offset = roundup (tcbsize, align ?: 1);
