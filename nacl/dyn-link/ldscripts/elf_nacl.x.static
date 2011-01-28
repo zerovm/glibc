@@ -14,6 +14,7 @@ PHDRS
   headers PT_PHDR FILEHDR PHDRS ;  /* put the headers in a non-loadable seg */
   seg_code    PT_LOAD FLAGS(5) ;   /* read + execute */
   seg_rodata  PT_LOAD FLAGS(4) ;   /* read */
+  seg_tls     PT_TLS  FLAGS(4) ;
   seg_rwdata  PT_LOAD FLAGS(6) ;   /* read + write */
 }
 SECTIONS
@@ -76,10 +77,11 @@ SECTIONS
     PROVIDE (__tls_template_start = .);
     *(.tdata .tdata.* .gnu.linkonce.td.*)
     PROVIDE (__tls_template_tdata_end = .);
-  }
-  .tbss		  : { *(.tbss .tbss.* .gnu.linkonce.tb.*) *(.tcommon) }
+  } :seg_tls :seg_rodata
+  .tbss		  : { *(.tbss .tbss.* .gnu.linkonce.tb.*) *(.tcommon) } :seg_tls
   /* "." does not advance for tbss because tbss is not loaded. */
   PROVIDE (__tls_template_end = . + SIZEOF(.tbss));
+  PROVIDE (__tls_template_align = MAX(ALIGNOF(.tdata), ALIGNOF(.tbss)));
   . = ALIGN(CONSTANT (MAXPAGESIZE)); /* nacl wants page alignment */
   .preinit_array     :
   {

@@ -110,6 +110,7 @@ init_static_tls (size_t memsz, size_t align)
 extern unsigned char __tls_template_start[];
 extern unsigned char __tls_template_tdata_end[];
 extern unsigned char __tls_template_end[];
+extern unsigned char __tls_template_align[];
 #endif
 
 void
@@ -132,11 +133,9 @@ __libc_setup_tls (size_t tcbsize, size_t tcbalign)
   initimage = __tls_template_start;
   memsz = __tls_template_end - __tls_template_start;
   filesz = __tls_template_tdata_end - __tls_template_start;
-  /* TODO(mseaborn): Support larger alignments properly.  See
-     http://code.google.com/p/nativeclient/issues/detail?id=1240.  We
-     might be able to use ALIGNOF in the linker script to record the
-     alignment.  */
-  align = 4;
+  align = __tls_template_align;
+  if (align > max_align)
+    max_align = align;
 #else
   /* Look through the TLS segment if there is any.  */
   if (_dl_phdr != NULL)

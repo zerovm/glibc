@@ -92,6 +92,9 @@ SECTIONS
   .eh_frame       : ONLY_IF_RW { KEEP (*(.eh_frame)) } :seg_rwdata
   .gcc_except_table   : ONLY_IF_RW { *(.gcc_except_table .gcc_except_table.*) } :seg_rwdata
   /* Thread Local Storage sections  */
+  /* __tls_tempate_* symbols are needed for nacl-glibc build to succeed
+     because it uses -static without -Telf[64]_nacl.x.static which is required
+     for correct executables. */
   .tdata	  : {
     PROVIDE (__tls_template_start = .);
     *(.tdata .tdata.* .gnu.linkonce.td.*)
@@ -99,6 +102,7 @@ SECTIONS
   } :seg_rwdata :seg_tls
   .tbss		  : { *(.tbss .tbss.* .gnu.linkonce.tb.*) *(.tcommon) }
   PROVIDE (__tls_template_end = .);
+  PROVIDE (__tls_template_align = MAX(ALIGNOF(.tdata), ALIGNOF(.tbss)));
   .preinit_array     :
   {
     PROVIDE_HIDDEN (__preinit_array_start = .);
