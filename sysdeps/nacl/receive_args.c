@@ -7,6 +7,8 @@
 #include <sys/mman.h>
 #include <unistd.h>
 
+#include <nacl_rpc.h>
+
 
 /* We expect to receive an IMC message with the following format:
 
@@ -44,12 +46,6 @@ struct process_args
   int received_size;
   struct args_message message;
 };
-
-/* Descriptor for a bound socket that the NaCl browser plugin sets up.  */
-#define NACL_PLUGIN_BOUND_SOCK 3
-
-/* Descriptor for a connected socket that the NaCl browser plugin sets up.  */
-#define NACL_PLUGIN_ASYNC_RECEIVE_FD 6
 
 #define MESSAGE_SIZE_MAX 0x10000
 
@@ -99,7 +95,8 @@ struct process_args *argmsg_fetch ()
   message.descv = NULL;
   message.desc_length = 0;
   message.flags = 0;
-  args->received_size = imc_recvmsg (NACL_PLUGIN_ASYNC_RECEIVE_FD, &message, 0);
+  args->received_size = imc_recvmsg (NACL_PLUGIN_ASYNC_TO_CHILD_FD,
+                                     &message, 0);
   if (args->received_size < 0)
     fail ("Error receiving startup message\n");
   if (args->received_size < 4 ||
