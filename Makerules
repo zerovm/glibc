@@ -457,7 +457,7 @@ $(common-objpfx)shlib.lds: $(common-objpfx)config.make $(..)Makerules
 	      $(if $(filter yes,$(have-hash-style)), \
 		   -e 's/^.*\.gnu\.hash[ 	]*:.*$$/  .note.ABI-tag : { *(.note.ABI-tag) } &/' \
 		   -e '/^[ 	]*\.hash[ 	]*:.*$$/{h;d;}' \
-		   -e '/DATA_SEGMENT_ALIGN/{H;g}' \
+		   -e '/DATA_SEGMENT_ALIGN/{H;g;}' \
 		, \
 		   -e 's/^.*\.hash[ 	]*:.*$$/  .note.ABI-tag : { *(.note.ABI-tag) } &/' \
 	       ) \
