@@ -16,7 +16,7 @@ NF == 0 { next }
 {
   subdir = type = FILENAME;
   sub(/^.*\//, "", type);
-  sub(/\/[^/]+$/, "", subdir);
+  sub(/\/[^\/]+$/, "", subdir);
   sub(/^.*\//, "", subdir);
   thisdir = "";
 }
@@ -56,13 +56,13 @@ type == "Subdirs" && thisdir {
     # The Subdirs file comes from an add-on that should have the subdirectory.
     dir = FILENAME;
     do
-      sub(/\/[^/]+$/, "", dir);
+      sub(/\/[^\/]+$/, "", dir);
     while (dir !~ /\/sysdeps$/);
     sub(/\/sysdeps$/, "", dir);
     if (system("test -d " dir "/" thisdir) == 0)
       dir = dir "/" thisdir;
     else {
-      sub(/\/[^/]+$/, "", dir);
+      sub(/\/[^\/]+$/, "", dir);
       if (system("test -d " dir "/" thisdir) == 0)
         dir = dir "/" thisdir;
       else {

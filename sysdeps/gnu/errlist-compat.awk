@@ -32,8 +32,6 @@
 # These two rules catch the Versions file contents.
 NF == 2 && $2 == "{" { last_version = $1; next }
 $1 == "#errlist-compat" {
-  # Don't process any further Versions files
-  ARGC = ARGIND + 1;
   cnt = $2 + 0;
   if (cnt < 80) {
     print "*** this line seems bogus:", $0 > "/dev/stderr";
@@ -111,21 +109,21 @@ END {
     printf "#endif\n\n";
   }
 
-  printf "\
-extern const char *const __sys_errlist_internal[NERR];\n\
-extern const int __sys_nerr_internal;\n\
-strong_alias (_sys_errlist_internal, __sys_errlist_internal)\n\
-strong_alias (_sys_nerr_internal, __sys_nerr_internal)\n\
-extern const char *const sys_errlist[NERR];\n\
-versioned_symbol (libc, _sys_errlist_internal, sys_errlist, %s);\n\
-versioned_symbol (libc, __sys_errlist_internal, _sys_errlist, %s);\n\
-versioned_symbol (libc, _sys_nerr_internal, sys_nerr, %s);\n\
-versioned_symbol (libc, __sys_nerr_internal, _sys_nerr, %s);\n", \
+  printf \
+"extern const char *const __sys_errlist_internal[NERR];\n" \
+"extern const int __sys_nerr_internal;\n" \
+"strong_alias (_sys_errlist_internal, __sys_errlist_internal)\n" \
+"strong_alias (_sys_nerr_internal, __sys_nerr_internal)\n" \
+"extern const char *const sys_errlist[NERR];\n" \
+"versioned_symbol (libc, _sys_errlist_internal, sys_errlist, %s);\n" \
+"versioned_symbol (libc, __sys_errlist_internal, _sys_errlist, %s);\n" \
+"versioned_symbol (libc, _sys_nerr_internal, sys_nerr, %s);\n" \
+"versioned_symbol (libc, __sys_nerr_internal, _sys_nerr, %s);\n", \
     lastv, lastv, lastv, lastv;
 
-  print "\n\
-link_warning (sys_errlist, \"\
-`sys_errlist' is deprecated; use `strerror' or `strerror_r' instead\")\n\
-link_warning (sys_nerr, \"\
-`sys_nerr' is deprecated; use `strerror' or `strerror_r' instead\")";
+  print "\n" \
+"link_warning (sys_errlist, \"" \
+"`sys_errlist' is deprecated; use `strerror' or `strerror_r' instead\")\n" \
+"link_warning (sys_nerr, \"" \
+"`sys_nerr' is deprecated; use `strerror' or `strerror_r' instead\")";
 }

@@ -319,7 +319,7 @@ $(objpfx)ld.so: $(objpfx)librtld.os $(ld-map)
 		  -Wl,-Ttext,0x20000
 	rm -f $@.lds
 	readelf -s $@ \
-	  | $(AWK) '($$7 ~ /^UND(|EF)$$/ && $$1 != "0:" && $$4 != "REGISTER") { print; p=1 } END { exit p != 0 }'
+	  | $(AWK) '($$7 ~ /^UND(EF)?$$/ && $$1 != "0:" && $$4 != "REGISTER") { print; p=1 } END { exit p != 0 }'
 
 # We have to modify ld.so's ELF headers to get a version that NaCl's
 # sel_ldr will run.  For a discussion, see:
