@@ -73,8 +73,16 @@
 
 /* The LFS interface is available, except for the asynchronous I/O.  */
 #define _LFS_LARGEFILE		1
+#ifdef __native_client__
+/* Native Client doesn't support obsolete file functions with 64 suffix
+   because it uses 64-bit file offsets by default. */
+#define _LFS64_LARGEFILE	0
+#define _LFS64_STDIO		0
+#else
 #define _LFS64_LARGEFILE	1
 #define _LFS64_STDIO		1
+#endif
+
 
 /* POSIX timers are available.  */
 #define _POSIX_TIMERS	200112L

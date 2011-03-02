@@ -108,8 +108,16 @@
 
 /* The rest of the LFS is also available.  */
 #define _LFS_LARGEFILE		1
+/* Native Client doesn't support obsolete file functions with 64 suffix
+   because it uses 64-bit file offsets by default. */
+#ifdef __native_client__
+#define _LFS64_LARGEFILE	0
+#define _LFS64_STDIO		0
+#else
 #define _LFS64_LARGEFILE	1
 #define _LFS64_STDIO		1
+#endif
+
 
 /* POSIX shared memory objects are implemented.  */
 #define _POSIX_SHARED_MEMORY_OBJECTS	200112L
