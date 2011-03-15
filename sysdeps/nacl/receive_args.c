@@ -56,6 +56,108 @@ static void fail (const char *message)
   _exit (127);
 }
 
+/* The NaCl plugin blocks waiting for us to accept an SRPC connection.
+   If we reject the connection, the "onload" Javascript hook is not run.
+   See http://code.google.com/p/nativeclient/issues/detail?id=1501
+   Since it is currently not practical to link libsrpc into the dynamic
+   linker, we have to hard-code the response.
+   TODO(mseaborn): Fix the plugin's process startup interface so that we
+   do not have to send it the SRPC connection acceptance message below.  */
+static const uint8_t srpc_reply_message[] =
+{
+  /* struct LengthHeader[2]: */
+  11 * 4, 0, 0, 0, /* total byte_count */
+  0, 0, 0, 0,      /* total desc_count */
+  11 * 4, 0, 0, 0, /* this fragment's byte_count */
+  0, 0, 0, 0,      /* this fragment's desc_count */
+
+  /* struct NACL_SRPC_RPC_SERIALIZED_FIELDS: */
+  /* protocol_version (fixed, kNaClSrpcProtocolVersion) */
+  2, 0, 0xda, 0xc0,
+  /* request_id */
+  0, 0, 0, 0,
+  /* is_request */
+  0, 0, 0, 0,
+  /* rpc_number (method number): 0 for service_discovery */
+  0, 0, 0, 0,
+  /* result (return code): 256 (NACL_SRPC_RESULT_OK) */
+  0, 1, 0, 0,
+  /* value_len (for a reply, the number of result values): 1 */
+  1, 0, 0, 0,
+  /* template_len (not meaningful for a reply): 0 */
+  0, 0, 0, 0,
+
+  /* struct NACL_SRPC_ARG_SERIALIZED_FIELDS: */
+  /* argument 1 type: NACL_SRPC_ARG_TYPE_CHAR_ARRAY */
+  'C', 0, 0, 0,
+  /* pad to 8 byte alignment */
+  0, 0, 0, 0,
+  /* argument 1 length: 0 (empty method list) */
+  0, 0, 0, 0,
+  /* pad up to union size */
+  0, 0, 0, 0,
+};
+
+static int keep_plugin_happy (int socket_fd)
+{
+  /* Receive service_discovery SRPC request.  This should always be
+     the first message.  */
+  char buf[20];
+  struct NaClImcMsgIoVec recv_iov = { buf, sizeof (buf) };
+  struct NaClImcMsgHdr recv_message = { &recv_iov, 1, NULL, 0, 0 };
+  int received = imc_recvmsg (socket_fd, &recv_message, 0);
+  if (received < 0)
+    return -1;
+
+  /* Send reply, listing no SRPC methods.  */
+  struct NaClImcMsgIoVec send_iov = {
+    srpc_reply_message,
+    sizeof (srpc_reply_message)
+  };
+  struct NaClImcMsgHdr send_message = { &send_iov, 1, NULL, 0, 0 };
+  int sent = imc_sendmsg (socket_fd, &send_message, 0);
+  if (sent < 0)
+    return -1;
+
+  if (__close (socket_fd) < 0)
+    return -1;
+
+  return 0;
+}
+
+static int from_hex (unsigned char value)
+{
+  switch (value)
+    {
+      case '0': return 0;
+      case '1': return 1;
+      case '2': return 2;
+      case '3': return 3;
+      case '4': return 4;
+      case '5': return 5;
+      case '6': return 6;
+      case '7': return 7;
+      case '8': return 8;
+      case '9': return 9;
+      case 'a': case 'A': return 10;
+      case 'b': case 'B': return 11;
+      case 'c': case 'C': return 12;
+      case 'd': case 'D': return 13;
+      case 'e': case 'E': return 14;
+      case 'f': case 'F': return 15;
+      default: return 0;
+    }
+}
+
+static void decode_hex (unsigned char *dest, int *dest_size,
+                        unsigned char *src, int src_size)
+{
+  int i;
+  for (i = 0; i < src_size / 2; i++)
+    dest[i] = from_hex (src[i*2]) * 0x10 + from_hex (src[i*2 + 1]);
+  *dest_size = src_size / 2;
+}
+
 struct process_args *argmsg_fetch ()
 {
   /* The NaCl browser plugin does not give us a good way to detect
@@ -80,7 +182,7 @@ struct process_args *argmsg_fetch ()
          similar environment.  */
       return NULL;
     }
-  close (socket_fd);
+  keep_plugin_happy (socket_fd);
   struct process_args *args =
     mmap (NULL, MESSAGE_SIZE_MAX, PROT_READ | PROT_WRITE,
           MAP_PRIVATE | MAP_ANONYMOUS, -1, 0);
@@ -97,6 +199,17 @@ struct process_args *argmsg_fetch ()
   message.flags = 0;
   args->received_size = imc_recvmsg (NACL_PLUGIN_ASYNC_TO_CHILD_FD,
                                      &message, 0);
+
+  /* As a workaround for a limitation in the NaCl plugin, allow the
+     message to be hex-encoded.  This is because __sendAsyncMessage*()
+     does not support null bytes in messages.
+     See http://code.google.com/p/nativeclient/issues/detail?id=1535
+     TODO(mseaborn): Fix this limitation.  */
+  if (args->received_size >= 4 &&
+      memcmp (args->message.tag, "HEXD", 4) == 0)
+    decode_hex ((unsigned char *) &args->message, &args->received_size,
+                (unsigned char *) &args->message + 4, args->received_size - 4);
+
   if (args->received_size < 0)
     fail ("Error receiving startup message\n");
   if (args->received_size < 4 ||
