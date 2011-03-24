@@ -1,0 +1,1 @@
+/* mkstemp64 is obsolete */

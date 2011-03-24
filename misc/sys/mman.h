@@ -54,7 +54,7 @@ __BEGIN_DECLS
    for errors (in which case `errno' is set).  A successful `mmap' call
    deallocates any previous mapping for the affected region.  */
 
-#ifndef __USE_FILE_OFFSET64
+#if !defined __USE_FILE_OFFSET64 || defined __native_client__
 extern void *mmap (void *__addr, size_t __len, int __prot,
 		   int __flags, int __fd, __off_t __offset) __THROW;
 #else
@@ -69,7 +69,8 @@ extern void * __REDIRECT_NTH (mmap,
 #endif
 #ifdef __USE_LARGEFILE64
 extern void *mmap64 (void *__addr, size_t __len, int __prot,
-		     int __flags, int __fd, __off64_t __offset) __THROW;
+		     int __flags, int __fd, __off64_t __offset)
+     NACL_LFS_ALIAS (mmap) __THROW;
 #endif
 
 /* Deallocate any mapping for the region starting at ADDR and extending LEN

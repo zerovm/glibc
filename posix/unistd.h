@@ -297,7 +297,7 @@ extern int faccessat (int __fd, __const char *__file, int __type, int __flag)
    the current position (if WHENCE is SEEK_CUR),
    or the end of the file (if WHENCE is SEEK_END).
    Return the new file position.  */
-#ifndef __USE_FILE_OFFSET64
+#if !defined __USE_FILE_OFFSET64 || defined __native_client__
 extern __off_t lseek (int __fd, __off_t __offset, int __whence) __THROW;
 #else
 # ifdef __REDIRECT_NTH
@@ -310,7 +310,7 @@ extern __off64_t __REDIRECT_NTH (lseek,
 #endif
 #ifdef __USE_LARGEFILE64
 extern __off64_t lseek64 (int __fd, __off64_t __offset, int __whence)
-     __THROW;
+     NACL_LFS_ALIAS (lseek) __THROW;
 #endif
 
 /* Close the file descriptor FD.
@@ -333,7 +333,7 @@ extern ssize_t read (int __fd, void *__buf, size_t __nbytes) __wur;
 extern ssize_t write (int __fd, __const void *__buf, size_t __n) __wur;
 
 #ifdef __USE_UNIX98
-# ifndef __USE_FILE_OFFSET64
+# if !defined __USE_FILE_OFFSET64 || defined __native_client__
 /* Read NBYTES into BUF from FD at the given position OFFSET without
    changing the file pointer.  Return the number read, -1 for errors
    or 0 for EOF.
@@ -369,11 +369,11 @@ extern ssize_t __REDIRECT (pwrite, (int __fd, __const void *__buf,
    changing the file pointer.  Return the number read, -1 for errors
    or 0 for EOF.  */
 extern ssize_t pread64 (int __fd, void *__buf, size_t __nbytes,
-			__off64_t __offset) __wur;
+			__off64_t __offset) NACL_LFS_ALIAS (pread) __wur;
 /* Write N bytes of BUF to FD at the given position OFFSET without
    changing the file pointer.  Return the number written, or -1.  */
 extern ssize_t pwrite64 (int __fd, __const void *__buf, size_t __n,
-			 __off64_t __offset) __wur;
+			 __off64_t __offset) NACL_LFS_ALIAS (pwrite) __wur;
 # endif
 #endif
 
@@ -956,7 +956,7 @@ extern int getdtablesize (void) __THROW;
 
 
 /* Truncate FILE to LENGTH bytes.  */
-# ifndef __USE_FILE_OFFSET64
+# if !defined __USE_FILE_OFFSET64 || defined __native_client__
 extern int truncate (__const char *__file, __off_t __length)
      __THROW __nonnull ((1)) __wur;
 # else
@@ -970,7 +970,7 @@ extern int __REDIRECT_NTH (truncate,
 # endif
 # ifdef __USE_LARGEFILE64
 extern int truncate64 (__const char *__file, __off64_t __length)
-     __THROW __nonnull ((1)) __wur;
+     NACL_LFS_ALIAS (truncate) __THROW __nonnull ((1)) __wur;
 # endif
 
 #endif /* Use BSD || X/Open Unix.  */
@@ -978,7 +978,7 @@ extern int truncate64 (__const char *__file, __off64_t __length)
 #if defined __USE_BSD || defined __USE_XOPEN_EXTENDED || defined __USE_XOPEN2K
 
 /* Truncate the file FD is open on to LENGTH bytes.  */
-# ifndef __USE_FILE_OFFSET64
+# if !defined __USE_FILE_OFFSET64 || defined __native_client__
 extern int ftruncate (int __fd, __off_t __length) __THROW __wur;
 # else
 #  ifdef __REDIRECT_NTH
@@ -989,7 +989,8 @@ extern int __REDIRECT_NTH (ftruncate, (int __fd, __off64_t __length),
 #  endif
 # endif
 # ifdef __USE_LARGEFILE64
-extern int ftruncate64 (int __fd, __off64_t __length) __THROW __wur;
+extern int ftruncate64 (int __fd, __off64_t __length)
+     NACL_LFS_ALIAS (ftruncate) __THROW __wur;
 # endif
 
 #endif /* Use BSD || X/Open Unix || POSIX 2003.  */
@@ -1042,7 +1043,7 @@ extern long int syscall (long int __sysno, ...) __THROW;
 # define F_TLOCK 2	/* Test and lock a region for exclusive use.  */
 # define F_TEST  3	/* Test a region for other processes locks.  */
 
-# ifndef __USE_FILE_OFFSET64
+# if !defined __USE_FILE_OFFSET64 || defined __native_client__
 extern int lockf (int __fd, int __cmd, __off_t __len) __wur;
 # else
 #  ifdef __REDIRECT
@@ -1053,7 +1054,8 @@ extern int __REDIRECT (lockf, (int __fd, int __cmd, __off64_t __len),
 #  endif
 # endif
 # ifdef __USE_LARGEFILE64
-extern int lockf64 (int __fd, int __cmd, __off64_t __len) __wur;
+extern int lockf64 (int __fd, int __cmd, __off64_t __len)
+     NACL_LFS_ALIAS (lockf) __wur;
 # endif
 #endif /* Use misc and F_LOCK not already defined.  */
 

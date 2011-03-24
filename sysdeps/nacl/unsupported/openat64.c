@@ -1,0 +1,1 @@
+/* openat64 is obsolete */

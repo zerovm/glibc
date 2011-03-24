@@ -19,6 +19,7 @@
 #include <errno.h>
 #include <sys/resource.h>
 #include <sys/types.h>
+#include <shlib-compat.h>
 
 /* Put the soft and hard limits for RESOURCE in *RLIMITS.
    Returns 0 if successful, -1 if not (and sets errno).  */
@@ -28,7 +29,7 @@ __getrlimit (enum __rlimit_resource resource, struct rlimit *rlimits)
   __set_errno (ENOSYS);
   return -1;
 }
-weak_alias (__getrlimit, getrlimit)
+weak_alias(__getrlimit, getrlimit)
 
 stub_warning (getrlimit)
 #include <stub-tag.h>

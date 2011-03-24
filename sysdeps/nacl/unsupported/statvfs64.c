@@ -1,0 +1,1 @@
+/* statvfs64 is obsolete */

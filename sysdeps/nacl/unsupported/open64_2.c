@@ -1,0 +1,1 @@
+/* __open64_2 is obsolete */

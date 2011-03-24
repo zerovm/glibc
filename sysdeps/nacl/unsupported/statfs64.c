@@ -1,0 +1,1 @@
+/* statfs64 is obsolete */

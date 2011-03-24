@@ -1,0 +1,1 @@
+/* fstatvfs64 is obsolete */

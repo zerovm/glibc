@@ -49,7 +49,8 @@ read (int __fd, void *__buf, size_t __nbytes)
 extern ssize_t __pread_chk (int __fd, void *__buf, size_t __nbytes,
 			    __off_t __offset, size_t __bufsize) __wur;
 extern ssize_t __pread64_chk (int __fd, void *__buf, size_t __nbytes,
-			      __off64_t __offset, size_t __bufsize) __wur;
+			      __off64_t __offset, size_t __bufsize) 
+     NACL_LFS_ALIAS(__pread_chk) __wur;
 extern ssize_t __REDIRECT (__pread_alias,
 			   (int __fd, void *__buf, size_t __nbytes,
 			    __off_t __offset), pread) __wur;

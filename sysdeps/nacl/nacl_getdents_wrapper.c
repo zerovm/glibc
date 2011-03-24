@@ -8,7 +8,7 @@ static const int d_name_shift = offsetof (DIRENT_TYPE, d_name) -
 /* Calls NACL_SYSCALL(getdents) and converts resulting buffer to glibc abi.
    This wrapper is required since glibc abi for DIRENT_TYPE differs from
    struct nacl_abi_dirent. */
-int __GETDENTS (int fd, char *buf, int buf_size)
+__ssize_t internal_function __GETDENTS (int fd, char *buf, size_t buf_size)
 {
   /* NACL_SYSCALL (getdents) fills buffer with overlapped structures
      nacl_abi_dirent. Right after d_reclen bytes of one structure end the next

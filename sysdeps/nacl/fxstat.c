@@ -47,4 +47,3 @@ hidden_def(__fxstat)
 #ifdef SHARED
 extern __typeof (__fxstat64) __fxstat64 __attribute__ ((alias ("__GI___fxstat")));
 #endif
-extern __typeof (__nacl_abi_stat_to_stat64) __nacl_abi_stat_to_stat64 __attribute__ ((alias ("__nacl_abi_stat_to_stat")));

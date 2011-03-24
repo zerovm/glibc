@@ -9,11 +9,13 @@ extern DIR *__opendir (__const char *__name);
 extern DIR *__fdopendir (int __fd);
 extern int __closedir (DIR *__dirp);
 extern struct dirent *__readdir (DIR *__dirp);
-extern struct dirent64 *__readdir64 (DIR *__dirp);
+extern struct dirent64 *__readdir64 (DIR *__dirp)
+     NACL_LFS_ALIAS (__readdir);
 extern int __readdir_r (DIR *__dirp, struct dirent *__entry,
 			struct dirent **__result);
 extern int __readdir64_r (DIR *__dirp, struct dirent64 *__entry,
-			  struct dirent64 **__result);
+			  struct dirent64 **__result)
+     NACL_LFS_ALIAS (__readdir_r);
 extern int __scandir64 (__const char * __dir,
 			struct dirent64 *** __namelist,
 			int (*__selector) (__const struct dirent64 *),

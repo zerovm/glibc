@@ -1,0 +1,1 @@
+/* __fxstatat64 is obsolete */

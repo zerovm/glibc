@@ -13,3 +13,4 @@
 
 #include <sysdeps/nacl/nacl_getdents_wrapper.c>
 #include <sysdeps/unix/readdir.c>
+strong_alias (nacl_getdents_wrapper, __getdents)

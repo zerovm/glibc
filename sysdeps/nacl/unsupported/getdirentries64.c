@@ -1,0 +1,1 @@
+/* getdirentries64 is obsolete */

@@ -1,0 +1,1 @@
+/* __old_setrlimit64 is obsolete */

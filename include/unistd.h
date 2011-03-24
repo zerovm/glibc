@@ -20,7 +20,8 @@ libc_hidden_proto (readlinkat)
 /* Now define the internal interfaces.  */
 extern int __access (__const char *__name, int __type);
 extern int __euidaccess (__const char *__name, int __type);
-extern __off64_t __lseek64 (int __fd, __off64_t __offset, int __whence);
+extern __off64_t __lseek64 (int __fd, __off64_t __offset, int __whence)
+     NACL_LFS_ALIAS (__lseek);
 extern __off_t __lseek (int __fd, __off_t __offset, int __whence);
 libc_hidden_proto (__lseek)
 extern __off_t __libc_lseek (int __fd, __off_t __offset, int __whence);
@@ -32,7 +33,8 @@ extern ssize_t __libc_pread (int __fd, void *__buf, size_t __nbytes,
 extern ssize_t __pread64 (int __fd, void *__buf, size_t __nbytes,
 			  __off64_t __offset);
 extern ssize_t __libc_pread64 (int __fd, void *__buf, size_t __nbytes,
-			       __off64_t __offset);
+			       __off64_t __offset)
+     NACL_LFS_ALIAS (__libc_pread);
 extern ssize_t __pwrite (int __fd, __const void *__buf, size_t __n,
 			 __off_t __offset);
 extern ssize_t __libc_pwrite (int __fd, __const void *__buf, size_t __n,
@@ -41,7 +43,8 @@ extern ssize_t __pwrite64 (int __fd, __const void *__buf, size_t __n,
 			   __off64_t __offset);
 libc_hidden_proto (__pwrite64)
 extern ssize_t __libc_pwrite64 (int __fd, __const void *__buf, size_t __n,
-				__off64_t __offset);
+				__off64_t __offset)
+     NACL_LFS_ALIAS (__libc_pwrite);
 extern ssize_t __libc_read (int __fd, void *__buf, size_t __n);
 libc_hidden_proto (__libc_read)
 extern ssize_t __libc_write (int __fd, __const void *__buf, size_t __n);
@@ -131,7 +134,8 @@ libc_hidden_proto (__fork)
 extern int __getpagesize (void) __attribute__ ((__const__));
 libc_hidden_proto (__getpagesize)
 extern int __ftruncate (int __fd, __off_t __length);
-extern int __ftruncate64 (int __fd, __off64_t __length);
+extern int __ftruncate64 (int __fd, __off64_t __length)
+     NACL_LFS_ALIAS (__ftruncate);
 extern int __truncate (const char *path, __off_t __length);
 extern void *__sbrk (intptr_t __delta);
 libc_hidden_proto (__sbrk)

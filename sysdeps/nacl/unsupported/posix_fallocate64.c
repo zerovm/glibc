@@ -1,0 +1,1 @@
+/* posix_fallocate64 is obsolete */

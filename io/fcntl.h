@@ -81,7 +81,7 @@ extern int fcntl (int __fd, int __cmd, ...);
 
    This function is a cancellation point and therefore not marked with
    __THROW.  */
-#ifndef __USE_FILE_OFFSET64
+#if !defined __USE_FILE_OFFSET64 || defined __native_client__
 extern int open (__const char *__file, int __oflag, ...) __nonnull ((1));
 #else
 # ifdef __REDIRECT
@@ -92,7 +92,8 @@ extern int __REDIRECT (open, (__const char *__file, int __oflag, ...), open64)
 # endif
 #endif
 #ifdef __USE_LARGEFILE64
-extern int open64 (__const char *__file, int __oflag, ...) __nonnull ((1));
+extern int open64 (__const char *__file, int __oflag, ...)
+     NACL_LFS_ALIAS (open) __nonnull ((1));
 #endif
 
 #ifdef __USE_ATFILE
@@ -105,7 +106,7 @@ extern int open64 (__const char *__file, int __oflag, ...) __nonnull ((1));
 
    This function is a cancellation point and therefore not marked with
    __THROW.  */
-# ifndef __USE_FILE_OFFSET64
+# if !defined __USE_FILE_OFFSET64 || defined __native_client__
 extern int openat (int __fd, __const char *__file, int __oflag, ...)
      __nonnull ((2));
 # else
@@ -118,7 +119,7 @@ extern int __REDIRECT (openat, (int __fd, __const char *__file, int __oflag,
 # endif
 
 extern int openat64 (int __fd, __const char *__file, int __oflag, ...)
-     __nonnull ((2));
+     NACL_LFS_ALIAS (openat) __nonnull ((2));
 #endif
 
 /* Create and open FILE, with mode MODE.  This takes an `int' MODE
@@ -126,7 +127,7 @@ extern int openat64 (int __fd, __const char *__file, int __oflag, ...)
 
    This function is a cancellation point and therefore not marked with
    __THROW.  */
-#ifndef __USE_FILE_OFFSET64
+#if !defined __USE_FILE_OFFSET64 || defined __native_client__
 extern int creat (__const char *__file, __mode_t __mode) __nonnull ((1));
 #else
 # ifdef __REDIRECT
@@ -137,7 +138,8 @@ extern int __REDIRECT (creat, (__const char *__file, __mode_t __mode),
 # endif
 #endif
 #ifdef __USE_LARGEFILE64
-extern int creat64 (__const char *__file, __mode_t __mode) __nonnull ((1));
+extern int creat64 (__const char *__file, __mode_t __mode)
+     NACL_LFS_ALIAS (creat) __nonnull ((1));
 #endif
 
 #if !defined F_LOCK && (defined __USE_MISC || (defined __USE_XOPEN_EXTENDED \
@@ -155,7 +157,7 @@ extern int creat64 (__const char *__file, __mode_t __mode) __nonnull ((1));
 # define F_TLOCK 2	/* Test and lock a region for exclusive use.  */
 # define F_TEST  3	/* Test a region for other processes locks.  */
 
-# ifndef __USE_FILE_OFFSET64
+# if !defined __USE_FILE_OFFSET64 || defined __native_client__
 extern int lockf (int __fd, int __cmd, __off_t __len);
 # else
 # ifdef __REDIRECT
@@ -165,14 +167,15 @@ extern int __REDIRECT (lockf, (int __fd, int __cmd, __off64_t __len), lockf64);
 # endif
 # endif
 # ifdef __USE_LARGEFILE64
-extern int lockf64 (int __fd, int __cmd, __off64_t __len);
+extern int lockf64 (int __fd, int __cmd, __off64_t __len)
+     NACL_LFS_ALIAS (lockf);
 # endif
 #endif
 
 #ifdef __USE_XOPEN2K
 /* Advice the system about the expected behaviour of the application with
    respect to the file associated with FD.  */
-# ifndef __USE_FILE_OFFSET64
+# if !defined __USE_FILE_OFFSET64 || defined __native_client__
 extern int posix_fadvise (int __fd, __off_t __offset, __off_t __len,
 			  int __advise) __THROW;
 # else
@@ -186,7 +189,8 @@ extern int __REDIRECT_NTH (posix_fadvise, (int __fd, __off64_t __offset,
 # endif
 # ifdef __USE_LARGEFILE64
 extern int posix_fadvise64 (int __fd, __off64_t __offset, __off64_t __len,
-			    int __advise) __THROW;
+			    int __advise)
+     NACL_LFS_ALIAS (posix_fadvise) __THROW;
 # endif
 
 
@@ -194,7 +198,7 @@ extern int posix_fadvise64 (int __fd, __off64_t __offset, __off64_t __len,
 
    This function is a possible cancellation points and therefore not
    marked with __THROW.  */
-# ifndef __USE_FILE_OFFSET64
+# if !defined __USE_FILE_OFFSET64 || defined __native_client__
 extern int posix_fallocate (int __fd, __off_t __offset, __off_t __len);
 # else
 # ifdef __REDIRECT
@@ -206,7 +210,8 @@ extern int __REDIRECT (posix_fallocate, (int __fd, __off64_t __offset,
 # endif
 # endif
 # ifdef __USE_LARGEFILE64
-extern int posix_fallocate64 (int __fd, __off64_t __offset, __off64_t __len);
+extern int posix_fallocate64 (int __fd, __off64_t __offset, __off64_t __len)
+     NACL_LFS_ALIAS (posix_fallocate);
 # endif
 #endif
 

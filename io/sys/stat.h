@@ -428,17 +428,16 @@ extern int __REDIRECT_NTH (__fxstatat, (int __ver, int __fildes,
 
 #ifdef __USE_LARGEFILE64
 extern int __fxstat64 (int __ver, int __fildes, struct stat64 *__stat_buf)
-#if defined __native_client__ && (!defined SHARED || defined NOT_IN_libc)
-     __asm__ ("__fxstat")
-#endif
-     __THROW __nonnull ((3));
+     NACL_LFS_PRIVATE_ALIAS(__fxstat) __THROW __nonnull ((3));
 extern int __xstat64 (int __ver, __const char *__filename,
-		      struct stat64 *__stat_buf) __THROW __nonnull ((2, 3));
+		      struct stat64 *__stat_buf)
+     NACL_LFS_PRIVATE_ALIAS(__xstat) __THROW __nonnull ((2, 3));
 extern int __lxstat64 (int __ver, __const char *__filename,
-		       struct stat64 *__stat_buf) __THROW __nonnull ((2, 3));
+		       struct stat64 *__stat_buf)
+     NACL_LFS_PRIVATE_ALIAS(__lxstat) __THROW __nonnull ((2, 3));
 extern int __fxstatat64 (int __ver, int __fildes, __const char *__filename,
 			 struct stat64 *__stat_buf, int __flag)
-     __THROW __nonnull ((3, 4));
+     NACL_LFS_PRIVATE_ALIAS(__fxstatat) __THROW __nonnull ((3, 4));
 #endif
 extern int __xmknod (int __ver, __const char *__path, __mode_t __mode,
 		     __dev_t *__dev) __THROW __nonnull ((2, 4));

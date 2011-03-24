@@ -1,0 +1,1 @@
+/* fstatfs64 is obsolete */

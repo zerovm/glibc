@@ -28,7 +28,7 @@
 __BEGIN_DECLS
 
 /* Return information about the filesystem on which FILE resides.  */
-#ifndef __USE_FILE_OFFSET64
+#if !defined __USE_FILE_OFFSET64 || defined __native_client__
 extern int statfs (__const char *__file, struct statfs *__buf)
      __THROW __nonnull ((1, 2));
 #else
@@ -42,12 +42,12 @@ extern int __REDIRECT_NTH (statfs,
 #endif
 #ifdef __USE_LARGEFILE64
 extern int statfs64 (__const char *__file, struct statfs64 *__buf)
-     __THROW __nonnull ((1, 2));
+     NACL_LFS_ALIAS (statfs) __THROW __nonnull ((1, 2));
 #endif
 
 /* Return information about the filesystem containing the file FILDES
    refers to.  */
-#ifndef __USE_FILE_OFFSET64
+#if !defined __USE_FILE_OFFSET64 || defined __native_client__
 extern int fstatfs (int __fildes, struct statfs *__buf)
      __THROW __nonnull ((2));
 #else
@@ -60,7 +60,7 @@ extern int __REDIRECT_NTH (fstatfs, (int __fildes, struct statfs *__buf),
 #endif
 #ifdef __USE_LARGEFILE64
 extern int fstatfs64 (int __fildes, struct statfs64 *__buf)
-     __THROW __nonnull ((2));
+     NACL_LFS_ALIAS (fstatfs) __THROW __nonnull ((2));
 #endif
 
 __END_DECLS

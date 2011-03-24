@@ -168,7 +168,7 @@ __BEGIN_NAMESPACE_STD
 
    This function is a possible cancellation points and therefore not
    marked with __THROW.  */
-#ifndef __USE_FILE_OFFSET64
+#if !defined __USE_FILE_OFFSET64 || defined __native_client__
 extern FILE *tmpfile (void) __wur;
 #else
 # ifdef __REDIRECT
@@ -179,7 +179,7 @@ extern FILE *__REDIRECT (tmpfile, (void), tmpfile64) __wur;
 #endif
 
 #ifdef __USE_LARGEFILE64
-extern FILE *tmpfile64 (void) __wur;
+extern FILE *tmpfile64 (void) NACL_LFS_ALIAS (tmpfile) __wur;
 #endif
 
 /* Generate a temporary filename.  */
@@ -241,7 +241,7 @@ extern int fcloseall (void);
 
 
 __BEGIN_NAMESPACE_STD
-#ifndef __USE_FILE_OFFSET64
+#if !defined __USE_FILE_OFFSET64 || defined __native_client__
 /* Open a file and create a new stream for it.
 
    This function is a possible cancellation point and therefore not
@@ -272,10 +272,12 @@ extern FILE *__REDIRECT (freopen, (__const char *__restrict __filename,
 __END_NAMESPACE_STD
 #ifdef __USE_LARGEFILE64
 extern FILE *fopen64 (__const char *__restrict __filename,
-		      __const char *__restrict __modes) __wur;
+		      __const char *__restrict __modes)
+     NACL_LFS_PRIVATE_ALIAS (fopen) __wur;
 extern FILE *freopen64 (__const char *__restrict __filename,
 			__const char *__restrict __modes,
-			FILE *__restrict __stream) __wur;
+			FILE *__restrict __stream)
+     NACL_LFS_PRIVATE_ALIAS (freopen) __wur;
 #endif
 
 #ifdef	__USE_POSIX
@@ -734,7 +736,7 @@ __END_NAMESPACE_STD
    are originally defined in the Large File Support API.  */
 
 #if defined __USE_LARGEFILE || defined __USE_XOPEN2K
-# ifndef __USE_FILE_OFFSET64
+# if !defined __USE_FILE_OFFSET64 || defined __native_client__
 /* Seek to a certain position on STREAM.
 
    This function is a possible cancellation point and therefore not
@@ -759,7 +761,7 @@ extern __off64_t __REDIRECT (ftello, (FILE *__stream), ftello64);
 #endif
 
 __BEGIN_NAMESPACE_STD
-#ifndef __USE_FILE_OFFSET64
+#if !defined __USE_FILE_OFFSET64 || defined __native_client__
 /* Get STREAM's position.
 
    This function is a possible cancellation point and therefore not
@@ -784,10 +786,14 @@ extern int __REDIRECT (fsetpos,
 __END_NAMESPACE_STD
 
 #ifdef __USE_LARGEFILE64
-extern int fseeko64 (FILE *__stream, __off64_t __off, int __whence);
-extern __off64_t ftello64 (FILE *__stream) __wur;
-extern int fgetpos64 (FILE *__restrict __stream, fpos64_t *__restrict __pos);
-extern int fsetpos64 (FILE *__stream, __const fpos64_t *__pos);
+extern int fseeko64 (FILE *__stream, __off64_t __off, int __whence)
+     NACL_LFS_ALIAS (fseeko);
+extern __off64_t ftello64 (FILE *__stream)
+     NACL_LFS_ALIAS (ftello) __wur;
+extern int fgetpos64 (FILE *__restrict __stream, fpos64_t *__restrict __pos)
+     NACL_LFS_ALIAS (fgetpos);
+extern int fsetpos64 (FILE *__stream, __const fpos64_t *__pos)
+     NACL_LFS_ALIAS (fsetpos);
 #endif
 
 __BEGIN_NAMESPACE_STD

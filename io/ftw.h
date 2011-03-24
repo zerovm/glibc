@@ -133,7 +133,7 @@ typedef int (*__nftw64_func_t) (__const char *__filename,
 
    This function is a possible cancellation point and therefore not
    marked with __THROW.  */
-#ifndef __USE_FILE_OFFSET64
+#if !defined __USE_FILE_OFFSET64 || defined __native_client__
 extern int ftw (__const char *__dir, __ftw_func_t __func, int __descriptors)
      __nonnull ((1, 2));
 #else
@@ -146,7 +146,7 @@ extern int __REDIRECT (ftw, (__const char *__dir, __ftw_func_t __func,
 #endif
 #ifdef __USE_LARGEFILE64
 extern int ftw64 (__const char *__dir, __ftw64_func_t __func,
-		  int __descriptors) __nonnull ((1, 2));
+		  int __descriptors) __nonnull ((1, 2)) NACL_LFS_ALIAS(ftw);
 #endif
 
 #ifdef __USE_XOPEN_EXTENDED
@@ -155,7 +155,7 @@ extern int ftw64 (__const char *__dir, __ftw64_func_t __func,
 
    This function is a possible cancellation point and therefore not
    marked with __THROW.  */
-# ifndef __USE_FILE_OFFSET64
+# if !defined __USE_FILE_OFFSET64 || defined __native_client__
 extern int nftw (__const char *__dir, __nftw_func_t __func, int __descriptors,
 		 int __flag) __nonnull ((1, 2));
 # else
@@ -169,7 +169,8 @@ extern int __REDIRECT (nftw, (__const char *__dir, __nftw_func_t __func,
 # endif
 # ifdef __USE_LARGEFILE64
 extern int nftw64 (__const char *__dir, __nftw64_func_t __func,
-		   int __descriptors, int __flag) __nonnull ((1, 2));
+		   int __descriptors, int __flag) __nonnull ((1, 2))
+     NACL_LFS_ALIAS(nftw);
 # endif
 #endif
 

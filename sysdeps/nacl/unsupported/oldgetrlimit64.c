@@ -1,0 +1,1 @@
+/* __old_getrlimit64 is obsolete */

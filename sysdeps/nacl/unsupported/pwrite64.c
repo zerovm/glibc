@@ -1,0 +1,1 @@
+/* pwrite64 is obsolete */

@@ -1,0 +1,1 @@
+/* tmpfile64 is obsolete */

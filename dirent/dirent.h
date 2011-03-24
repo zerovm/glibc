@@ -159,7 +159,7 @@ extern int closedir (DIR *__dirp) __nonnull ((1));
 
    This function is a possible cancellation point and therefore not
    marked with __THROW.  */
-#ifndef __USE_FILE_OFFSET64
+#if !defined __USE_FILE_OFFSET64 || defined __native_client__
 extern struct dirent *readdir (DIR *__dirp) __nonnull ((1));
 #else
 # ifdef __REDIRECT
@@ -171,7 +171,8 @@ extern struct dirent *__REDIRECT (readdir, (DIR *__dirp), readdir64)
 #endif
 
 #ifdef __USE_LARGEFILE64
-extern struct dirent64 *readdir64 (DIR *__dirp) __nonnull ((1));
+extern struct dirent64 *readdir64 (DIR *__dirp) NACL_LFS_ALIAS (readdir)
+     __nonnull ((1));
 #endif
 
 #if defined __USE_POSIX || defined __USE_MISC
@@ -180,7 +181,7 @@ extern struct dirent64 *readdir64 (DIR *__dirp) __nonnull ((1));
 
    This function is a possible cancellation point and therefore not
    marked with __THROW.  */
-# ifndef __USE_FILE_OFFSET64
+# if !defined __USE_FILE_OFFSET64 || defined __native_client__
 extern int readdir_r (DIR *__restrict __dirp,
 		      struct dirent *__restrict __entry,
 		      struct dirent **__restrict __result)
@@ -201,7 +202,7 @@ extern int __REDIRECT (readdir_r,
 extern int readdir64_r (DIR *__restrict __dirp,
 			struct dirent64 *__restrict __entry,
 			struct dirent64 **__restrict __result)
-     __nonnull ((1, 2, 3));
+     NACL_LFS_ALIAS (readdir_r) __nonnull ((1, 2, 3));
 # endif
 #endif	/* POSIX or misc */
 
@@ -246,7 +247,7 @@ extern int dirfd (DIR *__dirp) __THROW __nonnull ((1));
    Entries for which SELECT returns nonzero are individually malloc'd,
    sorted using qsort with CMP, and collected in a malloc'd array in
    *NAMELIST.  Returns the number of entries selected, or -1 on error.  */
-# ifndef __USE_FILE_OFFSET64
+# if !defined __USE_FILE_OFFSET64 || defined __native_client__
 extern int scandir (__const char *__restrict __dir,
 		    struct dirent ***__restrict __namelist,
 		    int (*__selector) (__const struct dirent *),
@@ -272,11 +273,11 @@ extern int scandir64 (__const char *__restrict __dir,
 		      struct dirent64 ***__restrict __namelist,
 		      int (*__selector) (__const struct dirent64 *),
 		      int (*__cmp) (__const void *, __const void *))
-     __nonnull ((1, 2));
+     NACL_LFS_ALIAS (scandir) __nonnull ((1, 2));
 # endif
 
 /* Function to compare two `struct dirent's alphabetically.  */
-# ifndef __USE_FILE_OFFSET64
+# if !defined __USE_FILE_OFFSET64 || defined __native_client__
 extern int alphasort (__const void *__e1, __const void *__e2)
      __THROW __attribute_pure__ __nonnull ((1, 2));
 # else
@@ -291,12 +292,13 @@ extern int __REDIRECT_NTH (alphasort,
 
 # if defined __USE_GNU && defined __USE_LARGEFILE64
 extern int alphasort64 (__const void *__e1, __const void *__e2)
+     NACL_LFS_ALIAS (alphasort)
      __THROW __attribute_pure__ __nonnull ((1, 2));
 # endif
 
 # ifdef __USE_GNU
 /* Function to compare two `struct dirent's by name & version.  */
-#  ifndef __USE_FILE_OFFSET64
+#  if !defined __USE_FILE_OFFSET64 || defined __native_client__
 extern int versionsort (__const void *__e1, __const void *__e2)
      __THROW __attribute_pure__ __nonnull ((1, 2));
 #  else
@@ -312,6 +314,7 @@ extern int __REDIRECT_NTH (versionsort,
 
 #  ifdef __USE_LARGEFILE64
 extern int versionsort64 (__const void *__e1, __const void *__e2)
+     NACL_LFS_ALIAS (versionsort)
      __THROW __attribute_pure__ __nonnull ((1, 2));
 #  endif
 # endif
@@ -320,7 +323,7 @@ extern int versionsort64 (__const void *__e1, __const void *__e2)
    Reading starts at offset *BASEP, and *BASEP is updated with the new
    position after reading.  Returns the number of bytes read; zero when at
    end of directory; or -1 for errors.  */
-# ifndef __USE_FILE_OFFSET64
+# if !defined __USE_FILE_OFFSET64 || defined __native_client__
 extern __ssize_t getdirentries (int __fd, char *__restrict __buf,
 				size_t __nbytes,
 				__off_t *__restrict __basep)
@@ -341,6 +344,7 @@ extern __ssize_t __REDIRECT_NTH (getdirentries,
 extern __ssize_t getdirentries64 (int __fd, char *__restrict __buf,
 				  size_t __nbytes,
 				  __off64_t *__restrict __basep)
+     NACL_LFS_ALIAS (getdirentries)
      __THROW __nonnull ((2, 4));
 # endif
 

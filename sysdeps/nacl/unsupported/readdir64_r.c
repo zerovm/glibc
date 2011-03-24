@@ -1,0 +1,1 @@
+/* readdir64_r is obsolete */

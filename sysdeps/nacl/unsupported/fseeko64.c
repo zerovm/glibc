@@ -1,0 +1,1 @@
+/* fseeko64 is obsolete*/

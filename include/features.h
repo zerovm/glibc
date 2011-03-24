@@ -125,6 +125,25 @@
 # endif
 #endif
 
+/* In Native Client all file functions work with 64-bit offsets. So we define
+   macro for aliasing file functions with suffix 64 to file functions without
+   one. */
+#ifdef __native_client__
+# define NACL_LFS_ALIAS(func_name) __asm__ (#func_name)
+#else
+# define NACL_LFS_ALIAS(func_name)
+#endif
+
+/* In some cases glibc aliases func to __GI_func so that internal usage
+   does not need dynamic tables. This is only done for shared objects so
+   we need to use other aliasing scheme there (a function can have two
+   different assembler names). */
+#if defined __native_client__ && (!defined SHARED || defined NOT_IN_libc)
+# define NACL_LFS_PRIVATE_ALIAS(func_name) __asm__ (#func_name)
+#else
+# define NACL_LFS_PRIVATE_ALIAS(func_name)
+#endif
+
 /* Suppress kernel-name space pollution unless user expressedly asks
    for it.  */
 #ifndef _LOOSE_KERNEL_NAMES

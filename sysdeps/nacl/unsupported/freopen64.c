@@ -1,0 +1,1 @@
+/* freopen64 is obsolete. */

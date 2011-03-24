@@ -29,7 +29,8 @@ extern pid_t __waitpid_nocancel (pid_t, int *, int) attribute_hidden;
 extern int __openat_nocancel (int fd, const char *fname, int oflag,
 				mode_t mode) attribute_hidden;
 extern int __openat64_nocancel (int fd, const char *fname, int oflag,
-				  mode_t mode) attribute_hidden;
+				  mode_t mode)
+     NACL_LFS_ALIAS (__openat_nocancel) attribute_hidden;
 #else
 # define __open_nocancel(name, ...) __open (name, __VA_ARGS__)
 # define __close_nocancel(fd) __close (fd)

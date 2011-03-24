@@ -26,3 +26,6 @@ int __xstat (int version, const char *path, struct stat *buf)
     }
 }
 libc_hidden_def (__xstat)
+#ifdef SHARED
+extern __typeof (__xstat64) __xstat64 __attribute__ ((alias ("__GI___xstat")));
+#endif

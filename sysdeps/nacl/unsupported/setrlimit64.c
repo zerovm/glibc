@@ -1,0 +1,1 @@
+/* setrlimit64 is obsolete */

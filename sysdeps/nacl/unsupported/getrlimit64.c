@@ -1,0 +1,1 @@
+/* getrlimit64 is obsolete */

@@ -1,0 +1,1 @@
+/* mmap64 is obsolete */

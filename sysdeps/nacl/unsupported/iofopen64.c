@@ -1,0 +1,1 @@
+/* fopen64 is obsolete.*/

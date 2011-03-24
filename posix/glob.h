@@ -155,7 +155,7 @@ typedef struct
    `glob' returns GLOB_ABEND; if it returns zero, the error is ignored.
    If memory cannot be allocated for PGLOB, GLOB_NOSPACE is returned.
    Otherwise, `glob' returns zero.  */
-#if !defined __USE_FILE_OFFSET64 || __GNUC__ < 2
+#if !defined __USE_FILE_OFFSET64 || __GNUC__ < 2 || defined __native_client__
 extern int glob (__const char *__restrict __pattern, int __flags,
 		 int (*__errfunc) (__const char *, int),
 		 glob_t *__restrict __pglob) __THROW;
@@ -174,9 +174,11 @@ extern void __REDIRECT_NTH (globfree, (glob_t *__pglob), globfree64);
 #ifdef __USE_LARGEFILE64
 extern int glob64 (__const char *__restrict __pattern, int __flags,
 		   int (*__errfunc) (__const char *, int),
-		   glob64_t *__restrict __pglob) __THROW;
+		   glob64_t *__restrict __pglob)
+     NACL_LFS_ALIAS (glob) __THROW;
 
-extern void globfree64 (glob64_t *__pglob) __THROW;
+extern void globfree64 (glob64_t *__pglob)
+     NACL_LFS_ALIAS (globfree) __THROW;
 #endif
 
 

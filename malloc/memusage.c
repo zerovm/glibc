@@ -616,6 +616,7 @@ mmap (void *start, size_t len, int prot, int flags, int fd, off_t offset)
 
 /* `mmap' replacement.  We do not have to keep track of the sizesince
    `munmap' will get it as a parameter.  */
+#ifndef __native_client__
 void *
 mmap64 (void *start, size_t len, int prot, int flags, int fd, off64_t offset)
 {
@@ -664,6 +665,7 @@ mmap64 (void *start, size_t len, int prot, int flags, int fd, off64_t offset)
   /* Return the pointer to the user buffer.  */
   return result;
 }
+#endif
 
 
 /* `mmap' replacement.  We do not have to keep track of the sizesince

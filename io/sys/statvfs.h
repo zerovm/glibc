@@ -48,7 +48,7 @@ typedef __fsfilcnt64_t fsfilcnt_t; /* Type to count file system inodes.  */
 __BEGIN_DECLS
 
 /* Return information about the filesystem on which FILE resides.  */
-#ifndef __USE_FILE_OFFSET64
+#if !defined __USE_FILE_OFFSET64 || defined __native_client__
 extern int statvfs (__const char *__restrict __file,
 		    struct statvfs *__restrict __buf)
      __THROW __nonnull ((1, 2));
@@ -65,12 +65,12 @@ extern int __REDIRECT_NTH (statvfs,
 #ifdef __USE_LARGEFILE64
 extern int statvfs64 (__const char *__restrict __file,
 		      struct statvfs64 *__restrict __buf)
-     __THROW __nonnull ((1, 2));
+     NACL_LFS_ALIAS(statvfs) __THROW __nonnull ((1, 2));
 #endif
 
 /* Return information about the filesystem containing the file FILDES
    refers to.  */
-#ifndef __USE_FILE_OFFSET64
+#if !defined __USE_FILE_OFFSET64 || defined __native_client__
 extern int fstatvfs (int __fildes, struct statvfs *__buf)
      __THROW __nonnull ((2));
 #else
@@ -83,7 +83,7 @@ extern int __REDIRECT_NTH (fstatvfs, (int __fildes, struct statvfs *__buf),
 #endif
 #ifdef __USE_LARGEFILE64
 extern int fstatvfs64 (int __fildes, struct statvfs64 *__buf)
-     __THROW __nonnull ((2));
+     NACL_LFS_ALIAS(fstatvfs) __THROW __nonnull ((2));
 #endif
 
 __END_DECLS

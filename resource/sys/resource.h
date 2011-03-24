@@ -47,7 +47,7 @@ typedef int __priority_which_t;
 
 /* Put the soft and hard limits for RESOURCE in *RLIMITS.
    Returns 0 if successful, -1 if not (and sets errno).  */
-#ifndef __USE_FILE_OFFSET64
+#if !defined __USE_FILE_OFFSET64 || defined __native_client__
 extern int getrlimit (__rlimit_resource_t __resource,
 		      struct rlimit *__rlimits) __THROW;
 #else
@@ -60,13 +60,14 @@ extern int __REDIRECT_NTH (getrlimit, (__rlimit_resource_t __resource,
 #endif
 #ifdef __USE_LARGEFILE64
 extern int getrlimit64 (__rlimit_resource_t __resource,
-			struct rlimit64 *__rlimits) __THROW;
+			struct rlimit64 *__rlimits) 
+     NACL_LFS_ALIAS (getrlimit) __THROW;
 #endif
 
 /* Set the soft and hard limits for RESOURCE to *RLIMITS.
    Only the super-user can increase hard limits.
    Return 0 if successful, -1 if not (and sets errno).  */
-#ifndef __USE_FILE_OFFSET64
+#if !defined __USE_FILE_OFFSET64 || defined __native_client__
 extern int setrlimit (__rlimit_resource_t __resource,
 		      __const struct rlimit *__rlimits) __THROW;
 #else
@@ -80,7 +81,8 @@ extern int __REDIRECT_NTH (setrlimit, (__rlimit_resource_t __resource,
 #endif
 #ifdef __USE_LARGEFILE64
 extern int setrlimit64 (__rlimit_resource_t __resource,
-			__const struct rlimit64 *__rlimits) __THROW;
+			__const struct rlimit64 *__rlimits)
+     NACL_LFS_ALIAS (setrlimit) __THROW;
 #endif
 
 /* Return resource usage information on process indicated by WHO
