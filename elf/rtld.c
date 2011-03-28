@@ -587,7 +587,7 @@ _dl_start (void *arg)
         *(argc_type *) arg = argc;
 
         char **argv = (char **) ((argc_type *) arg + 1);
-        char **envp = argv + argc;
+        char **envp = argv + argc + 1;
         _dl_init (main_map, argc, argv, envp);
 
         jump_to_elf_start (arg, entry_point, (uintptr_t) _dl_fini);
