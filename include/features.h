@@ -189,7 +189,11 @@
 # undef  _XOPEN_SOURCE_EXTENDED
 # define _XOPEN_SOURCE_EXTENDED	1
 # undef	 _LARGEFILE64_SOURCE
-# define _LARGEFILE64_SOURCE	1
+/* Native client applications shouldn't use functions with 64 suffix.
+   Unfortunately, we can't make glibc itself to live without them. */
+# if !defined __native_client__ || defined _LIBC
+#  define _LARGEFILE64_SOURCE	1
+# endif
 # undef  _BSD_SOURCE
 # define _BSD_SOURCE	1
 # undef  _SVID_SOURCE
