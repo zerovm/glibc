@@ -30,7 +30,7 @@ __BEGIN_DECLS
    following the read bytes.  If OFFSET is a null pointer, use the normal
    file position instead.  Return the number of written bytes, or -1 in
    case of error.  */
-#ifndef __USE_FILE_OFFSET64
+#if !defined __USE_FILE_OFFSET64 || defined __native_client__
 extern ssize_t sendfile (int __out_fd, int __in_fd, off_t *__offset,
 			 size_t __count) __THROW;
 #else
@@ -44,7 +44,7 @@ extern ssize_t __REDIRECT_NTH (sendfile,
 #endif
 #ifdef __USE_LARGEFILE64
 extern ssize_t sendfile64 (int __out_fd, int __in_fd, __off64_t *__offset,
-			   size_t __count) __THROW;
+			   size_t __count) NACL_LFS_ALIAS(sendfile) __THROW;
 #endif
 
 __END_DECLS

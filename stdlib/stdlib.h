@@ -590,7 +590,7 @@ extern char *mktemp (char *__template) __THROW __nonnull ((1)) __wur;
 
    This function is a possible cancellation points and therefore not
    marked with __THROW.  */
-# ifndef __USE_FILE_OFFSET64
+# if !defined __USE_FILE_OFFSET64 || defined __native_client__
 extern int mkstemp (char *__template) __nonnull ((1)) __wur;
 # else
 #  ifdef __REDIRECT
@@ -601,7 +601,8 @@ extern int __REDIRECT (mkstemp, (char *__template), mkstemp64)
 #  endif
 # endif
 # ifdef __USE_LARGEFILE64
-extern int mkstemp64 (char *__template) __nonnull ((1)) __wur;
+extern int mkstemp64 (char *__template)
+     NACL_LFS_ALIAS(mkstemp) __nonnull ((1)) __wur;
 # endif
 #endif
 
@@ -621,7 +622,7 @@ extern char *mkdtemp (char *__template) __THROW __nonnull ((1)) __wur;
 
    This function is a possible cancellation points and therefore not
    marked with __THROW.  */
-# ifndef __USE_FILE_OFFSET64
+# if !defined __USE_FILE_OFFSET64 || defined __native_client__
 extern int mkostemp (char *__template, int __flags) __nonnull ((1)) __wur;
 # else
 #  ifdef __REDIRECT
@@ -632,7 +633,8 @@ extern int __REDIRECT (mkostemp, (char *__template, int __flags), mkostemp64)
 #  endif
 # endif
 # ifdef __USE_LARGEFILE64
-extern int mkostemp64 (char *__template, int __flags) __nonnull ((1)) __wur;
+extern int mkostemp64 (char *__template, int __flags) 
+     NACL_LFS_ALIAS(mkostemp) __nonnull ((1)) __wur;
 # endif
 #endif
 
