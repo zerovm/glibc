@@ -189,19 +189,19 @@ int __nacl_futex_wake_op (volatile int *addr1, volatile int *addr2,
   switch (futex_operation.decoded_wake_op_operation.operation)
     {
       case 0/*FUTEX_OP_SET*/:
-	old_value = __sync_lock_test_and_set (addr1, operation_argument);
+	old_value = __sync_lock_test_and_set (addr2, operation_argument);
 	break;
       case 1/*FUTEX_OP_ADD*/:
-	old_value = __sync_fetch_and_add (addr1, operation_argument);
+	old_value = __sync_fetch_and_add (addr2, operation_argument);
 	break;
       case 2/*FUTEX_OP_OR*/:
-	old_value = __sync_fetch_and_or (addr1, operation_argument);
+	old_value = __sync_fetch_and_or (addr2, operation_argument);
 	break;
       case 3/*FUTEX_OP_ANDN*/:
-	old_value = __sync_fetch_and_and (addr1, ~operation_argument);
+	old_value = __sync_fetch_and_and (addr2, ~operation_argument);
 	break;
       case 4/*FUTEX_OP_XOR*/:
-	old_value = __sync_fetch_and_xor (addr1, operation_argument);
+	old_value = __sync_fetch_and_xor (addr2, operation_argument);
 	break;
       default:
 	retcode = -ENOSYS;
@@ -242,7 +242,7 @@ int __nacl_futex_wake_op (volatile int *addr1, volatile int *addr2,
   retcode = nacl_futex_wake_nolock (addr1, nwake1, __FUTEX_BITSET_MATCH_ANY);
 
   if (old_value)
-    retcode += nacl_futex_wake_nolock (addr1, nwake1, __FUTEX_BITSET_MATCH_ANY);
+    retcode += nacl_futex_wake_nolock (addr2, nwake2, __FUTEX_BITSET_MATCH_ANY);
 
 ret_unlock:
   /* Cannot really do anything if error happens here.  */
