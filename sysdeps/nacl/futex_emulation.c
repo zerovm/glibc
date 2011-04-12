@@ -37,15 +37,12 @@ int __nacl_futex_wait (volatile int *addr, int val, unsigned int bitset,
     {
       struct thread_wait_list_node *self = &THREAD_SELF->thread_wait_list_node;
 
-      if (!self->descs_are_initialized)
+      if (!self->desc_is_initialized)
 	{
-	  self->mutex_desc = NACL_SYSCALL (mutex_create) ();
-	  if (self->mutex_desc < 0)
-	    goto ret_unlock;
 	  self->condvar_desc = NACL_SYSCALL (cond_create) ();
 	  if (self->condvar_desc < 0)
 	    goto ret_unlock;
-	  self->descs_are_initialized = 1;
+	  self->desc_is_initialized = 1;
 	}
 
       self->addr = addr;
@@ -53,27 +50,10 @@ int __nacl_futex_wait (volatile int *addr, int val, unsigned int bitset,
 
       list_add_tail (&self->list, &waiters_list);
 
-      if (NACL_SYSCALL (mutex_lock) (self->mutex_desc))
-	{
-	  list_del (&self->list);
-
-	  /* Cannot really do anything if error happens here.  */
-	  NACL_SYSCALL (mutex_unlock) (global_futex_emulation_mutex_desc);
-	  goto ret_no_unlock;
-	}
-
-      if (NACL_SYSCALL (mutex_unlock) (global_futex_emulation_mutex_desc))
-	{
-	  /* Cannot really do anything if error happens here.  */
-	  NACL_SYSCALL (mutex_unlock) (self->mutex_desc);
-	  goto ret_no_unlock;
-	}
-
       if (timeout)
 	{
-	  retcode = NACL_SYSCALL (cond_timed_wait_abs) (self->condvar_desc,
-							self->mutex_desc,
-							timeout);
+	  retcode = NACL_SYSCALL (cond_timed_wait_abs) (
+	      self->condvar_desc, global_futex_emulation_mutex_desc, timeout);
 	  /* TODO(khim): Do something about linux<->NaCl error codes mix.  */
 	  if (retcode == -116)
 	    retcode = -ETIMEDOUT;
@@ -89,13 +69,16 @@ int __nacl_futex_wait (volatile int *addr, int val, unsigned int bitset,
 	       2. We don't actually have a clue what we are trying to achieve
 	          here.  Only higher level code does - and it usually contains
 	          the loop.  */
-	  if (NACL_SYSCALL (cond_wait) (self->condvar_desc, self->mutex_desc))
+	  if (NACL_SYSCALL (cond_wait) (self->condvar_desc,
+					global_futex_emulation_mutex_desc))
 	    retcode = -EINTR;
 	  else
 	    retcode = 0;
 	}
+      if (self->list.next)
+        list_del (&self->list);
       /* Cannot really do anything if error happens here.  */
-      NACL_SYSCALL (mutex_unlock) (self->mutex_desc);
+      NACL_SYSCALL (mutex_unlock) (global_futex_emulation_mutex_desc);
       return retcode;
     }
 
@@ -106,6 +89,7 @@ ret_no_unlock:
   return retcode;
 }
 
+/* Note: global_futex_emulation_mutex_desc must be taken when called.  */
 static int nacl_futex_wake_nolock (volatile int *addr, int nwake,
 				   unsigned int bitset)
 {
@@ -124,17 +108,15 @@ static int nacl_futex_wake_nolock (volatile int *addr, int nwake,
 
       if ((curr->addr == addr) && (curr->bitset & bitset))
 	{
-	  if (!NACL_SYSCALL (mutex_lock) (curr->mutex_desc))
-	    {
-	      list_del (entry);
-	      /* Cannot really do anything if error happens here.  */
-	      NACL_SYSCALL (cond_signal) (curr->condvar_desc);
-	      NACL_SYSCALL (mutex_unlock) (curr->mutex_desc);
-	      retcode++;
-	      nwake--;
-	      if (nwake <= 0)
-	        return retcode;
-	    }
+	  list_del (entry);
+	  /* Mark the list entry as freed */
+	  entry->next = NULL;
+	  /* Cannot really do anything if error happens here.  */
+	  NACL_SYSCALL (cond_signal) (curr->condvar_desc);
+	  retcode++;
+	  nwake--;
+	  if (nwake <= 0)
+	    return retcode;
 	}
     }
 

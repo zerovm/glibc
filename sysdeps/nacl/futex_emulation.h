@@ -11,9 +11,8 @@ struct thread_wait_list_node
   list_t list;
   volatile int *addr;
   unsigned int bitset;
-  int mutex_desc;
   int condvar_desc;
-  bool descs_are_initialized;
+  bool desc_is_initialized;
 };
 
 #define __FUTEX_BITSET_MATCH_ANY 0xFFFFFFFF
