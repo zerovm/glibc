@@ -7,7 +7,13 @@ elide-routines.os += hp-timing
 endif
 
 ifeq ($(subdir),gmon)
-sysdep_routines += _mcount
+# We cannot support the _mcount ABI mandate correctly in Native Client
+# without compiler changes.  The vanilla mandate is that calling _mcount
+# preserve all caller registers, but NaCl code cannot even return without
+# using a scratch register, so this is impossible.  By just omitting _mcount
+# from the build, we ensure that anyone building with -pg will get a simple
+# link-time error.
+#sysdep_routines += _mcount
 endif
 
 ifeq ($(subdir),string)

@@ -12,7 +12,13 @@ CFLAGS-initfini.s += -march=i386 -mtune=i386
 endif
 
 ifeq ($(subdir),gmon)
-sysdep_routines += i386-mcount
+# We cannot support the _mcount ABI mandate correctly in Native Client
+# without compiler changes.  The vanilla mandate is that calling i386-mcount
+# preserve all caller registers, but NaCl code cannot even return without
+# using a scratch register, so this is impossible.  By just omitting
+# i386-mcount from the build, we ensure that anyone building with -pg will
+# get a simple link-time error.
+#sysdep_routines += i386-mcount
 endif
 
 ifeq ($(subdir),elf)
