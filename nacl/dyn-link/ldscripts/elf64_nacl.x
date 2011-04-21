@@ -3,6 +3,7 @@ OUTPUT_FORMAT("elf64-nacl", "elf64-nacl",
 	      "elf64-nacl")
 OUTPUT_ARCH(i386:x86-64)
 ENTRY(_start)
+SEARCH_DIR("=/usr/local/lib"); SEARCH_DIR("=/lib"); SEARCH_DIR("=/usr/lib");
 PHDRS
 {
   seg_code     PT_LOAD FLAGS(5) ;       /* read + execute */
