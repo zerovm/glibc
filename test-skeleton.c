@@ -193,7 +193,11 @@ timeout_handler (int sig __attribute__ ((unused)))
 int
 main (int argc, char *argv[])
 {
+#ifndef __native_client__
   int direct = 0;	/* Directly call the test function?  */
+#else
+  int direct = 1;	/* In Native Client fork is not implemented.  */
+#endif
   int status;
   int opt;
   unsigned int timeoutfactor = 1;

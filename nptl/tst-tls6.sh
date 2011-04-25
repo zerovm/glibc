@@ -18,6 +18,10 @@ export LANG
 > $logfile
 fail=0
 
+# All tests excluded for NaCl are marked as EXCLUDED_IN_NACL in output log.
+echo "nptl/tst-tls6.sh EXCLUDED_IN_NACL"
+exit 0
+
 for aligned in a e f; do
   echo "preload tst-tls5mod{$aligned,b,c,d}.so" >> $logfile
   echo "===============" >> $logfile

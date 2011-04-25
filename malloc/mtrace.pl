@@ -25,6 +25,10 @@ $VERSION = "@VERSION@";
 $PACKAGE = "libc";
 $progname = $0;
 
+# All tests excluded for NaCl are marked as EXCLUDED_IN_NACL in output log.
+print "mtrace is EXCLUDED_IN_NACL\n";
+exit 0;
+
 sub usage {
     print "Usage: mtrace [OPTION]... [Binary] MtraceData\n";
     print "  --help       print this help, then exit\n";

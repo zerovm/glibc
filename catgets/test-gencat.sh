@@ -22,6 +22,10 @@
 common_objpfx=$1
 run_program_prefix=$2
 
+# All tests excluded for NaCl are marked as EXCLUDED_IN_NACL in output log.
+echo "catget/test-gencat.sh EXCLUDED_IN_NACL"
+exit 0
+
 # Run the test program.
 LOCPATH=${common_objpfx}localedata GCONV_PATH=${common_objpfx}iconvdata \
 NLSPATH=${common_objpfx}catgets/%N.%c.cat LC_ALL=ja_JP.SJIS \
