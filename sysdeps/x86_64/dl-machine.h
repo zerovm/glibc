@@ -80,6 +80,14 @@ elf_machine_load_address (void)
        ".previous\n\t"
        : "=r" (addr) : : "cc");
 
+#ifdef __native_client__
+  /*
+   * The high bits of the actual %rip value are not part of what we
+   * consider "our address".
+   */
+  addr = (Elf32_Addr) addr;
+#endif
+
   return addr;
 }
 
