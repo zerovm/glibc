@@ -28,6 +28,8 @@ def parse_syscalls_list(path):
 # this list to a file that is found via the search path.
 override_list = [
     "debug/memcpy_chk.c",
+    "debug/strcpy_chk.c",
+    "debug/stpcpy_chk.c",
     "dirent/alphasort.c",
     "dirent/scandir.c",
     "dirent/versionsort.c",
