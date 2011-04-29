@@ -160,6 +160,7 @@ override_list = [
     "sysdeps/unix/sysv/linux/fstatvfs.c",
     "sysdeps/unix/sysv/linux/getdirentries.c",
     "sysdeps/unix/sysv/linux/openat.c",
+    "sysdeps/unix/sysv/linux/sched_getcpu.c",
     "sysdeps/unix/sysv/linux/statvfs.c",
     "sysdeps/unix/sysv/linux/sync_file_range.c",
     "sysdeps/unix/time.c",
