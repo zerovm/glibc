@@ -34,7 +34,7 @@ dl-routines	= $(addprefix dl-,load cache lookup object reloc deps \
 				  execstack caller open close trampoline) \
 		  nacl_tls_init nacl_read_tp \
 		  nacl_dyncode_copy nacl_dyncode_map nacl_dyncode_alloc \
-		  futex_emulation
+		  futex_emulation nacl_dyncode_valgrind
 all-dl-routines = $(dl-routines) $(sysdep-dl-routines)
 # But they are absent from the shared libc, because that code is in ld.so.
 elide-routines.os = $(all-dl-routines) dl-support enbl-secure dl-origin \

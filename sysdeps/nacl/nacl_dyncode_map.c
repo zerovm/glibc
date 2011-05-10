@@ -1,5 +1,6 @@
 
 #include <nacl_dyncode.h>
+#include <nacl_dyncode_valgrind.h>
 #include <stdint.h>
 #include <sys/mman.h>
 #include <unistd.h>
@@ -17,6 +18,9 @@ int nacl_dyncode_map (int fd, void *dest, size_t offset, size_t size)
   if (mapping == MAP_FAILED)
     return -1;
   int result = __nacl_dyncode_copy (dest, mapping + alignment_padding, size);
+
+  // Tell Valgrind about this mapping.
+  __nacl_dyncode_map_for_valgrind (dest, size, offset, mapping);
   int munmap_result = __munmap (mapping, size);
   if (result != 0 || munmap_result != 0)
     return -1;
