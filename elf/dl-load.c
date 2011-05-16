@@ -37,6 +37,7 @@
 #include <caller.h>
 #include <sysdep.h>
 #include <nacl_dyncode.h>
+#include <nacl_dyncode_valgrind.h>
 
 #include <dl-dst.h>
 
@@ -1341,6 +1342,10 @@ cannot allocate TLS data structures for initial thread");
           }
         else
           {
+            /* Tell Valgrind about the mapping. */
+            __nacl_data_map_for_valgrind ((void *) (l->l_addr + c->mapstart),
+                c->mapend - c->mapstart, c->mapoff, fd, c->prot);
+
             if (c->mapend > c->mapstart
                 /* Map the segment contents from the file.  */
                 && (__mmap ((void *) (l->l_addr + c->mapstart),
