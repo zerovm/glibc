@@ -85,6 +85,7 @@ override_list = [
     "posix/pread.c",
     "posix/pwrite.c",
     "posix/vfork.c",
+    "signal/sigaction.c",
     "socket/accept.c",
     "socket/bind.c",
     "socket/connect.c",
