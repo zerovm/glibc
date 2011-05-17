@@ -100,5 +100,9 @@ pthread_cancel (th)
 
   return result;
 }
+/* TODO(pasko): move pthread_cancel to libnosys.  */
+#ifdef __native_client__
+stub_warning (pthread_cancel)
+#endif
 
 PTHREAD_STATIC_FN_REQUIRE (pthread_create)
