@@ -1343,8 +1343,9 @@ cannot allocate TLS data structures for initial thread");
         else
           {
             /* Tell Valgrind about the mapping. */
-            __nacl_data_map_for_valgrind ((void *) (l->l_addr + c->mapstart),
-                c->mapend - c->mapstart, c->mapoff, fd, c->prot);
+            if (c->mapend > c->mapstart)
+              __nacl_data_map_for_valgrind ((void *) (l->l_addr + c->mapstart),
+                  c->mapend - c->mapstart, c->mapoff, fd, c->prot);
 
             if (c->mapend > c->mapstart
                 /* Map the segment contents from the file.  */
