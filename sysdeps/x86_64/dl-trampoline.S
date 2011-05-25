@@ -237,7 +237,7 @@ _dl_runtime_profile:
 	naclasp $176, %r15
 #endif
 	cfi_adjust_cfa_offset (-176)
-#ifndef __native_client
+#ifndef __native_client__
 	retq
 #else
     popq %r11
