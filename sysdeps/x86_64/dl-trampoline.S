@@ -103,7 +103,7 @@ _dl_runtime_profile:
 	movq 16(%rsp), %r8
 	movq 24(%rsp), %r9
 	movq (%rsp),%rax
-	movq 72(%rsp), %r10
+	movsxl 72(%rsp), %r10
 	testq %r10, %r10
 	jns 1f
 	movq 32(%rsp), %rcx
@@ -162,9 +162,9 @@ _dl_runtime_profile:
 	movq %rsp, %rdi
 	shrq $3, %rcx
 	rep movsq %nacl:(%rsi), %nacl:(%rdi),%r15
-	movq 32(%rbx), %rcx
-	movq 40(%rbx), %rsi
-	movq 48(%rbx), %rdi
+	movq %nacl:32(%r15, %rbx), %rcx
+	movq %nacl:40(%r15, %rbx), %rsi
+	movq %nacl:48(%r15, %rbx), %rdi
 	naclcall %r11d,%r15
 	naclrestsp %ebx, %r15
 	cfi_def_cfa_register (%rsp)
@@ -172,6 +172,7 @@ _dl_runtime_profile:
 #endif
 	cfi_adjust_cfa_offset (72)
 	movq %rsp, %rcx
+#ifndef __native_client__
 	movq %rax, (%rcx)
 	movq %rdx, 8(%rcx)
 	/* Even though the stack is correctly aligned to allow using movaps
@@ -181,6 +182,18 @@ _dl_runtime_profile:
 	movups %xmm1, 32(%rcx)
 	fstpt 48(%rcx)
 	fstpt 64(%rcx)
+#else
+	movq %rax, %nacl:(%r15, %rcx)
+	movq %rdx, %nacl:8(%r15, %rcx)
+	/* Even though the stack is correctly aligned to allow using movaps
+	   we use movups.  Some callers might provide an incorrectly aligned
+	   stack and we do not want to have it blow up here.  */
+	movups %xmm0, %nacl:16(%r15, %rcx)
+	movups %xmm1, %nacl:32(%r15, %rcx)
+	fstpt %nacl:48(%r15, %rcx)
+	fstpt %nacl:64(%r15, %rcx)
+#endif
+
 	/*
 	    +176    return address
 	    +168    PLT2
@@ -224,7 +237,12 @@ _dl_runtime_profile:
 	naclasp $176, %r15
 #endif
 	cfi_adjust_cfa_offset (-176)
+#ifndef __native_client
 	retq
+#else
+    popq %r11
+    nacljmp %r11d, %r15
+#endif
 	cfi_endproc
 	.size _dl_runtime_profile, .-_dl_runtime_profile
 #endif
