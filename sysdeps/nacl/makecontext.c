@@ -5,6 +5,6 @@
 void makecontext (ucontext_t *ucp, (void *func)(), int argc, ...)
 {
   errno = ENOSYS;
-  perror ("makecontext:");
+  perror ("makecontext");
   abort ();
 }

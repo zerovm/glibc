@@ -5,6 +5,6 @@
 int swapcontext (ucontext_t *oucp, const ucontext_t *ucp)
 {
   errno = ENOSYS;
-  perror ("swapcontext:");
+  perror ("swapcontext");
   abort ();
 }

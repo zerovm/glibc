@@ -5,6 +5,6 @@
 int setcontext (const ucontext_t *ucp)
 {
   errno = ENOSYS;
-  perror ("setcontext:");
+  perror ("setcontext");
   abort ();
 }

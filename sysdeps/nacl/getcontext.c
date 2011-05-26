@@ -5,6 +5,6 @@
 int getcontext (ucontext_t *ucp)
 {
   errno = ENOSYS;
-  perror ("getcontext:");
+  perror ("getcontext");
   abort ();
 }
