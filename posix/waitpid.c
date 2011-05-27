@@ -48,6 +48,7 @@ __libc_waitpid (pid_t pid, int *stat_loc, int options)
 weak_alias (__libc_waitpid, __waitpid)
 libc_hidden_weak (__waitpid)
 weak_alias (__libc_waitpid, waitpid)
+strong_alias (__waitpid, __waitpid_nocancel)
 
 stub_warning (waitpid)
 #include <stub-tag.h>
