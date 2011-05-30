@@ -98,7 +98,11 @@ _dl_sysdep_start (void **start_argptr,
   const ElfW(Phdr) *phdr = NULL;
   ElfW(Word) phnum = 0;
   ElfW(Addr) user_entry;
+#ifdef __native_client__
+  Elf32_auxv_t *av;
+#else
   ElfW(auxv_t) *av;
+#endif
 #ifdef HAVE_AUX_SECURE
 # define set_seen(tag) (tag)	/* Evaluate for the side effects.  */
 # define set_seen_secure() ((void) 0)
@@ -261,7 +265,11 @@ internal_function
 _dl_show_auxv (void)
 {
   char buf[64];
+#ifdef __native_client__
+  Elf32_auxv_t *av;
+#else
   ElfW(auxv_t) *av;
+#endif
 
   /* Terminate string.  */
   buf[63] = '\0';

@@ -176,6 +176,18 @@ struct process_args *argmsg_fetch ()
      TODO(mseaborn): Fix these problems with the plugin's process
      startup interface.  */
   int socket_fd = imc_accept (NACL_PLUGIN_BOUND_SOCK);
+  /* Find the descriptor for communicating with plugin.  The number differs
+     with IRT because NaCl runtime creates more descriptors in order to load
+     the IRT blob: three mutexes and one condvar.  We could distinguish IRT
+     case from non-IRT case here by looking into the aux vector, but it does
+     not make sense to write the proper code here until the hack with
+     in-browser DSO loading sequence (described just above) goes away.
+     TODO(pasko): eliminate testing socket numbers as part of dynamic linker
+     startup.  */
+  if (socket_fd == -1 && errno == EINVAL)
+    {
+      socket_fd = imc_accept (NACL_PLUGIN_BOUND_SOCK + 4);
+    }
   if (socket_fd == -1 && errno == EBADF)
     {
       /* We are not running under the NaCl browser plugin or in a
