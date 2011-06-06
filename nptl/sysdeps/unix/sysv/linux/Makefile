@@ -21,7 +21,7 @@ ifeq ($(subdir),nptl)
 sysdep_routines += register-atfork unregister-atfork libc_pthread_init \
 		   libc_multiple_threads
 
-libpthread-sysdep_routines += pt-fork pthread_mutex_cond_lock
+libpthread-sysdep_routines += pthread_mutex_cond_lock
 
 gen-as-const-headers += lowlevelcond.sym lowlevelrwlock.sym \
 			lowlevelbarrier.sym unwindbuf.sym \

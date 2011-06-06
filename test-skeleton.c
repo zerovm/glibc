@@ -33,6 +33,8 @@
 #include <time.h>
 
 #ifdef __native_client__
+# define fork(...) (-1)
+# define kill(...) (-1)
 # define waitpid(...) (-1)
 #endif
 
