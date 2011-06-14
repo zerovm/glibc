@@ -1,6 +1,10 @@
 # File name	Caller	Syscall name	Args	Strong name	Weak names
 
 modify_ldt	EXTRA	modify_ldt	i:ipi	__modify_ldt	modify_ldt
-vm86old		EXTRA	vm86old		i:p	__vm86old	vm86@GLIBC_2.0
-vm86		-	vm86		i:ip	__vm86		vm86@@GLIBC_2.3.4
+#
+# These break when the GLIBC default version is changed.
+# NaCl does not need them anyway.
+#vm86old		EXTRA	vm86old		i:p	__vm86old	vm86@GLIBC_2.0
+#vm86		-	vm86		i:ip	__vm86		vm86@@GLIBC_2.3.4
+#
 waitpid		-	waitpid		Ci:ipi	__waitpid	waitpid	__libc_waitpid

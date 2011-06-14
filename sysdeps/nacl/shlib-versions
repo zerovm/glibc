@@ -1,0 +1,4 @@
+# This should really be keyed to nacl and not .*, but we
+# appear to be building glibc with the OS set to linux.
+.*        DEFAULT                      GLIBC_2.9
+
