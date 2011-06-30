@@ -159,6 +159,7 @@ override_list = [
     "sysdeps/ieee754/ldbl-96/s_logbl.c",
     "sysdeps/ieee754/ldbl-96/s_rintl.c",
     "sysdeps/nacl/umount.c",
+    "sysdeps/nacl/start.c",
     "sysdeps/posix/libc_fatal.c",
     "sysdeps/posix/posix_fallocate.c",
     "sysdeps/posix/writev.c",

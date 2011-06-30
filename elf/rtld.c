@@ -550,16 +550,14 @@ _dl_start (void *arg)
      function, that way the compiler cannot put accesses to the GOT
      before ELF_DYNAMIC_RELOCATE.  */
 
-  struct process_args *ipc_args = argmsg_fetch ();
-  if (ipc_args != NULL)
-    {
-      /* Because code following the ELF ABI expects to find the argv
-         and env arrays on the stack, this is a little convoluted
-         because we have to allocate stack space here.  */
-      size_t size = argmsg_get_size_on_stack (ipc_args);
-      arg = alloca (size);
-      argmsg_move_to_stack (ipc_args, arg, size);
-    }
+  /* If we are getting arguments and environment from IPC rather from the
+     startup stack, this will replace ARG with a new mmap'd pointer.
+
+     Keeping _dl_starting_up set lets _dl_*printf calls work.  */
+  int starting = INTUSE(_dl_starting_up);
+  INTUSE(_dl_starting_up) = 1;
+  arg = argmsg_fetch(arg);
+  INTUSE(_dl_starting_up) = starting;
 
   {
 #ifdef DONT_USE_BOOTSTRAP_MAP
@@ -575,25 +573,23 @@ _dl_start (void *arg)
     struct link_map *main_map = GL(dl_ns)[LM_ID_BASE]._ns_loaded;
     uintptr_t entry_point = ELF_MACHINE_START_ADDRESS (main_map, entry);
 
-    if (ipc_args != NULL)
-      {
-        /* This copies the logic of _start in dl-machine.h, but in C
-           rather than assembly.  */
+    /* This roughly copies the logic of _start in dl-machine.h, but in C
+       rather than assembly.  We are adjusting the NaCl startup information
+       block rather than the traditional Unix/ELF stack setup.  */
+    uint32_t *arginfo = arg;
+    int envc = arginfo[1];
+    int argc = arginfo[2] - _dl_skip_args;
+    arginfo += _dl_skip_args;
+    arginfo[0] = (uintptr_t) &_dl_fini;
+    arginfo[1] = envc;
+    arginfo[2] = argc;
+    char **argv = (void *) &arginfo[3];
+    char **envp = &argv[argc + 1];
+    _dl_init (main_map, argc, argv, envp);
+    (*(void (*)(uint32_t *)) entry_point) (arginfo);
+    /*NOTREACHED*/
 
-        /* Adjust for skipped arguments.  */
-        int argc = *(argc_type *) arg;
-        argc -= _dl_skip_args;
-        arg = (char **) arg + _dl_skip_args;
-        *(argc_type *) arg = argc;
-
-        char **argv = (char **) ((argc_type *) arg + 1);
-        char **envp = argv + argc + 1;
-        _dl_init (main_map, argc, argv, envp);
-
-        jump_to_elf_start (arg, entry_point, (uintptr_t) _dl_fini);
-      }
-    else
-      return entry_point;
+    return entry_point;
   }
 }
 

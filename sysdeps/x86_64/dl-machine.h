@@ -152,24 +152,19 @@ elf_machine_runtime_setup (struct link_map *l, int lazy, int profile)
    its return value is the user program's entry point.  */
 
 #ifdef __native_client__
-#define ARGV_ENTRY_SIZE_STR "4"
-#define ARGC_SIZE_PLUS_ARGV_ENTRY_SIZE_STR "12"
-#define ADJUST_SP \
-    "leaq (%rsp,%rax,"ARGV_ENTRY_SIZE_STR"), %r13\n" \
-    "naclrestsp %r13d, %r15"
-#define CLEAR_BP "naclrestbp $0, %r15"
-#define MOV_R13_SP "naclrestsp %r13d, %r15"
-#define JMP_R12 "nacljmp %r12d, %r15"
+
+/* We're started with the normal C ABI for a one-argument function.
+   Our version of _dl_start runs the user's entry point directly, rather
+   than returning it.  Since the NaCl trusted runtime starts us up with
+   the registers set up for a normal C function call of one argument,
+   we can just go directly into _dl_start with no adjustment.  */
+
+#define RTLD_START asm("\n\
+.globl _start\n\
+.set _start, _dl_start\n\
+");
 
 #else
-#define ARGV_ENTRY_SIZE_STR "8"
-#define ARGC_SIZE_PLUS_ARGV_ENTRY_SIZE_STR "16"
-#define ADJUST_SP \
-    "leaq (%rsp,%rax,"ARGV_ENTRY_SIZE_STR"), %rsp"
-#define CLEAR_BP "xorl %ebp, %ebp"
-#define MOV_R13_SP "movq %r13, %rsp"
-#define JMP_R12 "jmp *%r12"
-#endif
 
 #define RTLD_START asm ("\n\
 .text\n\
@@ -218,6 +213,8 @@ _dl_start_user:\n\
 	"JMP_R12"\n\
 .previous\n\
 ");
+
+#endif
 
 /* ELF_RTYPE_CLASS_PLT iff TYPE describes relocation of a PLT entry or
    TLS variable, so undefined references should not be allowed to

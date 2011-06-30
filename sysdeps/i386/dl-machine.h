@@ -183,6 +183,25 @@ extern ElfW(Addr) _dl_profile_fixup (struct link_map *l,
    The C function `_dl_start' is the real entry point;
    its return value is the user program's entry point.  */
 
+#ifdef __native_client__
+
+/* We're started with the normal C (stack) ABI for a one-argument function.
+   But _dl_start uses regparm, so we have to fetch the argument for it.
+   Our version of _dl_start runs the user's entry point directly, rather
+   than returning it.  */
+
+#define RTLD_START asm("\n\
+	.text\n\
+	.p2align NACLENTRYALIGN\n\
+.globl _start\n\
+_start:\n\
+  	movl 4(%esp), %eax\n\
+	jmp _dl_start\n\
+	.previous\n\
+");
+
+#else
+
 #define RTLD_START asm ("\n\
 	.text\n\
 	.p2align NACLENTRYALIGN\n\
@@ -229,6 +248,8 @@ _dl_start_user:\n\
 	nacljmp %edi\n\
 	.previous\n\
 ");
+
+#endif
 
 /* Native client PLT does not save %ecx so we cannot use regparm(3). We use
    regparm(2) instead.  */
