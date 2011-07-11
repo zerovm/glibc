@@ -179,7 +179,7 @@ uint32_t *argmsg_fetch (uint32_t *info)
     {
       socket_fd = imc_accept (NACL_PLUGIN_BOUND_SOCK + 4);
     }
-  if (socket_fd == -1 && errno == EBADF)
+  if (socket_fd == -1)
     {
       /* We are not running under the NaCl browser plugin or in a
          similar environment.  */
