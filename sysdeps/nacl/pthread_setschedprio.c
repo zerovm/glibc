@@ -1,7 +1,7 @@
 #include <errno.h>
 #include <pthread.h>
 
-#include <nacl_syscalls.h>
+#include <irt_syscalls.h>
 
 
 int
@@ -13,5 +13,5 @@ pthread_setschedprio (threadid, prio)
     /* We can only support changing our own priority.  */
     return EPERM;
 
-  return NACL_SYSCALL (thread_nice) (prio);
+  return -__nacl_irt_thread_nice (prio);
 }

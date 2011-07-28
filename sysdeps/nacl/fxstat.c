@@ -5,7 +5,7 @@
 
 #include <kernel_stat.h>
 #include <nacl_stat.h>
-#include <nacl_syscalls.h>
+#include <irt_syscalls.h>
 
 void __nacl_abi_stat_to_stat (struct nacl_abi_stat *nacl_st,
                                 struct stat *st)
@@ -35,13 +35,13 @@ int __fxstat (int vers, int fd, struct stat *buf)
     return -1;
   }
   struct nacl_abi_stat nacl_buf;
-  int result = NACL_SYSCALL (fstat) (fd, &nacl_buf);
-  if (result < 0) {
-    errno = -result;
+  int result = __nacl_irt_fstat (fd, &nacl_buf);
+  if (result != 0) {
+    errno = result;
     return -1;
   }
   __nacl_abi_stat_to_stat (&nacl_buf, buf);
-  return result;
+  return -result;
 }
 hidden_def(__fxstat)
 #ifdef SHARED

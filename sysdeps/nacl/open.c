@@ -4,6 +4,7 @@
 #include <stdarg.h>
 #include <unistd.h>
 
+#include <irt_syscalls.h>
 #include <nacl_rpc.h>
 #include <nacl_syscalls.h>
 
@@ -83,7 +84,9 @@ static int nacl_open_rpc (const char *filename, int flags, mode_t mode)
 
 int __open (const char *filename, int flags, ...)
 {
+  int newfd;
   int mode = 0;
+
   if(flags & O_CREAT) {
     va_list arg;
     va_start(arg, flags);
@@ -94,12 +97,12 @@ int __open (const char *filename, int flags, ...)
   if (__nacl_use_rpc ())
     return nacl_open_rpc (filename, flags, mode);
 
-  int result = NACL_SYSCALL (open) (filename, flags, mode);
-  if (result < 0) {
-    errno = -result;
+  int result = __nacl_irt_open (filename, flags, mode, &newfd);
+  if (result != 0) {
+    errno = result;
     return -1;
   }
-  return result;
+  return newfd;
 }
 libc_hidden_def (__open)
 weak_alias (__open, open)

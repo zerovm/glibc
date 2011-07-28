@@ -2,17 +2,17 @@
 #include <errno.h>
 #include <unistd.h>
 
-#include <nacl_syscalls.h>
+#include <irt_syscalls.h>
 
 
 int __close (int fd)
 {
-  int result = NACL_SYSCALL (close) (fd);
-  if (result < 0) {
-    errno = -result;
+  int result = __nacl_irt_close (fd);
+  if (result != 0) {
+    errno = result;
     return -1;
   }
-  return result;
+  return -result;
 }
 libc_hidden_def (__close)
 weak_alias (__close, close)

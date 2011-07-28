@@ -401,7 +401,7 @@ start_thread (void *arg)
       __nacl_futex_wake (&pd->tid, INT_MAX, __FUTEX_BITSET_MATCH_ANY);
     }
 
-  NACL_SYSCALL (thread_exit) (&pd->tid);
+  __nacl_irt_thread_exit (&pd->tid);
 
   /* NOTREACHED */
   return 0;

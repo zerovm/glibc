@@ -17,7 +17,7 @@ int nacl_dyncode_map (int fd, void *dest, size_t offset, size_t size)
                              offset - alignment_padding);
   if (mapping == MAP_FAILED)
     return -1;
-  int result = __nacl_dyncode_copy (dest, mapping + alignment_padding, size);
+  int result = __nacl_dyncode_create (dest, mapping + alignment_padding, size);
 
   // Tell Valgrind about this mapping.
   __nacl_dyncode_map_for_valgrind (dest, size, offset, mapping);

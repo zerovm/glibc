@@ -4,7 +4,7 @@
 #include <string.h>
 
 #include <nacl_dirent.h>
-#include <nacl_syscalls.h>
+#include <irt_syscalls.h>
 
 #define __READDIR __readdir
 #define __GETDENTS nacl_getdents_wrapper

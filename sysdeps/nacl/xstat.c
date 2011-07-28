@@ -3,7 +3,7 @@
 #include <sys/stat.h>
 
 #include <nacl_stat.h>
-#include <nacl_syscalls.h>
+#include <irt_syscalls.h>
 
 int __xstat (int version, const char *path, struct stat *buf)
 {
@@ -13,10 +13,10 @@ int __xstat (int version, const char *path, struct stat *buf)
       return -1;
     }
   struct nacl_abi_stat st;
-  int result = NACL_SYSCALL (stat) (path, &st);
-  if (result < 0)
+  int result = __nacl_irt_stat (path, &st);
+  if (result != 0)
     {
-      errno = -result;
+      errno = result;
       return -1;
     }
   else

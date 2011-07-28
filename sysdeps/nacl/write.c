@@ -3,17 +3,18 @@
 #include <unistd.h>
 #include <sysdep.h>
 
-#include <nacl_syscalls.h>
+#include <irt_syscalls.h>
 
 
 ssize_t __write(int desc, void const *buf, size_t count)
 {
-  int result = NACL_SYSCALL (write) (desc, buf, count);
-  if (result < 0) {
-    errno = -result;
+  size_t nwrite;
+  int result = __nacl_irt_write (desc, buf, count, &nwrite);
+  if (result != 0) {
+    errno = result;
     return -1;
   }
-  return result;
+  return nwrite;
 }
 libc_hidden_def (__write)
 weak_alias (__write, write)

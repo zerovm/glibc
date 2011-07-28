@@ -3,7 +3,7 @@
 #include <unistd.h>
 #include <sysdep.h>
 
-#include <nacl_syscalls.h>
+#include <irt_syscalls.h>
 
 
 void *__curbrk = 0;
@@ -11,13 +11,12 @@ weak_alias (__curbrk, ___brk_addr)
 
 int __brk (void *addr)
 {
-  void *result = NACL_SYSCALL (sysbrk) (addr);
-  if ((unsigned int) result > 0xfffff000u) {
-    errno = -(int) result;
+  int rv = __nacl_irt_sysbrk (&__curbrk);
+  if (rv != 0) {
+    errno = rv;
     return -1;
   }
-  __curbrk = result;
-  if (result < addr) {
+  if (__curbrk < addr) {
     errno = ENOMEM;
     return -1;
   }

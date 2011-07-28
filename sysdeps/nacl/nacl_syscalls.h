@@ -29,7 +29,10 @@
  */
 
 #define NACL_sys_null                    1
+#define NACL_sys_nameservice             2
 
+#define NACL_sys_dup                     8
+#define NACL_sys_dup2                    9
 #define NACL_sys_open                   10
 #define NACL_sys_close                  11
 #define NACL_sys_read                   12
@@ -56,15 +59,7 @@
 #define NACL_sys_clock                  41
 #define NACL_sys_nanosleep              42
 
-#define NACL_sys_multimedia_init        50
-#define NACL_sys_multimedia_shutdown    51
-#define NACL_sys_video_init             52
-#define NACL_sys_video_shutdown         53
-#define NACL_sys_video_update           54
-#define NACL_sys_video_poll_event       55
-#define NACL_sys_audio_init             56
-#define NACL_sys_audio_shutdown         57
-#define NACL_sys_audio_stream           58
+/* 50-58 previously used for multimedia syscalls */
 
 #define NACL_sys_imc_makeboundsock      60
 #define NACL_sys_imc_accept             61
@@ -89,6 +84,8 @@
 #define NACL_sys_tls_init               82
 #define NACL_sys_thread_nice            83
 #define NACL_sys_tls_get                84
+#define NACL_sys_second_tls_set         85
+#define NACL_sys_second_tls_get         86
 
 #define NACL_sys_srpc_get_fd            90
 
@@ -96,8 +93,10 @@
 #define NACL_sys_sem_wait               101
 #define NACL_sys_sem_post               102
 #define NACL_sys_sem_get_value          103
- 
-#define NACL_sys_dyncode_copy           104
+
+#define NACL_sys_dyncode_create         104
+#define NACL_sys_dyncode_modify         105
+#define NACL_sys_dyncode_delete         106
 
 #define NACL_MAX_SYSCALLS               110
 
@@ -114,6 +113,9 @@ struct nacl_abi_stat;
 struct timeval;
 struct timespec;
 
+typedef int (*TYPE_nacl_nameservice)(int *desc_in_out);
+typedef int (*TYPE_nacl_dup)(int oldfd);
+typedef int (*TYPE_nacl_dup2)(int oldfd, int newfd);
 typedef int (*TYPE_nacl_read) (int desc, void *buf, size_t count);
 typedef int (*TYPE_nacl_close) (int desc);
 typedef int (*TYPE_nacl_fstat) (int fd, struct nacl_abi_stat *stbp);
@@ -157,7 +159,7 @@ typedef int (*TYPE_nacl_cond_signal) (int cv);
 typedef int (*TYPE_nacl_cond_broadcast) (int cv);
 typedef int (*TYPE_nacl_cond_timed_wait_abs) (int condvar,
                                               int mutex,
-                                              struct timespec *abstime);
+                                              const struct timespec *abstime);
 typedef int (*TYPE_nacl_sem_create) (int32_t value);
 typedef int (*TYPE_nacl_sem_wait) (int sem);
 typedef int (*TYPE_nacl_sem_post) (int sem);
@@ -177,10 +179,14 @@ typedef void (*TYPE_nacl_exit) (int status);
 typedef void (*TYPE_nacl_null) (void);
 typedef int (*TYPE_nacl_tls_init) (void *tdb, int size);
 typedef void *(*TYPE_nacl_tls_get) (void);
+typedef int (*TYPE_nacl_second_tls_set) (void *new_value);
+typedef void *(*TYPE_nacl_second_tls_get) (void);
 typedef int (*TYPE_nacl_srpc_get_fd) (void);
-typedef int (*TYPE_nacl_dyncode_copy) (void *dest, const void *src,
+typedef int (*TYPE_nacl_dyncode_create) (void *dest, const void *src,
                                        size_t size);
-
+typedef int (*TYPE_nacl_dyncode_modify) (void *dest, const void *src,
+                                       size_t size);
+typedef int (*TYPE_nacl_dyncode_delete) (void *dest, size_t size);
 
 struct NaClImcMsgIoVec {
   void    *base;

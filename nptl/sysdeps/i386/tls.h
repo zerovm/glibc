@@ -191,7 +191,7 @@ union user_desc_init
 # endif
 #endif
 
-#include <nacl_tls.h>
+#include <irt_syscalls.h>
 
 /* Code to initially initialize the thread pointer.  This might need
    special attention since 'errno' is not yet available and if the
@@ -206,7 +206,7 @@ union user_desc_init
      _head->self = _thrdescr;						      \
      /* New syscall handling support.  */				      \
      INIT_SYSINFO;							      \
-     _result = __nacl_tls_init (_thrdescr);				      \
+     _result = __nacl_irt_tls_init (_thrdescr, sizeof(struct pthread));	      \
      _result == 0 ? NULL						      \
      : "set_thread_area failed when setting up thread-local storage\n"; })
 

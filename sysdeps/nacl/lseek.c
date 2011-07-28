@@ -2,15 +2,15 @@
 #include <errno.h>
 #include <unistd.h>
 
-#include <nacl_syscalls.h>
+#include <irt_syscalls.h>
 
 
 off_t __lseek (int fd, off_t offset, int whence)
 {
   nacl_abi_off_t nacl_offset = offset;
-  int result = NACL_SYSCALL (lseek) (fd, &nacl_offset, whence);
-  if (result < 0) {
-    errno = -result;
+  int result = __nacl_irt_seek (fd, nacl_offset, whence, &nacl_offset);
+  if (result != 0) {
+    errno = result;
     return -1;
   }
   return nacl_offset;

@@ -5,12 +5,12 @@
 static const int d_name_shift = offsetof (DIRENT_TYPE, d_name) -
     offsetof (struct nacl_abi_dirent, nacl_abi_d_name);
 
-/* Calls NACL_SYSCALL(getdents) and converts resulting buffer to glibc abi.
+/* Calls __nacl_irt_getdents and converts resulting buffer to glibc abi.
    This wrapper is required since glibc abi for DIRENT_TYPE differs from
    struct nacl_abi_dirent. */
 __ssize_t internal_function __GETDENTS (int fd, char *buf, size_t buf_size)
 {
-  /* NACL_SYSCALL (getdents) fills buffer with overlapped structures
+  /* __nacl_irt_getdents fills buffer with overlapped structures
      nacl_abi_dirent. Right after d_reclen bytes of one structure end the next
      structure begins, and so on. For example if nacl_abi_dirent contains 14
      bytes long string in d_name field then it will occupy 10+14 bytes in the
@@ -21,15 +21,18 @@ __ssize_t internal_function __GETDENTS (int fd, char *buf, size_t buf_size)
      minimal size of nacl_abi_dirent is 12 bytes. */
   int nacl_buf_size = buf_size - buf_size / 10 - 1;
   char nacl_buf[nacl_buf_size];
-  int nbytes = NACL_SYSCALL (getdents) (fd, nacl_buf, nacl_buf_size);
+  size_t nbytes;
+  int rv = __nacl_irt_getdents (fd, nacl_buf, nacl_buf_size, &nbytes);
   struct nacl_abi_dirent *nacl_dp;
   DIRENT_TYPE *dp;
-  int nacl_offset = 0;
+  size_t nacl_offset = 0;
   int offset = 0;
   int d_name_len;
-  if (nbytes <= 0)
+  
+
+  if (rv <= 0)
     {
-      return nbytes;
+      return rv;
     }
   while (nacl_offset < nbytes)
     {

@@ -2,17 +2,17 @@
 #include <errno.h>
 #include <time.h>
 
-#include <nacl_syscalls.h>
+#include <irt_syscalls.h>
 
 
 int __nanosleep (const struct timespec *req, struct timespec *rem)
 {
-  int result = NACL_SYSCALL (nanosleep) (req, rem);
-  if ((unsigned int) result > 0xfffff000u) {
-    errno = -result;
+  int result = __nacl_irt_nanosleep (req, rem);
+  if (result != 0) {
+    errno = result;
     return -1;
   }
-  return result;
+  return -result;
 }
 libc_hidden_def (__nanosleep)
 weak_alias (__nanosleep, nanosleep)

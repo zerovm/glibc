@@ -26,7 +26,7 @@
 #include <tls.h>
 
 #include "kernel-features.h"
-#include <nacl_syscalls.h>
+#include <irt_syscalls.h>
 #include "pthreadP.h"
 
 #define CLONE_SIGNAL    	(CLONE_SIGHAND | CLONE_THREAD)
@@ -90,8 +90,8 @@ do_clone (struct pthread *pd, const struct pthread_attr *attr,
   STACK_VARIABLES_ARGS -= 8;
 #endif
 
-  if (NACL_SYSCALL (thread_create) (fct, STACK_VARIABLES_ARGS, pd,
-				    sizeof(struct pthread)) != 0)
+  if (__nacl_irt_thread_create (fct, STACK_VARIABLES_ARGS, pd,
+				sizeof(struct pthread)) != 0)
     {
       pd->tid = 0;
       atomic_decrement (&__nptl_nthreads); /* Oops, we lied for a second.  */

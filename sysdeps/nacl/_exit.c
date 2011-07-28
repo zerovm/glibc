@@ -2,12 +2,12 @@
 #include <stdlib.h>
 #include <unistd.h>
 
-#include <nacl_syscalls.h>
+#include <irt_syscalls.h>
 
 
 void _exit (int status)
 {
-  NACL_SYSCALL (exit) (status);
+  __nacl_irt_exit (status);
   /* In case the syscall returns: */
   while (1)
     __asm__("hlt");

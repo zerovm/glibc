@@ -3,17 +3,18 @@
 #include <unistd.h>
 #include <stddef.h>
 
-#include <nacl_syscalls.h>
+#include <irt_syscalls.h>
 
 
 ssize_t __libc_read (int fd, void *buf, size_t size)
 {
-  int result = NACL_SYSCALL (read) (fd, buf, size);
-  if (result < 0) {
+  int nread;
+  int result = __nacl_irt_read (fd, buf, size, &nread);
+  if (result != 0) {
     errno = -result;
     return -1;
   }
-  return result;
+  return nread;
 }
 libc_hidden_def (__libc_read)
 weak_alias (__libc_read, __read)
