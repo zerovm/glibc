@@ -72,7 +72,7 @@ static ElfW(auxv_t) *_dl_auxv attribute_relro;
 
 /* Argc is pushed on stack. In x86-64 NaCl the size of the pushed value
    is 64bit, but the pointer size is 32bit. We take lower half of argc, argv
-   starts after a gap.  See: 
+   starts after a gap.  See:
    http://code.google.com/p/nativeclient/issues/detail?id=1131  */
 #if defined __native_client__ && defined __x86_64__
 #define WORDS_ARGC 2
@@ -104,7 +104,8 @@ init_irt_table (void)
   if (__nacl_irt_query != NULL)
     {
       struct nacl_irt_basic nacl_irt_basic;
-      struct nacl_irt_file nacl_irt_file;
+      struct nacl_irt_fdio nacl_irt_fdio;
+      struct nacl_irt_filename nacl_irt_filename;
       struct nacl_irt_memory nacl_irt_memory;
       struct nacl_irt_dyncode nacl_irt_dyncode;
       struct nacl_irt_thread nacl_irt_thread;
@@ -123,19 +124,25 @@ init_irt_table (void)
 	  __nacl_irt_sysconf = nacl_irt_basic.sysconf;
 	}
 
-      if (__nacl_irt_query (NACL_IRT_FILE_v0_1, &nacl_irt_file,
-			    sizeof(nacl_irt_file)) == sizeof(nacl_irt_file))
+      if (__nacl_irt_query (NACL_IRT_FDIO_v0_1, &nacl_irt_fdio,
+			    sizeof(nacl_irt_fdio)) == sizeof(nacl_irt_fdio))
 	{
-	  __nacl_irt_open = nacl_irt_file.open;
-	  __nacl_irt_close = nacl_irt_file.close;
-	  __nacl_irt_read = nacl_irt_file.read;
-	  __nacl_irt_write = nacl_irt_file.write;
-	  __nacl_irt_seek = nacl_irt_file.seek;
-	  __nacl_irt_dup = nacl_irt_file.dup;
-	  __nacl_irt_dup2 = nacl_irt_file.dup2;
-	  __nacl_irt_fstat = nacl_irt_file.fstat;
-	  __nacl_irt_stat = nacl_irt_file.stat;
-	  __nacl_irt_getdents = nacl_irt_file.getdents;
+	  __nacl_irt_close = nacl_irt_fdio.close;
+	  __nacl_irt_dup = nacl_irt_fdio.dup;
+	  __nacl_irt_dup2 = nacl_irt_fdio.dup2;
+	  __nacl_irt_read = nacl_irt_fdio.read;
+	  __nacl_irt_write = nacl_irt_fdio.write;
+	  __nacl_irt_seek = nacl_irt_fdio.seek;
+	  __nacl_irt_fstat = nacl_irt_fdio.fstat;
+	  __nacl_irt_getdents = nacl_irt_fdio.getdents;
+	}
+
+      if (__nacl_irt_query (NACL_IRT_FILENAME_v0_1, &nacl_irt_filename,
+			    sizeof(nacl_irt_filename))
+          == sizeof(nacl_irt_filename))
+	{
+	  __nacl_irt_open = nacl_irt_filename.open;
+	  __nacl_irt_stat = nacl_irt_filename.stat;
 	}
 
       if (__nacl_irt_query (NACL_IRT_MEMORY_v0_1, &nacl_irt_memory,

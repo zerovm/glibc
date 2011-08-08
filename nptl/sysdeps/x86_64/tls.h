@@ -136,7 +136,7 @@ typedef struct
 
 #ifdef __native_client__
 #define TLS_INIT_TP_SYSCALL \
-   _result = __nacl_irt_tls_init (_thrdescr, sizeof(struct pthread));
+  _result = __nacl_irt_tls_init (_thrdescr);
 #else
 #define TLS_INIT_TP_SYSCALL \
      /* It is a simple syscall to set the %fs value for the thread.  */	      \

@@ -152,9 +152,9 @@ static int nacl_irt_dyncode_delete(void *dest, size_t size) {
 
 
 static int nacl_irt_thread_create (void *start_user_address, void *stack,
-                                   void *tdb, size_t tdb_size) {
+                                   void *thread_ptr) {
   return -NACL_SYSCALL (thread_create) (start_user_address, stack,
-                                        tdb, tdb_size);
+                                        thread_ptr, 0);
 }
 
 static void nacl_irt_thread_exit (int32_t *stack_flag) {
@@ -231,8 +231,8 @@ static int nacl_irt_cond_timed_wait_abs (int cond_handle, int mutex_handle,
 }
 
 
-static int nacl_irt_tls_init (void *tdb, size_t tdb_size) {
-  return -NACL_SYSCALL (tls_init) (tdb, tdb_size);
+static int nacl_irt_tls_init (void *tdb) {
+  return -NACL_SYSCALL (tls_init) (tdb);
 }
 
 static void *nacl_irt_tls_get (void) {
@@ -281,7 +281,7 @@ int (*__nacl_irt_dyncode_delete) (void *dest, size_t size) =
   nacl_irt_dyncode_delete;
 
 int (*__nacl_irt_thread_create) (void *start_user_address, void *stack,
-  void *tdb, size_t tdb_size) = nacl_irt_thread_create;
+                                 void *thread_ptr) = nacl_irt_thread_create;
 void (*__nacl_irt_thread_exit) (int32_t *stack_flag) =
   nacl_irt_thread_exit;
 int (*__nacl_irt_thread_nice) (const int nice) =
@@ -302,5 +302,5 @@ int (*__nacl_irt_cond_wait) (int cond_handle, int mutex_handle) =
 int (*__nacl_irt_cond_timed_wait_abs) (int cond_handle, int mutex_handle,
   const struct timespec *abstime) = nacl_irt_cond_timed_wait_abs;
 
-int (*__nacl_irt_tls_init) (void *tdb, size_t size) = nacl_irt_tls_init;
+int (*__nacl_irt_tls_init) (void *tdb) = nacl_irt_tls_init;
 void *(*__nacl_irt_tls_get) (void) = nacl_irt_tls_get;

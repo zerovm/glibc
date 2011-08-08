@@ -59,18 +59,22 @@ struct nacl_irt_basic {
   int (*sysconf)(int name, int *value);
 };
 
-#define NACL_IRT_FILE_v0_1      "nacl-irt-file-0.1"
-struct nacl_irt_file {
-  int (*open)(const char *pathname, int oflag, mode_t cmode, int *newfd);
+#define NACL_IRT_FDIO_v0_1      "nacl-irt-fdio-0.1"
+struct nacl_irt_fdio {
   int (*close)(int fd);
+  int (*dup)(int fd, int *newfd);
+  int (*dup2)(int fd, int newfd);
   int (*read)(int fd, void *buf, size_t count, size_t *nread);
   int (*write)(int fd, const void *buf, size_t count, size_t *nwrote);
   int (*seek)(int fd, off_t offset, int whence, off_t *new_offset);
-  int (*dup)(int fd, int *newfd);
-  int (*dup2)(int fd, int newfd);
   int (*fstat)(int fd, struct stat *);
-  int (*stat)(const char *pathname, struct stat *);
   int (*getdents)(int fd, struct dirent *, size_t count, size_t *nread);
+};
+
+#define NACL_IRT_FILENAME_v0_1      "nacl-irt-filename-0.1"
+struct nacl_irt_filename {
+  int (*open)(const char *pathname, int oflag, mode_t cmode, int *newfd);
+  int (*stat)(const char *pathname, struct stat *);
 };
 
 #define NACL_IRT_MEMORY_v0_1    "nacl-irt-memory-0.1"
@@ -89,8 +93,7 @@ struct nacl_irt_dyncode {
 
 #define NACL_IRT_THREAD_v0_1   "nacl-irt-thread-0.1"
 struct nacl_irt_thread {
-  int (*thread_create)(void *start_user_address, void *stack,
-                       void *tdb, size_t tdb_size);
+  int (*thread_create)(void *start_user_address, void *stack, void *thread_ptr);
   void (*thread_exit)(int32_t *stack_flag);
   int (*thread_nice)(const int nice);
 };
@@ -125,7 +128,7 @@ struct nacl_irt_sem {
 
 #define NACL_IRT_TLS_v0_1       "nacl-irt-tls-0.1"
 struct nacl_irt_tls {
-  int (*tls_init)(void *tdb, size_t size);
+  int (*tls_init)(void *thread_ptr);
   void *(*tls_get)(void);
 };
 

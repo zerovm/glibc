@@ -1,7 +1,7 @@
 /*
- * Copyright 2008 The Native Client Authors. All rights reserved.
- * Use of this source code is governed by a BSD-style license that can
- * be found in the LICENSE file.
+ * Copyright (c) 2011 The Native Client Authors. All rights reserved.
+ * Use of this source code is governed by a BSD-style license that can be
+ * found in the LICENSE file.
  */
 
 /*
@@ -145,8 +145,8 @@ typedef int (*TYPE_nacl_munmap) (void *start, size_t length);
 typedef void (*TYPE_nacl_thread_exit) (int32_t *stack_flag);
 typedef int (*TYPE_nacl_thread_create) (void *start_user_address,
                                         void *stack,
-                                        void *tdb,
-                                        size_t tdb_size);
+                                        void *thread_ptr,
+                                        void *second_thread_ptr);
 typedef int (*TYPE_nacl_thread_nice) (const int nice);
 
 typedef int (*TYPE_nacl_mutex_create) (void);
@@ -177,7 +177,7 @@ typedef int (*TYPE_nacl_nanosleep) (const struct timespec *req,
    wrapper to handle it if the syscall does happen to return. */
 typedef void (*TYPE_nacl_exit) (int status);
 typedef void (*TYPE_nacl_null) (void);
-typedef int (*TYPE_nacl_tls_init) (void *tdb, int size);
+typedef int (*TYPE_nacl_tls_init) (void *tdb);
 typedef void *(*TYPE_nacl_tls_get) (void);
 typedef int (*TYPE_nacl_second_tls_set) (void *new_value);
 typedef void *(*TYPE_nacl_second_tls_get) (void);

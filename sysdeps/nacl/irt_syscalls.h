@@ -51,7 +51,7 @@ extern int (*__nacl_irt_dyncode_modify) (void *dest, const void *src,
 extern int (*__nacl_irt_dyncode_delete) (void *dest, size_t size);
 
 extern int (*__nacl_irt_thread_create) (void *start_user_address, void *stack,
-                                       void *tdb, size_t tdb_size);
+                                        void *thread_ptr);
 extern void (*__nacl_irt_thread_exit) (int32_t *stack_flag);
 extern int (*__nacl_irt_thread_nice) (const int nice);
 
@@ -69,7 +69,7 @@ extern int (*__nacl_irt_cond_wait) (int cond_handle, int mutex_handle);
 extern int (*__nacl_irt_cond_timed_wait_abs) (int cond_handle, int mutex_handle,
                                               const struct timespec *abstime);
 
-extern int (*__nacl_irt_tls_init) (void *tdb, size_t size);
+extern int (*__nacl_irt_tls_init) (void *tdb);
 extern void *(*__nacl_irt_tls_get) (void);
 
 #endif

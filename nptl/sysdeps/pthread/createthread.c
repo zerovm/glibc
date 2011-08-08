@@ -90,8 +90,7 @@ do_clone (struct pthread *pd, const struct pthread_attr *attr,
   STACK_VARIABLES_ARGS -= 8;
 #endif
 
-  if (__nacl_irt_thread_create (fct, STACK_VARIABLES_ARGS, pd,
-				sizeof(struct pthread)) != 0)
+  if (__nacl_irt_thread_create (fct, STACK_VARIABLES_ARGS, pd) != 0)
     {
       pd->tid = 0;
       atomic_decrement (&__nptl_nthreads); /* Oops, we lied for a second.  */
