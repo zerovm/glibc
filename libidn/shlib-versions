@@ -1,1 +1,1 @@
-.*-.*-.*	libcidn=1
+.*-.*-.*	libcidn=NACL_SONAME_SUBST
