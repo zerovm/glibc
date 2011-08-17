@@ -309,8 +309,4 @@ int (*__nacl_irt_cond_timed_wait_abs) (int cond_handle, int mutex_handle,
 int (*__nacl_irt_tls_init) (void *tdb) = nacl_irt_tls_init;
 void *(*__nacl_irt_tls_get) (void) = nacl_irt_tls_get;
 
-int (*__nacl_irt_ppapi_start) (const struct PP_StartFunctions *) =
-  not_implemented;
-void (*__nacl_irt_ppapi_register_thread_creator) (
-  const struct PP_ThreadFunctions *) = not_implemented;
 int (*__nacl_irt_open_resource) (const char* file, int *fd) = not_implemented;

@@ -145,7 +145,7 @@ struct nacl_irt_ppapihook {
 
 #define NACL_IRT_RESOURCE_OPEN_v0_1 "nacl-irt-resource-open-0.1"
 struct nacl_irt_resource_open {
-  int (*open_resource)(const char* file, int *fd);
+  int (*open_resource)(const char *file, int *fd);
 };
 
 #if __cplusplus

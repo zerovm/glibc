@@ -112,7 +112,6 @@ init_irt_table (void)
       struct nacl_irt_mutex nacl_irt_mutex;
       struct nacl_irt_cond nacl_irt_cond;
       struct nacl_irt_tls nacl_irt_tls;
-      struct nacl_irt_ppapihook nacl_irt_ppapihook;
       struct nacl_irt_resource_open nacl_irt_resource_open;
 
       if (__nacl_irt_query (NACL_IRT_BASIC_v0_1, &nacl_irt_basic,
@@ -197,14 +196,6 @@ init_irt_table (void)
 	{
 	  __nacl_irt_tls_init = nacl_irt_tls.tls_init;
 	  __nacl_irt_tls_get = nacl_irt_tls.tls_get;
-	}
-
-      if (__nacl_irt_query (NACL_IRT_PPAPIHOOK_v0_1, &nacl_irt_ppapihook,
-	      sizeof(nacl_irt_ppapihook)) == sizeof(nacl_irt_ppapihook))
-	{
-	  __nacl_irt_ppapi_start = nacl_irt_ppapihook.ppapi_start;
-	  __nacl_irt_ppapi_register_thread_creator =
-	    nacl_irt_ppapihook.ppapi_register_thread_creator;
 	}
 
       if (__nacl_irt_query (NACL_IRT_RESOURCE_OPEN_v0_1, &nacl_irt_resource_open,

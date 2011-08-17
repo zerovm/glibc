@@ -91,6 +91,7 @@ ld {
     __nacl_irt_mutex_unlock;
     __nacl_irt_nanosleep;
     __nacl_irt_open;
+    __nacl_irt_open_resource;
     __nacl_irt_read;
     __nacl_irt_sched_yield;
     __nacl_irt_seek;
