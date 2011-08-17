@@ -240,8 +240,12 @@ static void *nacl_irt_tls_get (void) {
 }
 
 
-size_t (*__nacl_irt_query)(const char *interface_ident,
-                           void *table, size_t tablesize);
+static int not_implemented (void) {
+  return (12 /* ENOSYS */);
+}
+
+size_t (*__nacl_irt_query) (const char *interface_ident,
+                            void *table, size_t tablesize) = not_implemented;
 
 void (*__nacl_irt_exit) (int status) = nacl_irt_exit;
 int (*__nacl_irt_gettod) (struct timeval *tv) = nacl_irt_gettod;
@@ -304,3 +308,9 @@ int (*__nacl_irt_cond_timed_wait_abs) (int cond_handle, int mutex_handle,
 
 int (*__nacl_irt_tls_init) (void *tdb) = nacl_irt_tls_init;
 void *(*__nacl_irt_tls_get) (void) = nacl_irt_tls_get;
+
+int (*__nacl_irt_ppapi_start) (const struct PP_StartFunctions *) =
+  not_implemented;
+void (*__nacl_irt_ppapi_register_thread_creator) (
+  const struct PP_ThreadFunctions *) = not_implemented;
+int (*__nacl_irt_open_resource) (const char* file, int *fd) = not_implemented;

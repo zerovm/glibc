@@ -112,6 +112,8 @@ init_irt_table (void)
       struct nacl_irt_mutex nacl_irt_mutex;
       struct nacl_irt_cond nacl_irt_cond;
       struct nacl_irt_tls nacl_irt_tls;
+      struct nacl_irt_ppapihook nacl_irt_ppapihook;
+      struct nacl_irt_resource_open nacl_irt_resource_open;
 
       if (__nacl_irt_query (NACL_IRT_BASIC_v0_1, &nacl_irt_basic,
 			    sizeof(nacl_irt_basic)) == sizeof(nacl_irt_basic))
@@ -195,6 +197,26 @@ init_irt_table (void)
 	{
 	  __nacl_irt_tls_init = nacl_irt_tls.tls_init;
 	  __nacl_irt_tls_get = nacl_irt_tls.tls_get;
+	}
+
+      if (__nacl_irt_query (NACL_IRT_PPAPIHOOK_v0_1, &nacl_irt_ppapihook,
+	      sizeof(nacl_irt_ppapihook)) == sizeof(nacl_irt_ppapihook))
+	{
+	  __nacl_irt_ppapi_start = nacl_irt_ppapihook.ppapi_start;
+	  __nacl_irt_ppapi_register_thread_creator =
+	    nacl_irt_ppapihook.ppapi_register_thread_creator;
+	}
+
+      if (__nacl_irt_query (NACL_IRT_RESOURCE_OPEN_v0_1, &nacl_irt_resource_open,
+	      sizeof(nacl_irt_resource_open)) == sizeof(nacl_irt_resource_open))
+	{
+	  __nacl_irt_open_resource = nacl_irt_resource_open.open_resource;
+	  if (_dl_argc == 1)
+	    {
+	      static char *argv[] = { "/runnable-ld.so", "/main.nexe", 0 };
+	      _dl_argc = 2;
+	      _dl_argv = argv;
+	    }
 	}
     }
 }
@@ -287,7 +309,7 @@ _dl_sysdep_start (void **start_argptr,
       case AT_FPUCW:
 	GLRO(dl_fpu_control) = av->a_un.a_val;
 	break;
-#ifndef __native_client__
+#ifdef __native_client__
       case AT_SYSINFO:
 	__nacl_irt_query = (TYPE_nacl_irt_query) av->a_un.a_val;
 	init_irt_table ();

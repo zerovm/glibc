@@ -971,6 +971,10 @@ dl_main (const ElfW(Phdr) *phdr,
       /* Note the place where the dynamic linker actually came from.  */
       GL(dl_rtld_map).l_name = rtld_progname;
 
+#ifdef __native_client__
+      /* TODO(khim): probably must be configurable. */
+      library_path = "lib";
+#endif
       while (_dl_argc > 1)
 	if (! strcmp (INTUSE(_dl_argv)[1], "--list"))
 	  {

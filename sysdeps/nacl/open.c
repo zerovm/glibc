@@ -94,8 +94,8 @@ int __open (const char *filename, int flags, ...)
     va_end(arg);
   }
 
-  if (__nacl_use_rpc ())
-    return nacl_open_rpc (filename, flags, mode);
+  if (!__nacl_irt_open_resource (filename, &newfd))
+    return newfd;
 
   int result = __nacl_irt_open (filename, flags, mode, &newfd);
   if (result != 0) {

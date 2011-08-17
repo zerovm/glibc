@@ -166,6 +166,7 @@ uint32_t *argmsg_fetch (uint32_t *info)
 
      TODO(mseaborn): Fix these problems with the plugin's process
      startup interface.  */
+      return info;
   int socket_fd = imc_accept (NACL_PLUGIN_BOUND_SOCK);
   /* Find the descriptor for communicating with plugin.  The number differs
      with IRT because NaCl runtime creates more descriptors in order to load

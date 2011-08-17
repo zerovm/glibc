@@ -12,6 +12,8 @@ struct dirent;
 struct nacl_abi_stat;
 struct timeval;
 struct timespec;
+struct PP_StartFunctions;
+struct PP_ThreadFunctions;
 
 extern size_t (*__nacl_irt_query)(const char *interface_ident,
                                   void *table, size_t tablesize);
@@ -71,5 +73,11 @@ extern int (*__nacl_irt_cond_timed_wait_abs) (int cond_handle, int mutex_handle,
 
 extern int (*__nacl_irt_tls_init) (void *tdb);
 extern void *(*__nacl_irt_tls_get) (void);
+
+int (*__nacl_irt_ppapi_start) (const struct PP_StartFunctions *);
+void (*__nacl_irt_ppapi_register_thread_creator) (
+                                             const struct PP_ThreadFunctions *);
+
+int (*__nacl_irt_open_resource) (const char* file, int *fd);
 
 #endif
