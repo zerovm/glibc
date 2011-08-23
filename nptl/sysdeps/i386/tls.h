@@ -213,8 +213,7 @@ union user_desc_init
 
 /* Return the address of the dtv for the current thread.  */
 # define THREAD_DTV() \
-  ({ struct pthread *__pd;						      \
-     THREAD_GETMEM (__pd, header.dtv); })
+  THREAD_GETMEM (THREAD_SELF, header.dtv)
 
 
 /* Return the thread descriptor for the current thread.
@@ -223,11 +222,18 @@ union user_desc_init
    assignments like
         pthread_descr self = thread_self();
    do not get optimized away.  */
-# define THREAD_SELF \
+# ifdef __native_client__
+#  define THREAD_SELF							      \
+  ({ struct pthread *__self;						      \
+     asm ("movl %%gs:0,%0" : "=r" (__self));				      \
+     __self; })
+# else
+#  define THREAD_SELF \
   ({ struct pthread *__self;						      \
      asm ("movl %%gs:%c1,%0" : "=r" (__self)				      \
 	  : "i" (offsetof (struct pthread, header.self)));		      \
      __self;})
+#endif
 
 /* Magic for libthread_db to know how to do THREAD_SELF.  */
 # define DB_THREAD_SELF \
@@ -235,6 +241,16 @@ union user_desc_init
   REGISTER_THREAD_AREA (64, 26 * 8, 3) /* x86-64's user_regs_struct->gs */
 
 
+#ifdef __native_client__
+# define THREAD_GETMEM(descr, member) \
+  descr->member
+#define THREAD_GETMEM_NC(descr, member, idx) \
+  descr->member[idx]
+# define THREAD_SETMEM(descr, member, value) \
+  descr->member = (value)
+# define THREAD_SETMEM_NC(descr, member, idx, value) \
+  descr->member[idx] = (value)
+#else
 /* Read member of the thread descriptor directly.  */
 # define THREAD_GETMEM(descr, member) \
   ({ __typeof (descr->member) __value;					      \
@@ -341,6 +357,7 @@ union user_desc_init
 			 "i" (offsetof (struct pthread, member)),	      \
 			 "r" (idx));					      \
        }})
+#endif
 
 
 /* Atomic compare and exchange on TLS, returning old value.  */
@@ -382,8 +399,9 @@ union user_desc_init
      asm volatile ("pushl %%eax\n\t"					      \
 		   "pushl %%eax\n\t"					      \
 		   "pushl %%eax\n\t"					      \
-		   "pushl %%gs:%P4\n\t"					      \
-		   "movl %%gs:%P3,%%eax\n\t"				      \
+		   "movl %%gs:0,%%eax\n\t"				      \
+		   "pushl %P4(%%eax)\n\t"				      \
+		   "movl %P3(%%eax),%%eax\n\t"				      \
 		   "naclcall %%eax\n\t"					      \
 		   "addl $16, %%esp"					      \
 		   : "=a" (__res), "=c" (__ignore1), "=d" (__ignore2)	      \
