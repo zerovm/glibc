@@ -305,11 +305,19 @@ z-now-yes = -Wl,-z,now
 
 $(objpfx)ld.so: $(objpfx)librtld.os $(ld-map)
 	@rm -f $@.lds
+	# NaCl loader refuses to run ld.so with more than 3 loadable segments.
+	# Remove the bss segment.
 	$(LINK.o) -nostdlib -nostartfiles -shared $(z-now-$(bind-now))	\
 		  $(LDFLAGS-rtld) -Wl,-z,defs -Wl,--verbose 2>&1 |	\
 		  LC_ALL=C \
-		  sed -e '/^=========/,/^=========/!d;/^=========/d'	\
+		  sed -e '/^=========/,/^=========/!d;/^=========/d' \
 		      -e 's/\. = 0 + SIZEOF_HEADERS;/& _begin = . - SIZEOF_HEADERS;/' \
+		      -e 's/_end = \.; PROVIDE (end = \.);/& . = DATA_SEGMENT_END(.);/' \
+		      -e 's/seg_bss      PT_LOAD FLAGS(6) ;       \/\* read + write \*\///' \
+		      -e 's/} :seg_bss/}/' \
+		      -e 's/\. = DATA_SEGMENT_END (\.);//' \
+		      -e 's/\. = ALIGN (CONSTANT (MAXPAGESIZE));//' \
+		      -e 's/\. = ALIGN (CONSTANT (COMMONPAGESIZE));//' \
 		  > $@.lds
 	$(LINK.o) -nostdlib -nostartfiles -shared -o $@			\
 		  $(LDFLAGS-rtld) -Wl,-z,defs $(z-now-$(bind-now))	\

@@ -9,6 +9,7 @@ PHDRS
   seg_code     PT_LOAD FLAGS(5) ;       /* read + execute */
   seg_rodata   PT_LOAD FLAGS(4) ;       /* read */
   seg_rwdata   PT_LOAD FLAGS(6) ;       /* read + write */
+  seg_bss      PT_LOAD FLAGS(6) ;       /* read + write */
   seg_dynamic  PT_DYNAMIC FLAGS(6) ;
   seg_stack    PT_GNU_STACK FLAGS(6) ;
   seg_tls      PT_TLS FLAGS(4) ;
@@ -163,6 +164,19 @@ SECTIONS
   }
   .data1          : { *(.data1) }
   _edata = .; PROVIDE (edata = .);
+
+  /* We place the BSS in a separate segment as a workaround for the
+     behaviour of NaCl's mmap() on the last page in a file.  When using
+     copy-on-write MAP_PRIVATE, we cannot necessarily write beyond the
+     file's extent within the 64k page.
+     See http://code.google.com/p/nativeclient/issues/detail?id=824.
+     TODO(mseaborn): A better fix would be to change the dynamic linker
+     to copy the last page.  This would save a page of memory because
+     the BSS could share a page with the data segment.  But for now, it
+     is simpler to change the linker script. */
+  . = DATA_SEGMENT_END (.);
+  . = ALIGN (CONSTANT (COMMONPAGESIZE));
+
   __bss_start = .;
   .bss            :
   {
@@ -175,11 +189,10 @@ SECTIONS
       FIXME: Why do we need it? When there is no .bss section, we don't
       pad the .data section.  */
    . = ALIGN(. != 0 ? 32 / 8 : 1);
-  }
+  } :seg_bss
   . = ALIGN(32 / 8);
   . = ALIGN(32 / 8);
   _end = .; PROVIDE (end = .);
-  . = DATA_SEGMENT_END (.);
   /* Stabs debugging sections.  */
   .stab          0 : { *(.stab) }
   .stabstr       0 : { *(.stabstr) }
