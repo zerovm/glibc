@@ -1,6 +1,6 @@
 /* Linker script for glibc static linking.
    Usage: path_to_sdk/bin/nacl-gcc [usual options] -static
-              -T path_to_sdk/nacl[64]/lib/ldscripts/elf_nacl.x.static
+              -T path-to-toolchain/x86_64-nacl/lib/ldscripts/elf_nacl.x.static
 
    TODO(mseaborn): Make this work with "-static" on its own.
    See http://code.google.com/p/nativeclient/issues/detail?id=1198
@@ -23,28 +23,6 @@ SECTIONS
 {
   /* Read-only sections, merged into text segment: */
   PROVIDE (__executable_start = 0x20000); . = 0x20000;
-  .interp         : { *(.interp) }
-  .note.gnu.build-id : { *(.note.gnu.build-id) }
-  .hash           : { *(.hash) }
-  .gnu.hash       : { *(.gnu.hash) }
-  .dynsym         : { *(.dynsym) }
-  .dynstr         : { *(.dynstr) }
-  .gnu.version    : { *(.gnu.version) }
-  .gnu.version_d  : { *(.gnu.version_d) }
-  .gnu.version_r  : { *(.gnu.version_r) }
-  .rel.init       : { *(.rel.init) }
-  .rel.text       : { *(.rel.text .rel.text.* .rel.gnu.linkonce.t.*) }
-  .rel.fini       : { *(.rel.fini) }
-  .rel.rodata     : { *(.rel.rodata .rel.rodata.* .rel.gnu.linkonce.r.*) }
-  .rel.data.rel.ro   : { *(.rel.data.rel.ro* .rel.gnu.linkonce.d.rel.ro.*) }
-  .rel.data       : { *(.rel.data .rel.data.* .rel.gnu.linkonce.d.*) }
-  .rel.tdata	  : { *(.rel.tdata .rel.tdata.* .rel.gnu.linkonce.td.*) }
-  .rel.tbss	  : { *(.rel.tbss .rel.tbss.* .rel.gnu.linkonce.tb.*) }
-  .rel.ctors      : { *(.rel.ctors) }
-  .rel.dtors      : { *(.rel.dtors) }
-  .rel.got        : { *(.rel.got) }
-  .rel.bss        : { *(.rel.bss .rel.bss.* .rel.gnu.linkonce.b.*) }
-  .rel.plt        : { *(.rel.plt) }
   .plt            : { *(.plt) }
   /* I couldn't get ld to add NOP-padding between output sections
      (only between input sections within an output section),
@@ -65,9 +43,32 @@ SECTIONS
   PROVIDE (__etext = .);
   PROVIDE (_etext = .);
   PROVIDE (etext = .);
+
   . = DEFINED(__nacl_rodata_start) ? __nacl_rodata_start : .;
   . = ALIGN(CONSTANT (MAXPAGESIZE)); /* nacl wants page alignment */
-  .rodata         : { *(.rodata .rodata.* .gnu.linkonce.r.*) } :seg_rodata
+  .note.gnu.build-id : { *(.note.gnu.build-id) } :seg_rodata
+  .hash           : { *(.hash) }
+  .gnu.hash       : { *(.gnu.hash) }
+  .dynsym         : { *(.dynsym) }
+  .dynstr         : { *(.dynstr) }
+  .gnu.version    : { *(.gnu.version) }
+  .gnu.version_d  : { *(.gnu.version_d) }
+  .gnu.version_r  : { *(.gnu.version_r) }
+  .rel.init       : { *(.rel.init) }
+  .rel.text       : { *(.rel.text .rel.text.* .rel.gnu.linkonce.t.*) }
+  .rel.fini       : { *(.rel.fini) }
+  .rel.rodata     : { *(.rel.rodata .rel.rodata.* .rel.gnu.linkonce.r.*) }
+  .rel.data.rel.ro   : { *(.rel.data.rel.ro* .rel.gnu.linkonce.d.rel.ro.*) }
+  .rel.data       : { *(.rel.data .rel.data.* .rel.gnu.linkonce.d.*) }
+  .rel.tdata	  : { *(.rel.tdata .rel.tdata.* .rel.gnu.linkonce.td.*) }
+  .rel.tbss	  : { *(.rel.tbss .rel.tbss.* .rel.gnu.linkonce.tb.*) }
+  .rel.ctors      : { *(.rel.ctors) }
+  .rel.dtors      : { *(.rel.dtors) }
+  .rel.got        : { *(.rel.got) }
+  .rela.got       : { *(.rela.got) }
+  .rel.bss        : { *(.rel.bss .rel.bss.* .rel.gnu.linkonce.b.*) }
+  .rel.plt        : { *(.rel.plt) }
+  .rodata         : { *(.rodata .rodata.* .gnu.linkonce.r.*) }
   .rodata1        : { *(.rodata1) }
   .eh_frame_hdr : { *(.eh_frame_hdr) }
   .eh_frame       : ONLY_IF_RO { KEEP (*(.eh_frame)) }
