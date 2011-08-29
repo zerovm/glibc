@@ -36,8 +36,11 @@
 #include <stackinfo.h>
 #include <caller.h>
 #include <sysdep.h>
+#ifdef __native_client__
 #include <nacl_dyncode.h>
 #include <nacl_dyncode_valgrind.h>
+#include <irt_syscalls.h>
+#endif
 
 #include <dl-dst.h>
 
@@ -1723,8 +1726,14 @@ open_verify (const char *name, struct filebuf *fbp, struct link_map *loader,
 #endif
 
   /* Open the file.  We always open files read-only.  */
+#ifdef __native_client__
+  int fd;
+  errval = __nacl_irt_open_resource(name, &fd);
+  if (errval == 0)
+#else
   int fd = __open (name, O_RDONLY);
   if (fd != -1)
+#endif
     {
       ElfW(Ehdr) *ehdr;
       ElfW(Phdr) *phdr, *ph;
@@ -1898,6 +1907,13 @@ open_verify (const char *name, struct filebuf *fbp, struct link_map *loader,
 	    break;
 	  }
     }
+#ifdef __native_client__
+  else
+    {
+      errno = errval;
+      fd = -1;
+    }
+#endif
 
   return fd;
 }

@@ -29,7 +29,6 @@ static int nacl_irt_sysconf (int name, int *value) {
   return -NACL_SYSCALL (sysconf) (name, value);
 }
 
-
 static int nacl_irt_open (const char *pathname, int oflag, mode_t cmode,
                           int *newfd) {
   int rv = NACL_SYSCALL (open) (pathname, oflag, cmode);
@@ -101,7 +100,6 @@ static int nacl_irt_getdents (int fd, struct dirent *buf, size_t count,
   return 0;
 }
 
-
 static int nacl_irt_sysbrk (void **newbrk) {
   /*
    * The syscall does not actually indicate error.  It just returns the
@@ -137,7 +135,6 @@ static int nacl_irt_munmap (void *addr, size_t len) {
   return -NACL_SYSCALL (munmap) (addr, len);
 }
 
-
 static int nacl_irt_dyncode_create(void *dest, const void *src, size_t size) {
   return -NACL_SYSCALL(dyncode_create)(dest, src, size);
 }
@@ -149,7 +146,6 @@ static int nacl_irt_dyncode_modify(void *dest, const void *src, size_t size) {
 static int nacl_irt_dyncode_delete(void *dest, size_t size) {
   return -NACL_SYSCALL(dyncode_delete)(dest, size);
 }
-
 
 static int nacl_irt_thread_create (void *start_user_address, void *stack,
                                    void *thread_ptr) {
@@ -165,7 +161,6 @@ static void nacl_irt_thread_exit (int32_t *stack_flag) {
 static int nacl_irt_thread_nice (const int nice) {
   return -NACL_SYSCALL (thread_nice) (nice);
 }
-
 
 static int nacl_irt_mutex_create (int *mutex_handle) {
   int rv = NACL_SYSCALL (mutex_create) ();
@@ -194,7 +189,6 @@ static int nacl_irt_mutex_unlock(int mutex_handle) {
 static int nacl_irt_mutex_trylock(int mutex_handle) {
   return -NACL_SYSCALL (mutex_trylock) (mutex_handle);
 }
-
 
 static int nacl_irt_cond_create (int *cond_handle) {
   int rv = NACL_SYSCALL (cond_create) ();
@@ -230,7 +224,6 @@ static int nacl_irt_cond_timed_wait_abs (int cond_handle, int mutex_handle,
                                               abstime);
 }
 
-
 static int nacl_irt_tls_init (void *tdb) {
   return -NACL_SYSCALL (tls_init) (tdb);
 }
@@ -239,6 +232,9 @@ static void *nacl_irt_tls_get (void) {
   return NACL_SYSCALL (tls_get) ();
 }
 
+static int nacl_irt_open_resource (const char *pathname, int *newfd) {
+  return __nacl_irt_open(pathname, O_RDONLY, 0, newfd);
+}
 
 static int not_implemented (void) {
   return (12 /* ENOSYS */);
@@ -309,4 +305,5 @@ int (*__nacl_irt_cond_timed_wait_abs) (int cond_handle, int mutex_handle,
 int (*__nacl_irt_tls_init) (void *tdb) = nacl_irt_tls_init;
 void *(*__nacl_irt_tls_get) (void) = nacl_irt_tls_get;
 
-int (*__nacl_irt_open_resource) (const char* file, int *fd) = not_implemented;
+int (*__nacl_irt_open_resource) (const char* file, int *fd) =
+  nacl_irt_open_resource;
