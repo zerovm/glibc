@@ -21,8 +21,9 @@
 /* Type used for the representation of TLS information in the GOT.  */
 typedef struct dl_tls_index
 {
-  unsigned long int ti_module;
-  unsigned long int ti_offset;
+  /* In Native Client GOT entries are 8 bytes in size.  Hence, long long.  */
+  unsigned long long ti_module;
+  unsigned long long ti_offset;
 } tls_index;
 
 
