@@ -76,7 +76,7 @@ sparc64.*-.*-linux.*	libc=6			GLIBC_2.2
 .*-.*-gnu-gnu.*		libc=0.3
 
 # The dynamic loader also requires different names.
-i.86-.*-linux.*		ld=ld-linux.so.NACL_SONAME_SUBST
+i.86-.*-linux.*		ld=ld-nacl-x86-32.so.NACL_SONAME_SUBST
 sparc64.*-.*-linux.*	ld=ld-linux.so.2	GLIBC_2.2
 sparc.*-.*-linux.*	ld=ld-linux.so.2
 alpha.*-.*-linux.*	ld=ld-linux.so.2
@@ -85,7 +85,7 @@ ia64-.*-linux.*		ld=ld-linux-ia64.so.2	GLIBC_2.2
 s390x-.*-linux.*	ld=ld64.so.1		GLIBC_2.2
 powerpc64.*-.*-linux.*	ld=ld64.so.1		GLIBC_2.3
 cris-.*-linux.*		ld=ld.so.1		GLIBC_2.2
-x86_64-.*-linux.*	ld=ld-linux-x86-64.so.NACL_SONAME_SUBST	GLIBC_2.2.5
+x86_64-.*-linux.*	ld=ld-nacl-x86-64.so.NACL_SONAME_SUBST	GLIBC_2.2.5
 # We use the ELF ABI standard name for the default.
 .*-.*-.*		ld=ld.so.1
 

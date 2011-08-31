@@ -1,3 +1,4 @@
+rtld-installed-name = $(patsubst %.$(NACL_FAKE_SONAME),%.1,$(ld.so-version))
 
 ifeq ($(subdir),io)
 sysdep_routines += imc_sendmsg imc_recvmsg imc_accept
