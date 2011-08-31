@@ -6,6 +6,7 @@ ENTRY(_start)
 SEARCH_DIR("=/usr/local/lib"); SEARCH_DIR("=/lib"); SEARCH_DIR("=/usr/lib");
 PHDRS
 {
+  seg_interp   PT_INTERP FLAGS(4) ;     /* read */
   seg_code     PT_LOAD FLAGS(5) ;       /* read + execute */
   seg_rodata   PT_LOAD FLAGS(4) ;       /* read */
   seg_rwdata   PT_LOAD FLAGS(6) ;       /* read + write */
@@ -46,6 +47,7 @@ SECTIONS
   PROVIDE (etext = .);
 
   . = 0x11000000 + (. & (CONSTANT (MAXPAGESIZE) - 1));
+  .interp	  : { *(.interp) } :seg_rodata :seg_interp
   .note.gnu.build-id : { *(.note.gnu.build-id) } :seg_rodata
   .hash           : { *(.hash) }
   .gnu.hash       : { *(.gnu.hash) }
