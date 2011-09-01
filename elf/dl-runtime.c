@@ -95,6 +95,29 @@ _dl_fixup (
 	    version = NULL;
 	}
 
+#if defined(__native_client__) && defined(__x86_64__)
+      /* We need to save the SSE registers in case something we do
+         here clobbers them.  An audit library might do it.  Our
+         calls to __nacl_read_tp (deep inside THREAD_GETMEM and the
+         like) might do it.  These registers are call-clobbered, but
+         they are also used for passing floating-point arguments, so
+         the need to survive past the PLT fixup work.  */
+      typedef float La_x86_64_xmm __attribute__ ((__vector_size__ (16)));
+      La_x86_64_xmm save_xmm[8];
+# define SAVE_XMM(n) \
+      asm volatile ("movdqa %%xmm" #n ", %0" : "=m" (save_xmm[n]))
+# define RESTORE_XMM(n) \
+      asm volatile ("movdqa %0, %%xmm" #n :: "m" (save_xmm[n]))
+      SAVE_XMM (0);
+      SAVE_XMM (1);
+      SAVE_XMM (2);
+      SAVE_XMM (3);
+      SAVE_XMM (4);
+      SAVE_XMM (5);
+      SAVE_XMM (6);
+      SAVE_XMM (7);
+#endif
+
       /* We need to keep the scope around so do some locking.  This is
 	 not necessary for objects which cannot be unloaded or when
 	 we are not using any threads (yet).  */
@@ -111,6 +134,17 @@ _dl_fixup (
       /* We are done with the global scope.  */
       if (!RTLD_SINGLE_THREAD_P)
 	THREAD_GSCOPE_RESET_FLAG ();
+
+#if defined(__native_client__) && defined(__x86_64__)
+      RESTORE_XMM (0);
+      RESTORE_XMM (1);
+      RESTORE_XMM (2);
+      RESTORE_XMM (3);
+      RESTORE_XMM (4);
+      RESTORE_XMM (5);
+      RESTORE_XMM (6);
+      RESTORE_XMM (7);
+#endif
 
       /* Currently result contains the base load address (or link map)
 	 of the object that defines sym.  Now add in the symbol
