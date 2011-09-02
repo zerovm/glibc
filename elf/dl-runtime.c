@@ -103,7 +103,7 @@ _dl_fixup (
          they are also used for passing floating-point arguments, so
          the need to survive past the PLT fixup work.  */
       typedef float La_x86_64_xmm __attribute__ ((__vector_size__ (16)));
-      La_x86_64_xmm save_xmm[8];
+      La_x86_64_xmm save_xmm[8] __attribute__ ((__aligned__ (16)));
 # define SAVE_XMM(n) \
       asm volatile ("movdqa %%xmm" #n ", %0" : "=m" (save_xmm[n]))
 # define RESTORE_XMM(n) \
