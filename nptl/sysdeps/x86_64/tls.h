@@ -26,6 +26,18 @@
 # include <stddef.h>
 # include <stdint.h>
 # include <stdlib.h>
+/* Return the thread descriptor for the current thread.
+
+   The contained asm must *not* be marked volatile since otherwise
+   assignments like
+        pthread_descr self = thread_self();
+   do not get optimized away.
+
+   We need it before sysdep.h in NaCl for INTERNAL_SYSCALL_gettid_0.  */
+#ifdef __native_client__
+void* __nacl_read_tp (void) __attribute__ ((const));
+# define THREAD_SELF ((struct pthread *)__nacl_read_tp ())
+#endif
 # include <sysdep.h>
 # include <kernel-features.h>
 
@@ -186,10 +198,7 @@ typedef struct
    assignments like
         pthread_descr self = thread_self();
    do not get optimized away.  */
-#ifdef __native_client__
-void* __nacl_read_tp (void) __attribute__ ((const));
-# define THREAD_SELF ((struct pthread *)__nacl_read_tp ())
-#else
+#ifndef __native_client__
 # define THREAD_SELF \
   ({ struct pthread *__self;						      \
      asm ("movq %%fs:%c1,%q0" : "=r" (__self)				      \

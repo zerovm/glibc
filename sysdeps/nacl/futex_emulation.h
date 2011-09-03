@@ -15,6 +15,8 @@ struct thread_wait_list_node
   bool desc_is_initialized;
 };
 
+#include <irt_syscalls.h>
+
 #define __FUTEX_BITSET_MATCH_ANY 0xFFFFFFFF
 
 void __nacl_futex_init (void);
@@ -22,10 +24,11 @@ void __nacl_futex_fini (void);
 
 int __nacl_futex_wait (volatile int *addr, int val, unsigned int bitset,
 		       const struct timespec *timeout);
-int __nacl_futex_wake (volatile int *addr, int nwake, unsigned int bitset);
+int __nacl_futex_wake (volatile int *addr, int nwake, unsigned int bitset,
+		       int *count);
 int __nacl_futex_wake_op (volatile int *addr1, volatile int *addr2, int nwake1,
-			  int nwake2, int op);
+			  int nwake2, int op, int *count);
 int __nacl_futex_cmp_requeue (volatile int *addr1, volatile int *addr2, int nwake,
-			      int nrequeue, int val);
+			      int nrequeue, int val, int *count);
 
 #endif

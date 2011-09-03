@@ -90,14 +90,16 @@ ret_no_unlock:
 
 /* Note: global_futex_emulation_mutex_desc must be taken when called.  */
 static int nacl_futex_wake_nolock (volatile int *addr, int nwake,
-				   unsigned int bitset)
+				   unsigned int bitset,
+				   int *count)
 {
   int retcode = 0;
   list_t *entry;
   list_t *prev;
+  *count = 0;
 
   if (nwake <= 0)
-    return retcode;
+    return 0;
 
   list_for_each_prev_safe (entry, prev, &waiters_list)
     {
@@ -112,24 +114,25 @@ static int nacl_futex_wake_nolock (volatile int *addr, int nwake,
 	  entry->next = NULL;
 	  /* Cannot really do anything if error happens here.  */
 	  __nacl_irt_cond_signal (curr->condvar_desc);
-	  retcode++;
+	  (*count)++;
 	  nwake--;
 	  if (nwake <= 0)
-	    return retcode;
+	    return 0;
 	}
     }
 
   return retcode;
 }
 
-int __nacl_futex_wake (volatile int *addr, int nwake, unsigned int bitset)
+int __nacl_futex_wake (volatile int *addr, int nwake, unsigned int bitset,
+		       int *count)
 {
   int retcode = 0;
 
   if (__nacl_irt_mutex_lock (global_futex_emulation_mutex_desc))
     goto ret_no_unlock;
 
-  retcode = nacl_futex_wake_nolock (addr, nwake, bitset);
+  retcode = nacl_futex_wake_nolock (addr, nwake, bitset, count);
 
   /* Cannot really do anything if error happens here.  */
   __nacl_irt_mutex_unlock (global_futex_emulation_mutex_desc);
@@ -153,7 +156,8 @@ int __nacl_futex_wake_op (volatile int *addr1, volatile int *addr2,
 			      int encoded_futex_operation;
 			      struct decoded_wake_op_operation
 			        decoded_wake_op_operation;
-			    } futex_operation)
+			    } futex_operation,
+			  int *count)
 {
   int retcode = 0;
   int operation_argument;
@@ -220,10 +224,16 @@ int __nacl_futex_wake_op (volatile int *addr1, volatile int *addr2,
 	goto ret_unlock;
     }
 
-  retcode = nacl_futex_wake_nolock (addr1, nwake1, __FUTEX_BITSET_MATCH_ANY);
+  retcode = nacl_futex_wake_nolock (addr1, nwake1, __FUTEX_BITSET_MATCH_ANY,
+				    count);
 
-  if (old_value)
-    retcode += nacl_futex_wake_nolock (addr2, nwake2, __FUTEX_BITSET_MATCH_ANY);
+  if (!retcode && old_value)
+    {
+      int count2;
+      retcode = nacl_futex_wake_nolock (addr2, nwake2, __FUTEX_BITSET_MATCH_ANY,
+					&count2);
+      (*count) += count2;
+    }
 
 ret_unlock:
   /* Cannot really do anything if error happens here.  */
@@ -233,7 +243,7 @@ ret_no_unlock:
 }
 
 int __nacl_futex_cmp_requeue (volatile int *addr1, volatile int *addr2,
-			      int nwake, int nrequeue, int val)
+			      int nwake, int nrequeue, int val, int *count)
 {
   int retcode = -EINTR;
 
@@ -248,7 +258,8 @@ int __nacl_futex_cmp_requeue (volatile int *addr1, volatile int *addr2,
   else
     {
       list_t *entry;
-      retcode = nacl_futex_wake_nolock (addr1, nwake, __FUTEX_BITSET_MATCH_ANY);
+      retcode = nacl_futex_wake_nolock (addr1, nwake, __FUTEX_BITSET_MATCH_ANY,
+					count);
 
       if (retcode <= 0 || (waiters_list.next == &waiters_list) || nrequeue <= 0)
 	goto ret_unlock_nocheck;
@@ -265,7 +276,7 @@ int __nacl_futex_cmp_requeue (volatile int *addr1, volatile int *addr2,
 	  if (curr->addr == addr1)
 	    {
 	      curr->addr = addr2;
-	      retcode++;
+	      count++;
 	      nrequeue--;
 	    }
 	}

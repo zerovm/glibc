@@ -8,7 +8,7 @@
 
 ssize_t __libc_read (int fd, void *buf, size_t size)
 {
-  int nread;
+  size_t nread;
   int result = __nacl_irt_read (fd, buf, size, &nread);
   if (result != 0) {
     errno = -result;

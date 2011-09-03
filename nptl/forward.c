@@ -199,6 +199,7 @@ FORWARD2(__pthread_unwind,
 	 (__pthread_unwind_buf_t *buf), (buf), {
 		       /* We cannot call abort() here.  */
 		       INTERNAL_SYSCALL_DECL (err);
-		       INTERNAL_SYSCALL (kill, err, 1, SIGKILL);
+		       INTERNAL_SYSCALL (kill, err, 2, THREAD_SELF->pid,
+					 SIGKILL);
 		     })
 #undef return

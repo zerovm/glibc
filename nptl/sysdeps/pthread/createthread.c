@@ -78,9 +78,9 @@ do_clone (struct pthread *pd, const struct pthread_attr *attr,
 #endif
 
   /* Native Client does not have a notion of a thread ID, so we make
-     one up.  This must be positive to mark the thread as not
-     exited.  */
-  pd->tid = ((unsigned int) pd) >> 2;
+     one up.  This must be small enough to leave space for number identifying
+     the clock.  Use CLOCK_IDFIELD_SIZE to guarantee that.  */
+  pd->tid = ((unsigned int) pd) >> CLOCK_IDFIELD_SIZE;
 
   /* Native Client syscall thread_create does not push return address onto stack
      as opposed to the kernel.  We emulate this behavior on x86-64 to meet the

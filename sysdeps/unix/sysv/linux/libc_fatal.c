@@ -36,11 +36,11 @@
 #include FATAL_PREPARE_INCLUDE
 #endif
 
-struct str_list
+struct __str_list
 {
   const char *str;
   size_t len;
-  struct str_list *next;
+  struct __str_list *next;
 };
 
 
@@ -68,7 +68,7 @@ __libc_message (int do_abort, const char *fmt, ...)
   if (fd == -1)
     fd = STDERR_FILENO;
 
-  struct str_list *list = NULL;
+  struct __str_list *list = NULL;
   int nlist = 0;
 
   const char *cp = fmt;
@@ -100,7 +100,7 @@ __libc_message (int do_abort, const char *fmt, ...)
 	  cp = next;
 	}
 
-      struct str_list *newp = alloca (sizeof (struct str_list));
+      struct __str_list *newp = alloca (sizeof (struct __str_list));
       newp->str = str;
       newp->len = len;
       newp->next = list;

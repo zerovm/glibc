@@ -58,13 +58,13 @@ __futimes (int fd, const struct timeval tvp[2])
     }
 
 #ifdef __ASSUME_UTIMENSAT
-  return INLINE_SYSCALL (utimensat, 4, fd, NULL, tvp ? &ts : NULL, 0);
+  return INLINE_SYSCALL (utimensat, 4, fd, NULL, tvp ? ts : NULL, 0);
 #else
   int result;
 # ifdef __NR_utimensat
   if (!__builtin_expect (miss_utimensat, 0))
     {
-      result = INLINE_SYSCALL (utimensat, 4, fd, NULL, tvp ? &ts : NULL, 0);
+      result = INLINE_SYSCALL (utimensat, 4, fd, NULL, tvp ? ts : NULL, 0);
       if (__builtin_expect (result, 0) != -1 || errno != ENOSYS)
 	return result;
 

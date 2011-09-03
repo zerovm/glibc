@@ -78,3 +78,49 @@ extern int (*__nacl_irt_open_resource) (const char* file, int *fd);
 void init_irt_table (void) attribute_hidden;
 #endif
 #endif
+
+#if defined(_LIBC) || defined (__need_emulated_syscalls)
+#ifndef _IRT_EMULATED_SYSCALLS_H
+#define _IRT_EMULATED_SYSCALLS_H 1
+
+#ifndef _LINUX_TYPES_H
+#define ustat __kernel_ustat
+#include <linux/sysctl.h>
+#undef ustat
+#ifdef _LIBC
+#include <misc/sys/ustat.h>
+#else
+#include <sys/ustat.h>
+#endif
+#endif
+#ifndef _LIBC
+#include <mqueue.h>
+#endif
+
+#include <linux/getcpu.h>
+#include <linux/posix_types.h>
+#include <sys/poll.h>
+#include <sched.h>
+#include <signal.h>
+#include <streams/stropts.h>
+#include <sys/epoll.h>
+#include <sys/ptrace.h>
+#include <sys/times.h>
+#include <sys/types.h>
+#include <sys/wait.h>
+#include <time.h>
+#include <utime.h>
+
+#ifdef _LIBC
+struct robust_list_head;
+#else
+struct robust_list_head
+{
+  void *list;
+  long int futex_offset;
+  void *list_op_pending;
+};
+#endif
+
+#endif
+#endif
