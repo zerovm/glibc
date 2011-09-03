@@ -291,6 +291,11 @@ INTERNAL_SYSCALL_futex6 (union __attribute__ ((__transparent_union__))
 
 #include_next <sysdep.h>
 
+/* Nacl uses AT_SYSINFO for IRT. Thus sysinfo can never be usable
+   and it's safe to disable this machinery.  */
+#undef NEED_DL_SYSINFO
+
+
 #undef __NR_fallocate
 #undef __NR_pselect6
 #undef __NR_rt_sigaction

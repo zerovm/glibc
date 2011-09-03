@@ -74,4 +74,7 @@ extern void *(*__nacl_irt_tls_get) (void);
 
 extern int (*__nacl_irt_open_resource) (const char* file, int *fd);
 
+#ifdef _LIBC
+void init_irt_table (void) attribute_hidden;
+#endif
 #endif

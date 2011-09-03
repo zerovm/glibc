@@ -42,8 +42,6 @@
 #ifdef __native_client__
 #include <irt.h>
 #include <irt_syscalls.h>
-#undef NEED_DL_SYSINFO
-#undef NEED_DL_SYSINFO_DSO
 #endif
 
 #ifdef _DL_FIRST_PLATFORM
@@ -95,122 +93,6 @@ static ElfW(auxv_t) *_dl_auxv attribute_relro;
 
 #ifndef DL_STACK_END
 # define DL_STACK_END(cookie) ((void *) (cookie))
-#endif
-
-#ifdef __native_client__
-static void
-init_irt_table (void)
-{
-  if (__nacl_irt_query != NULL)
-    {
-      struct nacl_irt_basic nacl_irt_basic;
-      struct nacl_irt_fdio nacl_irt_fdio;
-      struct nacl_irt_filename nacl_irt_filename;
-      struct nacl_irt_memory nacl_irt_memory;
-      struct nacl_irt_dyncode nacl_irt_dyncode;
-      struct nacl_irt_thread nacl_irt_thread;
-      struct nacl_irt_mutex nacl_irt_mutex;
-      struct nacl_irt_cond nacl_irt_cond;
-      struct nacl_irt_tls nacl_irt_tls;
-      struct nacl_irt_resource_open nacl_irt_resource_open;
-
-      if (__nacl_irt_query (NACL_IRT_BASIC_v0_1, &nacl_irt_basic,
-			    sizeof(nacl_irt_basic)) == sizeof(nacl_irt_basic))
-	{
-	  __nacl_irt_exit = nacl_irt_basic.exit;
-	  __nacl_irt_gettod = nacl_irt_basic.gettod;
-	  __nacl_irt_clock = nacl_irt_basic.clock;
-	  __nacl_irt_nanosleep = nacl_irt_basic.nanosleep;
-	  __nacl_irt_sched_yield = nacl_irt_basic.sched_yield;
-	  __nacl_irt_sysconf = nacl_irt_basic.sysconf;
-	}
-
-      if (__nacl_irt_query (NACL_IRT_FDIO_v0_1, &nacl_irt_fdio,
-			    sizeof(nacl_irt_fdio)) == sizeof(nacl_irt_fdio))
-	{
-	  __nacl_irt_close = nacl_irt_fdio.close;
-	  __nacl_irt_dup = nacl_irt_fdio.dup;
-	  __nacl_irt_dup2 = nacl_irt_fdio.dup2;
-	  __nacl_irt_read = nacl_irt_fdio.read;
-	  __nacl_irt_write = nacl_irt_fdio.write;
-	  __nacl_irt_seek = nacl_irt_fdio.seek;
-	  __nacl_irt_fstat = nacl_irt_fdio.fstat;
-	  __nacl_irt_getdents = nacl_irt_fdio.getdents;
-	}
-
-      if (__nacl_irt_query (NACL_IRT_FILENAME_v0_1, &nacl_irt_filename,
-			    sizeof(nacl_irt_filename))
-          == sizeof(nacl_irt_filename))
-	{
-	  __nacl_irt_open = nacl_irt_filename.open;
-	  __nacl_irt_stat = nacl_irt_filename.stat;
-	}
-
-      if (__nacl_irt_query (NACL_IRT_MEMORY_v0_1, &nacl_irt_memory,
-			    sizeof(nacl_irt_memory)) == sizeof(nacl_irt_memory))
-	{
-	  __nacl_irt_sysbrk = nacl_irt_memory.sysbrk;
-	  __nacl_irt_mmap = nacl_irt_memory.mmap;
-	  __nacl_irt_munmap = nacl_irt_memory.munmap;
-	}
-
-      if (__nacl_irt_query (NACL_IRT_DYNCODE_v0_1, &nacl_irt_dyncode,
-	      sizeof(nacl_irt_dyncode)) == sizeof(nacl_irt_dyncode))
-	{
-	  __nacl_irt_dyncode_create = nacl_irt_dyncode.dyncode_create;
-	  __nacl_irt_dyncode_modify = nacl_irt_dyncode.dyncode_modify;
-	  __nacl_irt_dyncode_delete = nacl_irt_dyncode.dyncode_delete;
-	}
-
-      if (__nacl_irt_query (NACL_IRT_THREAD_v0_1, &nacl_irt_thread,
-			    sizeof(nacl_irt_thread)) == sizeof(nacl_irt_thread))
-	{
-	  __nacl_irt_thread_create = nacl_irt_thread.thread_create;
-	  __nacl_irt_thread_exit = nacl_irt_thread.thread_exit;
-	  __nacl_irt_thread_nice = nacl_irt_thread.thread_nice;
-	}
-
-      if (__nacl_irt_query (NACL_IRT_MUTEX_v0_1, &nacl_irt_mutex,
-			    sizeof(nacl_irt_mutex)) == sizeof(nacl_irt_mutex))
-	{
-	  __nacl_irt_mutex_create = nacl_irt_mutex.mutex_create;
-	  __nacl_irt_mutex_destroy = nacl_irt_mutex.mutex_destroy;
-	  __nacl_irt_mutex_lock = nacl_irt_mutex.mutex_lock;
-	  __nacl_irt_mutex_unlock = nacl_irt_mutex.mutex_unlock;
-	  __nacl_irt_mutex_trylock = nacl_irt_mutex.mutex_trylock;
-	}
-
-      if (__nacl_irt_query (NACL_IRT_COND_v0_1, &nacl_irt_cond,
-			    sizeof(nacl_irt_cond)) == sizeof(nacl_irt_cond))
-	{
-	  __nacl_irt_cond_create = nacl_irt_cond.cond_create;
-	  __nacl_irt_cond_destroy = nacl_irt_cond.cond_destroy;
-	  __nacl_irt_cond_signal = nacl_irt_cond.cond_signal;
-	  __nacl_irt_cond_broadcast = nacl_irt_cond.cond_broadcast;
-	  __nacl_irt_cond_wait = nacl_irt_cond.cond_wait;
-	  __nacl_irt_cond_timed_wait_abs = nacl_irt_cond.cond_timed_wait_abs;
-	}
-
-      if (__nacl_irt_query (NACL_IRT_TLS_v0_1, &nacl_irt_tls,
-			    sizeof(nacl_irt_tls)) == sizeof(nacl_irt_tls))
-	{
-	  __nacl_irt_tls_init = nacl_irt_tls.tls_init;
-	  __nacl_irt_tls_get = nacl_irt_tls.tls_get;
-	}
-
-      if (__nacl_irt_query (NACL_IRT_RESOURCE_OPEN_v0_1, &nacl_irt_resource_open,
-	      sizeof(nacl_irt_resource_open)) == sizeof(nacl_irt_resource_open))
-	{
-	  __nacl_irt_open_resource = nacl_irt_resource_open.open_resource;
-	  if (_dl_argc == 1)
-	    {
-	      static char *argv[] = { "/runnable-ld.so", "/main.nexe", 0 };
-	      _dl_argc = 2;
-	      _dl_argv = argv;
-	    }
-	}
-    }
-}
 #endif
 
 ElfW(Addr)
@@ -303,7 +185,6 @@ _dl_sysdep_start (void **start_argptr,
 #ifdef __native_client__
       case AT_SYSINFO:
 	__nacl_irt_query = (TYPE_nacl_irt_query) av->a_un.a_val;
-	init_irt_table ();
 	break;
 #endif
 #ifdef NEED_DL_SYSINFO
@@ -320,6 +201,9 @@ _dl_sysdep_start (void **start_argptr,
       DL_PLATFORM_AUXV
 #endif
       }
+#ifdef __native_client__
+  init_irt_table ();
+#endif
 
 #ifndef HAVE_AUX_SECURE
   if (seen != -1)
