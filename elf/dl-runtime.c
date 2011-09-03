@@ -105,9 +105,9 @@ _dl_fixup (
       typedef float La_x86_64_xmm __attribute__ ((__vector_size__ (16)));
       La_x86_64_xmm save_xmm[8] __attribute__ ((__aligned__ (16)));
 # define SAVE_XMM(n) \
-      asm volatile ("movdqa %%xmm" #n ", %0" : "=m" (save_xmm[n]))
+      asm volatile ("movups %%xmm" #n ", %0" : "=m" (save_xmm[n]))
 # define RESTORE_XMM(n) \
-      asm volatile ("movdqa %0, %%xmm" #n :: "m" (save_xmm[n]))
+      asm volatile ("movups %0, %%xmm" #n :: "m" (save_xmm[n]))
       SAVE_XMM (0);
       SAVE_XMM (1);
       SAVE_XMM (2);
