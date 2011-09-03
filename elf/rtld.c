@@ -40,7 +40,6 @@
 #include <dl-osinfo.h>
 #include <dl-procinfo.h>
 #include <tls.h>
-#include "receive_args.h"
 
 #include <assert.h>
 
@@ -549,16 +548,6 @@ _dl_start (void *arg)
      header table in core.  Put the rest of _dl_start into a separate
      function, that way the compiler cannot put accesses to the GOT
      before ELF_DYNAMIC_RELOCATE.  */
-
-  /* If we are getting arguments and environment from IPC rather from the
-     startup stack, this will replace ARG with a new mmap'd pointer.
-
-     Keeping _dl_starting_up set lets _dl_*printf calls work.  */
-  int starting = INTUSE(_dl_starting_up);
-  INTUSE(_dl_starting_up) = 1;
-  arg = argmsg_fetch(arg);
-  INTUSE(_dl_starting_up) = starting;
-
   {
 #ifdef DONT_USE_BOOTSTRAP_MAP
     ElfW(Addr) entry = _dl_start_final (arg);
