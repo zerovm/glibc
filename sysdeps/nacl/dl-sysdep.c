@@ -13,4 +13,4 @@
     (auxp) = (void *) &(envp)[_envc + 1];                       \
   } while (0)
 
-#include <sysdeps/unix/sysv/linux/dl-sysdep.c>
+#include <linux/dl-sysdep.c>

@@ -159,12 +159,74 @@ shared-only-routines += $file
 	(echo '/* Dummy module requested by syscalls.list */'; \\"
   ;;
   x*)
+  case $args in
+  *:*)
+  set `echo $args |
+      sed -e 's/^\(.\):\(.*\)/\2 \10/' \
+	  -e 's/^\([^ ]\)\(.*\)/\2 \11/' \
+	  -e 's/^\([^ ]\)\(.*\)/\2 \12/' \
+	  -e 's/^\([^ ]\)\(.*\)/\2 \13/' \
+	  -e 's/^\([^ ]\)\(.*\)/\2 \14/' \
+	  -e 's/^\([^ ]\)\(.*\)/\2 \15/' \
+	  -e 's/^\([^ ]\)\(.*\)/\2 \16/' \
+	  -e 's/^\([^ ]\)\(.*\)/\2 \17/' \
+	  -e 's/^\([^ ]\)\(.*\)/\2 \18/' \
+	  -e 's/^\([^ ]\)\(.*\)/\2 \19/'`
+    ;;
+  *) set i;;
+  esac
+  rtn=$1; shift
+  case $rtn in
+    [bp]*) frtn='void *';;
+    *) frtn='int ';;
+  esac
   echo "\
 	\$(make-target-directory)
-	(echo 'int __unimplemented_syscall(const char *name);'; \\
-	 echo 'int $strong (void);'; \\
-	 echo 'libc_hidden_proto ($strong)'; \\
-	 echo 'int $strong (void) { return __unimplemented_syscall(\"$syscall\"); }'; \\
+	(echo '#define $strong ${strong}_RENAMED'; \\"
+  for name in $weak; do
+    case $name in
+    *@@*) base=`echo $name | sed 's/@@.*//'`;;
+    *@*) base=`echo $name | sed 's/@.*//'`;;
+    *) base=$name;;
+    esac
+    echo "	 echo '#define $base ${base}_RENAMED'; \\"
+  done
+  echo "\
+	 echo '#include <sysdep.h>'; \\
+	 echo '#undef $strong'; \\"
+  for name in $weak; do
+    case $name in
+    *@@*) base=`echo $name | sed 's/@@.*//'`;;
+    *@*) base=`echo $name | sed 's/@.*//'`;;
+    *) base=$name;;
+    esac
+    echo "	 echo '#undef $base'; \\"
+  done
+  echo "\
+	 echo '$frtn$strong ( ); /* $args */'; \\
+	 echo 'libc_hidden_proto ($strong)'; \\"
+  echo -n "	 echo '$frtn$strong ("
+  sprtr=
+  for arg; do
+    echo -n "$sprtr"
+    case $arg in
+      [abIpP]*) echo -n "void *$arg";;
+      f*) echo -n "int $arg[2]";;
+      i*) echo -n "int $arg";;
+      n*) echo -n "size_t $arg";;
+      [sS]*) echo -n "char *$arg";;
+      V*) echo -n "unsigned char *$arg";;
+      W*) echo -n "int *$arg";;
+    esac
+    sprtr=", "
+  done
+  echo ") {'; \\"
+  echo -n "	 echo '  return INLINE_SYSCALL ($syscall, $nargs"
+  for arg; do
+    echo -n ", $arg"
+  done
+  echo ");'; \\
+	 echo '}'; \\
 	 echo 'strong_alias ($strong, __${syscall}_nocancel)'; \\
 	 echo 'libc_hidden_def ($strong)'; \\"
   ;;
@@ -210,7 +272,7 @@ shared-only-routines += $file
 	echo "	 echo 'libc_hidden_def ($name)'; \\"
 	;;
       *)
-	echo "	 echo 'int $name (void);'; \\"
+	echo "	 echo '$frtn$name ( );'; \\"
 	echo "	 echo 'libc_hidden_proto ($name)'; \\"
 	echo "	 echo 'weak_alias ($strong, $name)'; \\"
 	echo "	 echo 'libc_hidden_weak ($name)'; \\"

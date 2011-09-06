@@ -29,9 +29,9 @@ __ssize_t internal_function __GETDENTS (int fd, char *buf, size_t buf_size)
   int offset = 0;
   int d_name_len;
 
-  if (rv != 0)
+  if (rv > 0)
     {
-      return rv;
+      return -rv;
     }
   while (nacl_offset < nbytes)
     {

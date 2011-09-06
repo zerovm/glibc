@@ -4,6 +4,10 @@
 
 # These are listed only for generating stubs, so argument lists don't matter.
 
+clone		EXTRA	clone		i:ppipppp	__clone	clone
+create_module	EXTRA	create_module	p:pi	create_module
+delete_module	EXTRA	delete_module	i:pipp	delete_module
+init_module	EXTRA	init_module	i:pip	init_module
 umount		EXTRA	umount		i:s	__umount	umount
 umount2		EXTRA	umount2		i:si	__umount2	umount2
-clone		EXTRA	clone		i:	__clone	clone
+vhangup		EXTRA	vhangup		i:	vhangup

@@ -93,23 +93,36 @@ void init_irt_table (void) attribute_hidden;
 #include <sys/ustat.h>
 #endif
 #endif
-#ifndef _LIBC
-#include <mqueue.h>
-#endif
 
 #include <linux/getcpu.h>
 #include <linux/posix_types.h>
-#include <sys/poll.h>
+#if !defined (_LIBC) || defined(IS_IN_librt)
+#include <mqueue.h>
+#endif
+#include <pthread.h>
 #include <sched.h>
 #include <signal.h>
 #include <streams/stropts.h>
 #include <sys/epoll.h>
+#include <sys/poll.h>
 #include <sys/ptrace.h>
 #include <sys/times.h>
 #include <sys/types.h>
 #include <sys/wait.h>
 #include <time.h>
 #include <utime.h>
+#include <sys/msg.h>
+#include <sys/sem.h>
+#include <sys/shm.h>
+#include <sys/sysinfo.h>
+#include <sys/time.h>
+#include <sys/timex.h>
+#include <sys/types.h>
+#include <sys/utsname.h>
+#ifdef __i386__
+#include <sys/vm86.h>
+#endif
+#include <unistd.h>
 
 #ifdef _LIBC
 struct robust_list_head;

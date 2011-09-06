@@ -7,18 +7,19 @@
 
    TODO(pasko): find a better way for an override. */
 
-int __unimplemented_syscall(const char *name);
-
-int __umount (void);
-libc_hidden_proto (__umount);
-int __umount (void)
-{
-  return __unimplemented_syscall ("umount");
+#define __umount __umount_RENAMED
+#define umount umount_RENAMED
+#include <sysdep.h>
+#undef __umount
+#undef umount
+int __umount ( ); /* i:s */
+libc_hidden_proto (__umount)
+int __umount (char *s1) {
+  return INLINE_SYSCALL (umount, 1, s1);
 }
-strong_alias (__umount, __umount_nocancel);
-libc_hidden_def (__umount);
-
-int umount (void);
-libc_hidden_proto (umount);
-weak_alias (__umount, umount);
-libc_hidden_weak (umount);
+strong_alias (__umount, __umount_nocancel)
+libc_hidden_def (__umount)
+int umount ( );
+libc_hidden_proto (umount)
+weak_alias (__umount, umount)
+libc_hidden_weak (umount)
