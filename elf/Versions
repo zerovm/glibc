@@ -57,6 +57,8 @@ ld {
     _vgwZZ_NaClZuZa_ZuZunaclZudyncodeZumapZuforZuvalgrind;
     __nacl_data_map_for_valgrind;
     _vgwZZ_NaClZuZa_ZuZunaclZudataZumapZuforZuvalgrind;
+
+    nacl_interface_query;
   }
   GLIBC_PRIVATE {
     # Futex emulation: used by libc and NPTL.

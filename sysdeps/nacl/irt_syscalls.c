@@ -243,8 +243,9 @@ static int nacl_irt_open_resource (const char *pathname, int *newfd) {
   return __nacl_irt_open(pathname, O_RDONLY, 0, newfd);
 }
 
-static int not_implemented (void) {
-  return (38 /* ENOSYS */);
+static size_t no_interface(const char *interface_ident,
+                           void *table, size_t tablesize) {
+  return 0;
 }
 
 size_t (*__nacl_irt_query) (const char *interface_ident,
@@ -494,5 +495,10 @@ init_irt_table (void)
     __nacl_irt_open_resource = nacl_irt_open_resource;
 
   if (!__nacl_irt_query)
-    __nacl_irt_query = (typeof (&__nacl_irt_query)) not_implemented;
+    __nacl_irt_query = no_interface;
+}
+
+size_t nacl_interface_query(const char *interface_ident,
+                            void *table, size_t tablesize) {
+  return (*__nacl_irt_query)(interface_ident, table, tablesize);
 }
