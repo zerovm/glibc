@@ -24,6 +24,28 @@ INTERNAL_SYSCALL_NCS_3 (int syscall_nr, int *err, int id1, int id2, int id3)
   return 0;
 }
 
+# ifdef __i386__
+#  define INTERNAL_SYSCALL_chown_3	INTERNAL_SYSCALL_chown32_3
+#  define INTERNAL_SYSCALL_fchown_3	INTERNAL_SYSCALL_fchown32_3
+#  define INTERNAL_SYSCALL_getegid_0	INTERNAL_SYSCALL_getegid32_0
+#  define INTERNAL_SYSCALL_geteuid_0	INTERNAL_SYSCALL_geteuid32_0
+#  define INTERNAL_SYSCALL_getgid_0	INTERNAL_SYSCALL_getgid32_0
+#  define INTERNAL_SYSCALL_getgroups_2	INTERNAL_SYSCALL_getgroups32_2
+#  define INTERNAL_SYSCALL_getresgid_3	INTERNAL_SYSCALL_getresgid32_3
+#  define INTERNAL_SYSCALL_getresuid_3	INTERNAL_SYSCALL_getresuid32_3
+#  define INTERNAL_SYSCALL_getuid_0	INTERNAL_SYSCALL_getuid32_0
+#  define INTERNAL_SYSCALL_lchown_3	INTERNAL_SYSCALL_lchown32_3
+#  define INTERNAL_SYSCALL_setfsgid_1	INTERNAL_SYSCALL_setfsgid32_1
+#  define INTERNAL_SYSCALL_setfsuid_1	INTERNAL_SYSCALL_setfsuid32_1
+#  define INTERNAL_SYSCALL_setgid_1	INTERNAL_SYSCALL_setgid32_1
+#  define INTERNAL_SYSCALL_setgroups_2	INTERNAL_SYSCALL_setgroups32_2
+#  define INTERNAL_SYSCALL_setregid_2	INTERNAL_SYSCALL_setregid32_2
+#  define INTERNAL_SYSCALL_setresgid_3	INTERNAL_SYSCALL_setresgid32_3
+#  define INTERNAL_SYSCALL_setresuid_3	INTERNAL_SYSCALL_setresuid32_3
+#  define INTERNAL_SYSCALL_setreuid_2	INTERNAL_SYSCALL_setreuid32_2
+#  define INTERNAL_SYSCALL_setuid_1	INTERNAL_SYSCALL_setuid32_1
+# endif
+
 __extern_always_inline int
 INTERNAL_SYSCALL_access_2 (int *err, const char *pathname, int mode)
 {
@@ -105,15 +127,7 @@ INTERNAL_SYSCALL_chmod_2 (int *err, const char *path, mode_t mode)
 
 __extern_always_inline int
 INTERNAL_SYSCALL_chown_3 (int *err, const char *path,
-			  __kernel_uid_t owner, __kernel_gid_t group)
-{
-  *err = (38 /* ENOSYS */);
-  return 0;
-}
-
-__extern_always_inline int
-INTERNAL_SYSCALL_chown32_3 (int *err, const char *path,
-			    uid_t owner, gid_t group)
+			  uid_t owner, gid_t group)
 {
   *err = (38 /* ENOSYS */);
   return 0;
@@ -301,15 +315,7 @@ INTERNAL_SYSCALL_fchmodat_3 (int *err, int dirfd, const char *pathname,
 
 __extern_always_inline int
 INTERNAL_SYSCALL_fchown_3 (int *err, int fd,
-			  __kernel_uid_t owner, __kernel_gid_t group)
-{
-  *err = (38 /* ENOSYS */);
-  return 0;
-}
-
-__extern_always_inline int
-INTERNAL_SYSCALL_fchown32_3 (int *err, int fd,
-			    uid_t owner, gid_t group)
+			   uid_t owner, gid_t group)
 {
   *err = (38 /* ENOSYS */);
   return 0;
@@ -572,57 +578,29 @@ INTERNAL_SYSCALL_getcwd_2 (int *err, char *buf, size_t size)
   return 0;
 }
 
-__extern_always_inline __kernel_gid_t
+__extern_always_inline gid_t
 INTERNAL_SYSCALL_getegid_0 (int *err)
 {
   *err = (38 /* ENOSYS */);
   return 0;
 }
 
-__extern_always_inline gid_t
-INTERNAL_SYSCALL_getegid32_0 (int *err)
-{
-  *err = (38 /* ENOSYS */);
-  return 0;
-}
-
-__extern_always_inline __kernel_uid_t
+__extern_always_inline uid_t
 INTERNAL_SYSCALL_geteuid_0 (int *err)
 {
   *err = (38 /* ENOSYS */);
   return 0;
 }
 
-__extern_always_inline uid_t
-INTERNAL_SYSCALL_geteuid32_0 (int *err)
-{
-  *err = (38 /* ENOSYS */);
-  return 0;
-}
-
-__extern_always_inline __kernel_gid_t
+__extern_always_inline gid_t
 INTERNAL_SYSCALL_getgid_0 (int *err)
 {
   *err = (38 /* ENOSYS */);
   return 0;
 }
 
-__extern_always_inline gid_t
-INTERNAL_SYSCALL_getgid32_0 (int *err)
-{
-  *err = (38 /* ENOSYS */);
-  return 0;
-}
-
 __extern_always_inline int
-INTERNAL_SYSCALL_getgroups_2 (int *err, int size, __kernel_gid_t *list)
-{
-  *err = (38 /* ENOSYS */);
-  return 0;
-}
-
-__extern_always_inline int
-INTERNAL_SYSCALL_getgroups32_2 (int *err, int size, gid_t *list)
+INTERNAL_SYSCALL_getgroups_2 (int *err, int size, gid_t *list)
 {
   *err = (38 /* ENOSYS */);
   return 0;
@@ -689,30 +667,14 @@ INTERNAL_SYSCALL_getpriority_2 (int *err, int which, int who)
 }
 
 __extern_always_inline int
-INTERNAL_SYSCALL_getresgid_3 (int *err, __kernel_gid_t *rgid,
-			      __kernel_gid_t *egid, __kernel_gid_t *sgid)
+INTERNAL_SYSCALL_getresgid_3 (int *err, gid_t *rgid, gid_t *egid, gid_t *sgid)
 {
   *err = (38 /* ENOSYS */);
   return 0;
 }
 
 __extern_always_inline int
-INTERNAL_SYSCALL_getresgid32_3 (int *err, gid_t *rgid, gid_t *egid, gid_t *sgid)
-{
-  *err = (38 /* ENOSYS */);
-  return 0;
-}
-
-__extern_always_inline int
-INTERNAL_SYSCALL_getresuid_3 (int *err, __kernel_uid_t *ruid,
-			      __kernel_uid_t *euid, __kernel_uid_t *suid)
-{
-  *err = (38 /* ENOSYS */);
-  return 0;
-}
-
-__extern_always_inline int
-INTERNAL_SYSCALL_getresuid32_3 (int *err, uid_t *ruid, uid_t *euid, uid_t *ugid)
+INTERNAL_SYSCALL_getresuid_3 (int *err, uid_t *ruid, uid_t *euid, uid_t *ugid)
 {
   *err = (38 /* ENOSYS */);
   return 0;
@@ -732,15 +694,8 @@ INTERNAL_SYSCALL_getsid_1 (int *err, pid_t pid)
   return 0;
 }
 
-__extern_always_inline __kernel_uid_t
-INTERNAL_SYSCALL_getuid_0 (int *err)
-{
-  *err = (38 /* ENOSYS */);
-  return 0;
-}
-
 __extern_always_inline uid_t
-INTERNAL_SYSCALL_getuid32_0 (int *err)
+INTERNAL_SYSCALL_getuid_0 (int *err)
 {
   *err = (38 /* ENOSYS */);
   return 0;
@@ -868,15 +823,7 @@ INTERNAL_SYSCALL_laccess_2 (int *err, const char *pathname, int mode)
 
 __extern_always_inline int
 INTERNAL_SYSCALL_lchown_3 (int *err, const char *path,
-			  __kernel_uid_t owner, __kernel_gid_t group)
-{
-  *err = (38 /* ENOSYS */);
-  return 0;
-}
-
-__extern_always_inline int
-INTERNAL_SYSCALL_lchown32_3 (int *err, const char *path,
-			    uid_t owner, gid_t group)
+			   uid_t owner, gid_t group)
 {
   *err = (38 /* ENOSYS */);
   return 0;
@@ -1512,56 +1459,28 @@ INTERNAL_SYSCALL_setdomainname_2 (int *err, const char *name, size_t len)
 }
 
 __extern_always_inline int
-INTERNAL_SYSCALL_setfsgid_1 (int *err, __kernel_gid_t gid)
+INTERNAL_SYSCALL_setfsgid_1 (int *err, gid_t gid)
 {
   *err = (38 /* ENOSYS */);
   return 0;
 }
 
 __extern_always_inline int
-INTERNAL_SYSCALL_setfsgid32_1 (int *err, gid_t gid)
+INTERNAL_SYSCALL_setfsuid_1 (int *err, uid_t uid)
 {
   *err = (38 /* ENOSYS */);
   return 0;
 }
 
 __extern_always_inline int
-INTERNAL_SYSCALL_setfsuid_1 (int *err, __kernel_uid_t uid)
+INTERNAL_SYSCALL_setgid_1 (int *err, gid_t gid)
 {
   *err = (38 /* ENOSYS */);
   return 0;
 }
 
 __extern_always_inline int
-INTERNAL_SYSCALL_setfsuid32_1 (int *err, uid_t uid)
-{
-  *err = (38 /* ENOSYS */);
-  return 0;
-}
-
-__extern_always_inline int
-INTERNAL_SYSCALL_setgid_1 (int *err, __kernel_gid_t gid)
-{
-  *err = (38 /* ENOSYS */);
-  return 0;
-}
-
-__extern_always_inline int
-INTERNAL_SYSCALL_setgid32_1 (int *err, gid_t gid)
-{
-  *err = (38 /* ENOSYS */);
-  return 0;
-}
-
-__extern_always_inline int
-INTERNAL_SYSCALL_setgroups_2 (int *err, int size, const __kernel_gid_t *list)
-{
-  *err = (38 /* ENOSYS */);
-  return 0;
-}
-
-__extern_always_inline int
-INTERNAL_SYSCALL_setgroups32_2 (int *err, int size, const gid_t *list)
+INTERNAL_SYSCALL_setgroups_2 (int *err, int size, const gid_t *list)
 {
   *err = (38 /* ENOSYS */);
   return 0;
@@ -1598,58 +1517,28 @@ INTERNAL_SYSCALL_setpriority_3 (int *err, int which, int who, int prio)
 }
 
 __extern_always_inline int
-INTERNAL_SYSCALL_setregid_2 (int *err, __kernel_gid_t rgid, __kernel_gid_t egid)
+INTERNAL_SYSCALL_setregid_2 (int *err, gid_t rgid, gid_t egid)
 {
   *err = (38 /* ENOSYS */);
   return 0;
 }
 
 __extern_always_inline int
-INTERNAL_SYSCALL_setregid32_2 (int *err, gid_t rgid, gid_t egid)
+INTERNAL_SYSCALL_setresgid_3 (int *err, gid_t rgid, gid_t egid, gid_t sgid)
 {
   *err = (38 /* ENOSYS */);
   return 0;
 }
 
 __extern_always_inline int
-INTERNAL_SYSCALL_setresgid_3 (int *err, __kernel_gid_t rgid,
-			      __kernel_gid_t egid, __kernel_gid_t sgid)
+INTERNAL_SYSCALL_setresuid_3 (int *err, uid_t ruid, uid_t euid, uid_t suid)
 {
   *err = (38 /* ENOSYS */);
   return 0;
 }
 
 __extern_always_inline int
-INTERNAL_SYSCALL_setresgid32_3 (int *err, gid_t rgid, gid_t egid, gid_t sgid)
-{
-  *err = (38 /* ENOSYS */);
-  return 0;
-}
-
-__extern_always_inline int
-INTERNAL_SYSCALL_setresuid_3 (int *err, __kernel_uid_t ruid,
-			      __kernel_uid_t euid, __kernel_uid_t suid)
-{
-  *err = (38 /* ENOSYS */);
-  return 0;
-}
-
-__extern_always_inline int
-INTERNAL_SYSCALL_setresuid32_3 (int *err, uid_t ruid, uid_t euid, uid_t suid)
-{
-  *err = (38 /* ENOSYS */);
-  return 0;
-}
-
-__extern_always_inline int
-INTERNAL_SYSCALL_setreuid_2 (int *err, __kernel_uid_t ruid, __kernel_uid_t euid)
-{
-  *err = (38 /* ENOSYS */);
-  return 0;
-}
-
-__extern_always_inline int
-INTERNAL_SYSCALL_setreuid32_2 (int *err, uid_t ruid, uid_t euid)
+INTERNAL_SYSCALL_setreuid_2 (int *err, uid_t ruid, uid_t euid)
 {
   *err = (38 /* ENOSYS */);
   return 0;
@@ -1679,14 +1568,7 @@ INTERNAL_SYSCALL_setsid_0 (int *err)
 }
 
 __extern_always_inline int
-INTERNAL_SYSCALL_setuid_1 (int *err, __kernel_uid_t uid)
-{
-  *err = (38 /* ENOSYS */);
-  return 0;
-}
-
-__extern_always_inline int
-INTERNAL_SYSCALL_setuid32_1 (int *err, uid_t uid)
+INTERNAL_SYSCALL_setuid_1 (int *err, uid_t uid)
 {
   *err = (38 /* ENOSYS */);
   return 0;
@@ -2064,6 +1946,28 @@ INTERNAL_SYSCALL_writev_3 (int *err, int fd, const
   *err = (38 /* ENOSYS */);
   return 0;
 }
+
+# ifdef __i386__
+#  undef INTERNAL_SYSCALL_chown_3
+#  undef INTERNAL_SYSCALL_fchown_3
+#  undef INTERNAL_SYSCALL_getegid_0
+#  undef INTERNAL_SYSCALL_geteuid_0
+#  undef INTERNAL_SYSCALL_getgid_0
+#  undef INTERNAL_SYSCALL_getgroups_2
+#  undef INTERNAL_SYSCALL_getresgid_3
+#  undef INTERNAL_SYSCALL_getresuid_3
+#  undef INTERNAL_SYSCALL_getuid_0
+#  undef INTERNAL_SYSCALL_lchown_3
+#  undef INTERNAL_SYSCALL_setfsgid_1
+#  undef INTERNAL_SYSCALL_setfsuid_1
+#  undef INTERNAL_SYSCALL_setgid_1
+#  undef INTERNAL_SYSCALL_setgroups_2
+#  undef INTERNAL_SYSCALL_setregid_2
+#  undef INTERNAL_SYSCALL_setresgid_3
+#  undef INTERNAL_SYSCALL_setresuid_3
+#  undef INTERNAL_SYSCALL_setreuid_2
+#  undef INTERNAL_SYSCALL_setuid_1
+# endif
 #endif
 
 #include_next <sysdep.h>
