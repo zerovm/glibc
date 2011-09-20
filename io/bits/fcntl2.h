@@ -23,7 +23,7 @@
 
 /* Check that calls to open and openat with O_CREAT set have an
    appropriate third/fourth parameter.  */
-#ifndef __USE_FILE_OFFSET64
+#if !defined __USE_FILE_OFFSET64 || defined __native_client__
 extern int __open_2 (__const char *__path, int __oflag) __nonnull ((1));
 extern int __REDIRECT (__open_alias, (__const char *__path, int __oflag, ...),
 		       open) __nonnull ((1));
