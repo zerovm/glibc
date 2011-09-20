@@ -1,0 +1,7 @@
+# In Native Client ld.so does not use File I/O functions when it loads DSO.
+# Either manifest or IRT will provide mapping to filesystem.
+# Consider all files placed in "/lib".  In the initial DSO loading /lib is
+# redirected to IRT's open_resourc, later nacl_mounts (or another similar
+# library) can introduce redirects.
+default-rpath = /lib
+default-dl-dst-lib = /lib

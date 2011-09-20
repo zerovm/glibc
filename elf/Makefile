@@ -360,7 +360,7 @@ $(objpfx)trusted-dirs.st: Makefile $(..)Makeconfig
 	$(make-target-directory)
 	echo "$(subst :, ,$(default-rpath) $(user-defined-trusted-dirs))"    \
 	| $(AWK) -f gen-trusted-dirs.awk > ${@:st=T};
-	echo '#define DL_DST_LIB "$(notdir $(slibdir))"' >> ${@:st=T}
+	echo '#define DL_DST_LIB "$(default-dl-dst-lib)"' >> ${@:st=T}
 	$(move-if-change) ${@:st=T} ${@:st=h}
 	touch $@
 CPPFLAGS-dl-load.c = -I$(objpfx). -I$(csu-objpfx).

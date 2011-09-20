@@ -500,6 +500,7 @@ default-rpath = $(slibdir):$(libdir)
 else
 default-rpath = $(libdir)
 endif
+default-dl-dst-lib = $(notdir $(slibdir))
 
 ifndef link-extra-libs
 link-extra-libs = $(LDLIBS-$(@F))

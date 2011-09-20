@@ -1,3 +1,4 @@
+#include <string.h>
 #include <sys/stat.h>
 #include <nacl_stat.h>
 #include <nacl_syscalls.h>
@@ -8,6 +9,7 @@
 #ifdef IS_IN_rtld
 #include <ldsodefs.h>
 #endif
+#include "trusted-dirs.h"
 
 static void nacl_irt_exit (int status) {
   NACL_SYSCALL (exit) (status);
@@ -239,12 +241,25 @@ static void *nacl_irt_tls_get (void) {
   return NACL_SYSCALL (tls_get) ();
 }
 
-static int nacl_irt_open_resource (const char *pathname, int *newfd) {
-  return __nacl_irt_open(pathname, O_RDONLY, 0, newfd);
+static int nacl_irt_open_as_resource (const char *pathname, int *newfd) {
+  return __nacl_irt_open (pathname, O_RDONLY, 0, newfd);
 }
 
-static size_t no_interface(const char *interface_ident,
-                           void *table, size_t tablesize) {
+/* Load files from DL_DST_LIB using IRT's open_resource. Other paths
+   will be processed using regular open syscall.
+
+   Note: nacl_mount may change this logic if needed.  */
+static int (*___nacl_irt_open_resource) (const char* file, int *fd);
+static int nacl_irt_open_resource (const char *pathname, int *newfd) {
+  if (memcmp (DL_DST_LIB "/", pathname, sizeof (DL_DST_LIB)))
+    return __nacl_irt_open (pathname, O_RDONLY, 0, newfd);
+  else
+    return ___nacl_irt_open_resource (pathname + sizeof (DL_DST_LIB) - 1,
+				      newfd);
+}
+
+static size_t no_interface (const char *interface_ident,
+                            void *table, size_t tablesize) {
   return 0;
 }
 
@@ -481,18 +496,24 @@ init_irt_table (void)
       __nacl_irt_query (NACL_IRT_RESOURCE_OPEN_v0_1, &u.nacl_irt_resource_open,
 	  sizeof(u.nacl_irt_resource_open)) == sizeof(u.nacl_irt_resource_open))
     {
-      __nacl_irt_open_resource = u.nacl_irt_resource_open.open_resource;
+      ___nacl_irt_open_resource = u.nacl_irt_resource_open.open_resource;
+      __nacl_irt_open_resource = nacl_irt_open_resource;
 #ifdef IS_IN_rtld
       if (_dl_argc == 1)
         {
-          static const char *argv[] = { "/runnable-ld.so", "/main.nexe", 0 };
+          static const char *argv[] =
+	    {
+	      DL_DST_LIB "/runnable-ld.so",
+	      DL_DST_LIB "/main.nexe",
+	      0
+	    };
           _dl_argc = 2;
           _dl_argv = (char **)argv;
         }
 #endif
     }
   else
-    __nacl_irt_open_resource = nacl_irt_open_resource;
+    __nacl_irt_open_resource = nacl_irt_open_as_resource;
 
   if (!__nacl_irt_query)
     __nacl_irt_query = no_interface;
