@@ -51,6 +51,7 @@ ld {
     # TODO(pasko): decide whether NaCl needs a version string
     # such as NACL_GLIBC_0.X.
     __nacl_read_tp;
+    __nacl_add_tp;
 
     # Valgrind support.
     __nacl_dyncode_map_for_valgrind;
