@@ -231,7 +231,21 @@ INTERNAL_SYSCALL_dup2_2 (int *err, int oldfd, int newfd)
 }
 
 __extern_always_inline int
+INTERNAL_SYSCALL_dup3_3 (int *err, int oldfd, int newfd, int flags)
+{
+  *err = (38 /* ENOSYS */);
+  return 0;
+}
+
+__extern_always_inline int
 INTERNAL_SYSCALL_epoll_create_1 (int *err, int flags)
+{
+  *err = (38 /* ENOSYS */);
+  return 0;
+}
+
+__extern_always_inline int
+INTERNAL_SYSCALL_epoll_create1_1 (int *err, int flags)
 {
   *err = (38 /* ENOSYS */);
   return 0;
@@ -1777,6 +1791,30 @@ __extern_always_inline int
 INTERNAL_SYSCALL_timer_settime_4 (int *err, __kernel_timer_t timerid, int flags,
 				  const struct itimerspec *new_value,
 				  struct itimerspec * old_value)
+{
+  *err = (38 /* ENOSYS */);
+  return 0;
+}
+
+__extern_always_inline int
+INTERNAL_SYSCALL_timerfd_create_2 (int *err, int clockid, int flags)
+{
+  *err = (38 /* ENOSYS */);
+  return 0;
+}
+
+__extern_always_inline int
+INTERNAL_SYSCALL_timerfd_gettime_2 (int *err, int fd,
+				    struct itimerspec *curr_value)
+{
+  *err = (38 /* ENOSYS */);
+  return 0;
+}
+
+__extern_always_inline int
+INTERNAL_SYSCALL_timerfd_settime_4 (int *err, int fd, int flags,
+				    const struct itimerspec *new_value,
+				    struct itimerspec *old_value)
 {
   *err = (38 /* ENOSYS */);
   return 0;
