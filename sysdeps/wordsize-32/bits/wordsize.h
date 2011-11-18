@@ -15,5 +15,9 @@
    License along with the GNU C Library; if not, write to the Free
    Software Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA
    02111-1307 USA.  */
+#ifndef BITS_WORDSIZE_H
+#define BITS_WORDSIZE_H
 
 #define __WORDSIZE	32
+
+#endif /* BITS_WORDSIZE_H */
