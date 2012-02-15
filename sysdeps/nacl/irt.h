@@ -148,6 +148,12 @@ struct nacl_irt_resource_open {
   int (*open_resource)(const char *file, int *fd);
 };
 
+#define NACL_IRT_CLOCK_v0_1 "nacl-irt-clock_get-0.1"
+struct nacl_irt_clock {
+  int (*getres)(clockid_t clk_id, struct timespec *res);
+  int (*gettime)(clockid_t clk_id, struct timespec *tp);
+};
+
 #if __cplusplus
 }
 #endif

@@ -74,6 +74,9 @@ extern void *(*__nacl_irt_tls_get) (void);
 
 extern int (*__nacl_irt_open_resource) (const char* file, int *fd);
 
+extern int (*__nacl_irt_clock_getres) (clockid_t clk_id, struct timespec *res);
+extern int (*__nacl_irt_clock_gettime) (clockid_t clk_id, struct timespec *tp);
+
 #ifdef _LIBC
 void init_irt_table (void) attribute_hidden;
 #endif

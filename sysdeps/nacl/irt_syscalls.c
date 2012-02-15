@@ -1,5 +1,6 @@
 #include <string.h>
 #include <sys/stat.h>
+#include <time.h>
 #include <nacl_stat.h>
 #include <nacl_syscalls.h>
 #define stat nacl_abi_stat
@@ -258,6 +259,16 @@ static int nacl_irt_open_resource (const char *pathname, int *newfd) {
 				      newfd);
 }
 
+static int nacl_irt_clock_getres(clockid_t clk_id,
+                                 struct timespec *res) {
+  return -NACL_SYSCALL (clock_getres) (clk_id, res);
+}
+
+static int nacl_irt_clock_gettime(clockid_t clk_id,
+                                  struct timespec *tp) {
+  return -NACL_SYSCALL (clock_gettime) (clk_id, tp);
+}
+
 static size_t no_interface (const char *interface_ident,
                             void *table, size_t tablesize) {
   return 0;
@@ -319,6 +330,9 @@ void *(*__nacl_irt_tls_get) (void);
 
 int (*__nacl_irt_open_resource) (const char* file, int *fd);
 
+int (*__nacl_irt_clock_getres) (clockid_t clk_id, struct timespec *res);
+int (*__nacl_irt_clock_gettime) (clockid_t clk_id, struct timespec *tp);
+
 void
 init_irt_table (void)
 {
@@ -333,6 +347,7 @@ init_irt_table (void)
     struct nacl_irt_cond nacl_irt_cond;
     struct nacl_irt_tls nacl_irt_tls;
     struct nacl_irt_resource_open nacl_irt_resource_open;
+    struct nacl_irt_clock nacl_irt_clock;
   } u;
 
   if (__nacl_irt_query &&
@@ -514,6 +529,19 @@ init_irt_table (void)
     }
   else
     __nacl_irt_open_resource = nacl_irt_open_as_resource;
+
+  if (__nacl_irt_query &&
+      __nacl_irt_query (NACL_IRT_CLOCK_v0_1, &u.nacl_irt_clock,
+      sizeof(u.nacl_irt_clock)) == sizeof(u.nacl_irt_clock))
+    {
+      __nacl_irt_clock_getres = u.nacl_irt_clock.getres;
+      __nacl_irt_clock_gettime = u.nacl_irt_clock.gettime;
+    }
+  else
+    {
+      __nacl_irt_clock_getres = nacl_irt_clock_getres;
+      __nacl_irt_clock_gettime = nacl_irt_clock_gettime;
+    }
 
   if (!__nacl_irt_query)
     __nacl_irt_query = no_interface;
