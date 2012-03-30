@@ -24,6 +24,11 @@ extern int (*__nacl_irt_nanosleep) (const struct timespec *req,
 extern int (*__nacl_irt_sched_yield) (void);
 extern int (*__nacl_irt_sysconf) (int name, int *value);
 
+extern int (*__nacl_irt_mkdir) (const char* pathname, mode_t mode);
+extern int (*__nacl_irt_rmdir) (const char* pathname);
+extern int (*__nacl_irt_chdir) (const char* pathname);
+extern int (*__nacl_irt_getcwd) (char* buf, size_t size, int* ret);
+
 extern int (*__nacl_irt_open) (const char *pathname, int oflag, mode_t cmode,
                                int *newfd);
 extern int (*__nacl_irt_close) (int fd);

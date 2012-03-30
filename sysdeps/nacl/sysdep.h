@@ -114,7 +114,7 @@ INTERNAL_SYSCALL_capset_2 (int *err, struct __user_cap_header_struct *hdrp,
 __extern_always_inline int
 INTERNAL_SYSCALL_chdir_1 (int *err, const char *path)
 {
-  *err = (38 /* ENOSYS */);
+  *err = __nacl_irt_chdir (path);
   return 0;
 }
 
@@ -588,8 +588,9 @@ INTERNAL_SYSCALL_getcpu_3 (int *err, unsigned *cpu, unsigned *node,
 __extern_always_inline int
 INTERNAL_SYSCALL_getcwd_2 (int *err, char *buf, size_t size)
 {
-  *err = (38 /* ENOSYS */);
-  return 0;
+  int ret;
+  *err = __nacl_irt_getcwd (buf, size, &ret);
+  return ret;
 }
 
 __extern_always_inline gid_t
@@ -915,7 +916,7 @@ INTERNAL_SYSCALL_mincore_3 (int *err, void *addr, size_t length,
 __extern_always_inline int
 INTERNAL_SYSCALL_mkdir_2 (int *err, const char *pathname, mode_t mode)
 {
-  *err = (38 /* ENOSYS */);
+  *err = __nacl_irt_mkdir (pathname, mode);
   return 0;
 }
 
@@ -1305,7 +1306,7 @@ INTERNAL_SYSCALL_renameat_4 (int *err, int olddfd, const char *oldname,
 __extern_always_inline int
 INTERNAL_SYSCALL_rmdir_1 (int *err, const char *pathname)
 {
-  *err = (38 /* ENOSYS */);
+  *err = __nacl_irt_rmdir (pathname);
   return 0;
 }
 

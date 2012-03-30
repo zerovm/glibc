@@ -274,8 +274,17 @@ static size_t no_interface (const char *interface_ident,
   return 0;
 }
 
+static int not_implemented() {
+  return (12 /* ENOSYS */);
+}
+
 size_t (*__nacl_irt_query) (const char *interface_ident,
 			    void *table, size_t tablesize);
+
+int (*__nacl_irt_mkdir) (const char* pathname, mode_t mode);
+int (*__nacl_irt_rmdir) (const char* pathname);
+int (*__nacl_irt_chdir) (const char* pathname);
+int (*__nacl_irt_getcwd) (char* buf, size_t size, int* ret);
 
 void (*__nacl_irt_exit) (int status);
 int (*__nacl_irt_gettod) (struct timeval *tv);
@@ -545,6 +554,11 @@ init_irt_table (void)
 
   if (!__nacl_irt_query)
     __nacl_irt_query = no_interface;
+
+  __nacl_irt_mkdir = not_implemented;
+  __nacl_irt_chdir = not_implemented;
+  __nacl_irt_rmdir = not_implemented;
+  __nacl_irt_getcwd = not_implemented;
 }
 
 size_t nacl_interface_query(const char *interface_ident,
