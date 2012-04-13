@@ -238,16 +238,16 @@ INTERNAL_SYSCALL_dup3_3 (int *err, int oldfd, int newfd, int flags)
 }
 
 __extern_always_inline int
-INTERNAL_SYSCALL_epoll_create_1 (int *err, int flags)
+INTERNAL_SYSCALL_epoll_create_1 (int *err, int size)
 {
-  *err = (38 /* ENOSYS */);
+  *err = __nacl_irt_epoll_create (size);
   return 0;
 }
 
 __extern_always_inline int
 INTERNAL_SYSCALL_epoll_create1_1 (int *err, int flags)
 {
-  *err = (38 /* ENOSYS */);
+  *err = __nacl_irt_epoll_create1 (flags);
   return 0;
 }
 
@@ -255,16 +255,17 @@ __extern_always_inline int
 INTERNAL_SYSCALL_epoll_ctl_4 (int *err, int epfd, int op, int fd,
 			      struct epoll_event *event)
 {
-  *err = (38 /* ENOSYS */);
+  *err = __nacl_irt_epoll_ctl (epfd, op, fd, event);
   return 0;
 }
 
 __extern_always_inline int
 INTERNAL_SYSCALL_epoll_pwait_6 (int *err, int epfd, struct epoll_event *events,
 				int maxevents, int timeout,
-				const sigset_t *sigmask, size_t sigsetsize)
+				const sigset_t *sigmask, size_t sigset_size)
 {
-  *err = (38 /* ENOSYS */);
+  *err = __nacl_irt_epoll_pwait (epfd, events, maxevents, timeout, sigmask,
+                                 sigset_size);
   return 0;
 }
 
@@ -281,6 +282,7 @@ INTERNAL_SYSCALL_epoll_wait_4 (int *err, int epfd, struct epoll_event *events,
 			       int maxevents, int timeout)
 {
   *err = (38 /* ENOSYS */);
+  *err = __nacl_irt_epoll_wait (epfd, events, maxevents, timeout);
   return 0;
 }
 
@@ -1164,16 +1166,16 @@ INTERNAL_SYSCALL_pivot_root_2 (int *err, const char *new_root,
 __extern_always_inline int
 INTERNAL_SYSCALL_poll_3 (int *err, struct pollfd *fds, nfds_t nfds, int timeout)
 {
-  *err = (38 /* ENOSYS */);
+  *err = __nacl_irt_poll (fds, nfds, timeout);
   return 0;
 }
 
 __extern_always_inline int
 INTERNAL_SYSCALL_ppoll_5 (int *err, struct pollfd *fds, nfds_t nfds,
 			  const struct timespec *timeout,
-			  const sigset_t *sigmask, size_t sigsetsize)
+			  const sigset_t *sigmask, size_t sigset_size)
 {
-  *err = (38 /* ENOSYS */);
+  *err = __nacl_irt_ppoll (fds, nfds, timeout, sigmask, sigset_size);
   return 0;
 }
 
@@ -1188,11 +1190,12 @@ INTERNAL_SYSCALL_prctl_5 (int *err, int option, unsigned long arg2,
 
 __extern_always_inline int
 INTERNAL_SYSCALL_pselect6_6 (int *err, int nfds, fd_set *readfds,
-			     fd_set *writefds, fd_set *exceptfds,
-			     const struct timespec *timeout,
-			     void *sigmask)
+                             fd_set *writefds, fd_set *exceptfds,
+                             const struct timeval *timeout,
+                             void *sigmask)
 {
-  *err = (38 /* ENOSYS */);
+  *err = __nacl_irt_pselect (nfds, readfds, writefds, exceptfds, timeout,
+                             sigmask);
   return 0;
 }
 
@@ -1428,7 +1431,7 @@ INTERNAL_SYSCALL_select_5 (int *err, int nfds, fd_set *readfds,
 			   fd_set *writefds, fd_set *exceptfds,
 			   const struct timeval *timeout)
 {
-  *err = (38 /* ENOSYS */);
+  *err = __nacl_irt_select (nfds, readfds, writefds, exceptfds, timeout);
   return 0;
 }
 
@@ -1650,8 +1653,137 @@ INTERNAL_SYSCALL_signalfd_3 (int *err, int fd, const sigset_t *mask,
 __extern_always_inline int
 INTERNAL_SYSCALL_socket_3 (int *err, int domain, int type, int protocol)
 {
-  *err = (38 /* ENOSYS */);
+  *err = __nacl_irt_socket (domain, type, protocol);
   return 0;
+}
+
+__extern_always_inline int
+INTERNAL_SYSCALL_accept_3 (int *err, int sockfd, struct sockaddr* addr,
+                           socklen_t* addr_len)
+{
+  *err = __nacl_irt_accept (sockfd, addr, addr_len);
+  return 0;
+}
+
+__extern_always_inline int
+INTERNAL_SYSCALL_bind_3 (int *err, int sockfd, struct sockaddr* addr,
+                         socklen_t addr_len)
+{
+  *err = __nacl_irt_bind (sockfd, addr, addr_len);
+  return 0;
+}
+
+__extern_always_inline int
+INTERNAL_SYSCALL_getpeername_3 (int *err, int sockfd, struct sockaddr* addr,
+                                socklen_t* addr_len)
+{
+  *err = __nacl_irt_getpeername (sockfd, addr, addr_len);
+  return 0;
+}
+
+__extern_always_inline int
+INTERNAL_SYSCALL_getsockname_3 (int *err, int sockfd, struct sockaddr* addr,
+                                socklen_t* addr_len)
+{
+  *err = __nacl_irt_getsockname (sockfd, addr, addr_len);
+  return 0;
+}
+
+__extern_always_inline int
+INTERNAL_SYSCALL_getsockopt_5 (int *err, int sockfd, int level, int optname,
+                               void *optval, socklen_t *optlen)
+{
+  *err = __nacl_irt_getsockopt (sockfd, level, optname, optval, optlen);
+  return 0;
+}
+
+__extern_always_inline int
+INTERNAL_SYSCALL_setsockopt_5 (int *err, int sockfd, int level, int optname,
+                               const void *optval, socklen_t optlen)
+{
+  *err = __nacl_irt_setsockopt (sockfd, level, optname, optval, optlen);
+  return 0;
+}
+
+__extern_always_inline int
+INTERNAL_SYSCALL_listen_2 (int *err, int sockfd, int backlog)
+{
+  *err = __nacl_irt_listen (sockfd, backlog);
+  return 0;
+}
+
+__extern_always_inline int
+INTERNAL_SYSCALL_connect_3 (int *err, int sockfd, struct sockaddr* addr,
+                            socklen_t addr_len)
+{
+  *err = __nacl_irt_connect (sockfd, addr, addr_len);
+  return 0;
+}
+
+__extern_always_inline int
+INTERNAL_SYSCALL_socketpair_4 (int *err, int domain, int type, int protocol,
+                             int sv[2])
+{
+  *err = __nacl_irt_socketpair (domain, type, protocol, sv);
+  return 0;
+}
+
+__extern_always_inline int
+INTERNAL_SYSCALL_shutdown_2 (int *err, int sockfd, int how)
+{
+  *err = __nacl_irt_shutdown (sockfd, how);
+  return 0;
+}
+
+__extern_always_inline int
+INTERNAL_SYSCALL_send_4 (int *err, int sockfd, const void *buf, size_t len, int flags)
+{
+  int ret;
+  *err = __nacl_irt_send (sockfd, buf, len, flags, &ret);
+  return ret;
+}
+
+__extern_always_inline int
+INTERNAL_SYSCALL_sendto_6 (int *err, int sockfd, const void *buf, size_t len,
+                           int flags, const struct sockaddr *dest_addr,
+						   socklen_t addrlen)
+{
+  int ret;
+  *err = __nacl_irt_sendto (sockfd, buf, len, flags, dest_addr, addrlen, &ret);
+  return ret;
+}
+
+__extern_always_inline int
+INTERNAL_SYSCALL_recv_4 (int *err, int sockfd, void *buf, size_t len, int flags)
+{
+  int ret;
+  *err = __nacl_irt_recv (sockfd, buf, len, flags, &ret);
+  return ret;
+}
+
+__extern_always_inline int
+INTERNAL_SYSCALL_recvfrom_6 (int *err, int sockfd, void *buf, size_t len, int flags,
+                           struct sockaddr *dest_addr, socklen_t *addrlen)
+{
+  int ret;
+  *err = __nacl_irt_recvfrom (sockfd, buf, len, flags, dest_addr, addrlen, &ret);
+  return ret;
+}
+
+__extern_always_inline int
+INTERNAL_SYSCALL_sendmsg_3 (int *err, int sockfd, const struct msghdr *msg, int flags)
+{
+  int ret;
+  *err = __nacl_irt_sendmsg (sockfd, msg, flags, &ret);
+  return ret;
+}
+
+__extern_always_inline int
+INTERNAL_SYSCALL_recvmsg_3 (int *err, int sockfd, struct msghdr *msg, int flags)
+{
+  int ret;
+  *err = __nacl_irt_recvmsg (sockfd, msg, flags, &ret);
+  return ret;
 }
 
 __extern_always_inline ssize_t

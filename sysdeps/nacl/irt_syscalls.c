@@ -305,6 +305,56 @@ int (*__nacl_irt_fstat) (int fd, struct nacl_abi_stat *);
 int (*__nacl_irt_stat) (const char *pathname, struct nacl_abi_stat *);
 int (*__nacl_irt_getdents) (int fd, struct dirent *, size_t count,
 			    size_t *nread);
+int (*__nacl_irt_socket) (int domain, int type, int protocol);
+int (*__nacl_irt_accept) (int sockfd, struct sockaddr *addr,
+                          socklen_t *addrlen);
+int (*__nacl_irt_bind) (int sockfd, const struct sockaddr *addr, socklen_t addrlen);
+int (*__nacl_irt_listen) (int sockfd, int backlog);
+int (*__nacl_irt_connect) (int sockfd, const struct sockaddr *addr,
+                           socklen_t addrlen);
+int (*__nacl_irt_send) (int sockfd, const void *buf, size_t len, int flags,
+                        int* ret);
+int (*__nacl_irt_sendmsg) (int sockfd, const struct msghdr *msg, int flags,
+                           int* ret);
+int (*__nacl_irt_sendto) (int sockfd, const void *buf, size_t len, int flags,
+                          const struct sockaddr *dest_addr, socklen_t addrlen,
+						  int* ret);
+int (*__nacl_irt_recv) (int sockfd, void *buf, size_t len, int flags, int* ret);
+int (*__nacl_irt_recvmsg) (int sockfd, struct msghdr *msg, int flags, int* ret);
+int (*__nacl_irt_recvfrom) (int sockfd, void *buf, size_t len, int flags,
+                            struct sockaddr *dest_addr, socklen_t* addrlen, int* ret);
+
+int (*__nacl_irt_epoll_create) (int size);
+int (*__nacl_irt_epoll_create1 )(int flags);
+int (*__nacl_irt_epoll_ctl) (int epfd, int op, int fd,
+                             struct epoll_event *event);
+int (*__nacl_irt_epoll_pwait) (int epfd, struct epoll_event *events,
+                                 int maxevents, int timeout,
+                                 const sigset_t *sigmask, size_t sigset_size);
+int (*__nacl_irt_epoll_wait) (int epfd, struct epoll_event *events,
+                                int maxevents, int timeout);
+int (*__nacl_irt_poll) (struct pollfd *fds, nfds_t nfds,
+                          int timeout);
+int (*__nacl_irt_ppoll) (struct pollfd *fds, nfds_t nfds,
+                           const struct timespec *timeout,
+                           const sigset_t *sigmask, size_t sigset_size);
+int (*__nacl_irt_select) (int nfds, fd_set *readfds,
+                                fd_set *writefds, fd_set *exceptfds,
+                                const struct timeval *timeout);
+int (*__nacl_irt_pselect) (int nfds, fd_set *readfds,
+                                fd_set *writefds, fd_set *exceptfds,
+                                const struct timeval *timeout, void* sigmask);
+int (*__nacl_irt_getpeername) (int sockfd, struct sockaddr *addr,
+                               socklen_t *addrlen);
+int (*__nacl_irt_getsockname) (int sockfd, struct sockaddr *addr,
+                               socklen_t *addrlen);
+int (*__nacl_irt_getsockopt) (int sockfd, int level, int optname,
+               void *optval, socklen_t *optlen);
+int (*__nacl_irt_setsockopt) (int sockfd, int level, int optname,
+               const void *optval, socklen_t optlen);
+int (*__nacl_irt_socketpair) (int domain, int type, int protocol, int sv[2]);
+int (*__nacl_irt_shutdown) (int sockfd, int how);
+
 
 int (*__nacl_irt_sysbrk) (void **newbrk);
 int (*__nacl_irt_mmap) (void **addr, size_t len, int prot, int flags,
@@ -559,6 +609,33 @@ init_irt_table (void)
   __nacl_irt_chdir = not_implemented;
   __nacl_irt_rmdir = not_implemented;
   __nacl_irt_getcwd = not_implemented;
+
+  __nacl_irt_epoll_create = not_implemented;
+  __nacl_irt_epoll_create1 = not_implemented;
+  __nacl_irt_epoll_ctl = not_implemented;
+  __nacl_irt_epoll_pwait = not_implemented;
+  __nacl_irt_epoll_wait = not_implemented;
+  __nacl_irt_poll = not_implemented;
+  __nacl_irt_ppoll = not_implemented;
+  __nacl_irt_socket = not_implemented;
+  __nacl_irt_accept = not_implemented;
+  __nacl_irt_bind = not_implemented;
+  __nacl_irt_listen = not_implemented;
+  __nacl_irt_connect = not_implemented;
+  __nacl_irt_send = not_implemented;
+  __nacl_irt_sendmsg = not_implemented;
+  __nacl_irt_sendto = not_implemented;
+  __nacl_irt_recv = not_implemented;
+  __nacl_irt_recvmsg = not_implemented;
+  __nacl_irt_recvfrom = not_implemented;
+  __nacl_irt_select = not_implemented;
+  __nacl_irt_pselect = not_implemented;
+  __nacl_irt_getpeername = not_implemented;
+  __nacl_irt_getsockname = not_implemented;
+  __nacl_irt_getsockopt = not_implemented;
+  __nacl_irt_setsockopt = not_implemented;
+  __nacl_irt_socketpair = not_implemented;
+  __nacl_irt_shutdown = not_implemented;
 }
 
 size_t nacl_interface_query(const char *interface_ident,
