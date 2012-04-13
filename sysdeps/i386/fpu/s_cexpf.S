@@ -105,7 +105,7 @@ ENTRY(__cexpf)
 	fscale			/* e^x : int(x * log2(e)) : y */
 	fst	%st(1)		/* e^x : e^x : y */
 	fxch	%st(2)		/* y : e^x : e^x */
-	fsincos			/* cos(y) : sin(y) : e^x : e^x */
+	NACL_FSINCOS			/* cos(y) : sin(y) : e^x : e^x */
 	fnstsw
 	testl	$0x400, %eax
 	jnz	7f
@@ -130,7 +130,7 @@ ENTRY(__cexpf)
 	testl	$0x400, %eax
 	jnz	8b
 	fstp	%st(1)		/* y%(2*pi) : e^x : e^x */
-	fsincos			/* cos(y) : sin(y) : e^x : e^x */
+	NACL_FSINCOS			/* cos(y) : sin(y) : e^x : e^x */
 	fmulp	%st, %st(3)
 	fmulp	%st, %st(1)
 	subl	$8, %esp
@@ -163,7 +163,7 @@ ENTRY(__cexpf)
 	andl	$8, %edx	/* This puts the sign bit of the real part
 				   in bit 3.  So we can use it to index a
 				   small array to select 0 or Inf.  */
-	fsincos			/* cos(y) : sin(y) */
+	NACL_FSINCOS			/* cos(y) : sin(y) */
 	fnstsw
 	testl	$0x0400, %eax
 	jnz	5f
@@ -192,7 +192,7 @@ ENTRY(__cexpf)
 	testl	$0x400, %eax
 	jnz	6b
 	fstp	%st(1)
-	fsincos
+	NACL_FSINCOS
 	fxch
 	ftst
 	fnstsw

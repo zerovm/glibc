@@ -322,7 +322,10 @@ __inline_mathcode (__pow2, __x, \
   register long double __cosr;						      \
   register long double __sinr;						      \
   __asm __volatile__							      \
-    ("fsincos\n\t"							      \
+    ("fld %%st(0)\n\t"							      \
+     "fsin\n\t"						      		      \
+     "fxch\n\t"								      \
+     "fcos\n\t"								      \
      "fnstsw	%%ax\n\t"						      \
      "testl	$0x400, %%eax\n\t"					      \
      "jz	1f\n\t"							      \
@@ -334,7 +337,10 @@ __inline_mathcode (__pow2, __x, \
      "testl	$0x400, %%eax\n\t"					      \
      "jnz	2b\n\t"							      \
      "fstp	%%st(1)\n\t"						      \
-     "fsincos\n\t"							      \
+     "fld       %%st(0)\n\t"						      \
+     "fsin\n\t"						      		      \
+     "fxch\n\t"								      \
+     "fcos\n\t"								      \
      "1:"								      \
      : "=t" (__cosr), "=u" (__sinr) : "0" (__x));			      \
   *__sinx = __sinr;							      \

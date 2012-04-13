@@ -32,7 +32,7 @@ ENTRY (BP_SYM (__sincosl))
 	ENTER
 
 	fldt	8(%rsp)
-	fsincos
+	NACL_FSINCOS
 	fnstsw	%ax
 	testl	$0x400,%eax
 	jnz	1f
@@ -50,7 +50,7 @@ ENTRY (BP_SYM (__sincosl))
 	testl	$0x400,%eax
 	jnz	2b
 	fstp	%st(1)
-	fsincos
+	NACL_FSINCOS
 	fstpt	(%rsi)
 	fstpt	(%rdi)
 

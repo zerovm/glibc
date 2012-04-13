@@ -32,7 +32,7 @@ ENTRY (BP_SYM (__sincos))
 	ENTER
 
 	fldl	ANGLE(%esp)
-	fsincos
+	NACL_FSINCOS
 	movl	SINP(%esp), %ecx
 	CHECK_BOUNDS_BOTH_WIDE (%ecx, SINP(%esp), $8)
 	movl	COSP(%esp), %edx
@@ -55,7 +55,7 @@ ENTRY (BP_SYM (__sincos))
 	testl	$0x400,%eax
 	jnz	2b
 	fstp	%st(1)
-	fsincos
+	NACL_FSINCOS
 	fstpl	(%edx)
 	fstpl	(%ecx)
 
