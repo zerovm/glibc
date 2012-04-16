@@ -36,7 +36,6 @@ extern int (*__nacl_irt_chdir) (const char* pathname);
 extern int (*__nacl_irt_getcwd) (char* buf, size_t size, int* ret);
 
 extern int (*__nacl_irt_epoll_create) (int flags); // size
-extern int (*__nacl_irt_epoll_create1 )(int flags);
 extern int (*__nacl_irt_epoll_ctl) (int epfd, int op, int fd,
                                     struct epoll_event *event);
 extern int (*__nacl_irt_epoll_pwait) (int epfd, struct epoll_event *events,

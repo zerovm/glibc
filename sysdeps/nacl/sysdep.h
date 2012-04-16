@@ -245,13 +245,6 @@ INTERNAL_SYSCALL_epoll_create_1 (int *err, int size)
 }
 
 __extern_always_inline int
-INTERNAL_SYSCALL_epoll_create1_1 (int *err, int flags)
-{
-  *err = __nacl_irt_epoll_create1 (flags);
-  return 0;
-}
-
-__extern_always_inline int
 INTERNAL_SYSCALL_epoll_ctl_4 (int *err, int epfd, int op, int fd,
 			      struct epoll_event *event)
 {

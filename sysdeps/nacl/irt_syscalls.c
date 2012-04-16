@@ -325,7 +325,6 @@ int (*__nacl_irt_recvfrom) (int sockfd, void *buf, size_t len, int flags,
                             struct sockaddr *dest_addr, socklen_t* addrlen, int* ret);
 
 int (*__nacl_irt_epoll_create) (int size);
-int (*__nacl_irt_epoll_create1 )(int flags);
 int (*__nacl_irt_epoll_ctl) (int epfd, int op, int fd,
                              struct epoll_event *event);
 int (*__nacl_irt_epoll_pwait) (int epfd, struct epoll_event *events,
@@ -611,7 +610,6 @@ init_irt_table (void)
   __nacl_irt_getcwd = not_implemented;
 
   __nacl_irt_epoll_create = not_implemented;
-  __nacl_irt_epoll_create1 = not_implemented;
   __nacl_irt_epoll_ctl = not_implemented;
   __nacl_irt_epoll_pwait = not_implemented;
   __nacl_irt_epoll_wait = not_implemented;
