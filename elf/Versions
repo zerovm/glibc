@@ -114,6 +114,7 @@ ld {
     __nacl_irt_tls_get;
     __nacl_irt_tls_init;
     __nacl_irt_epoll_create;
+    __nacl_irt_epoll_create1;
     __nacl_irt_epoll_ctl;
     __nacl_irt_epoll_wait;
     __nacl_irt_epoll_pwait;

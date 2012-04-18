@@ -240,8 +240,17 @@ INTERNAL_SYSCALL_dup3_3 (int *err, int oldfd, int newfd, int flags)
 __extern_always_inline int
 INTERNAL_SYSCALL_epoll_create_1 (int *err, int size)
 {
-  *err = __nacl_irt_epoll_create (size);
-  return 0;
+  int fd;
+  *err = __nacl_irt_epoll_create (size, &fd);
+  return fd;
+}
+
+__extern_always_inline int
+INTERNAL_SYSCALL_epoll_create1_1 (int *err, int flags)
+{
+  int fd;
+  *err = __nacl_irt_epoll_create1 (flags, &fd);
+  return fd;
 }
 
 __extern_always_inline int
@@ -257,9 +266,10 @@ INTERNAL_SYSCALL_epoll_pwait_6 (int *err, int epfd, struct epoll_event *events,
 				int maxevents, int timeout,
 				const sigset_t *sigmask, size_t sigset_size)
 {
+  int count;
   *err = __nacl_irt_epoll_pwait (epfd, events, maxevents, timeout, sigmask,
-                                 sigset_size);
-  return 0;
+                                 sigset_size, &count);
+  return count;
 }
 
 __extern_always_inline int
@@ -274,9 +284,9 @@ __extern_always_inline int
 INTERNAL_SYSCALL_epoll_wait_4 (int *err, int epfd, struct epoll_event *events,
 			       int maxevents, int timeout)
 {
-  *err = (38 /* ENOSYS */);
-  *err = __nacl_irt_epoll_wait (epfd, events, maxevents, timeout);
-  return 0;
+  int count;
+  *err = __nacl_irt_epoll_wait (epfd, events, maxevents, timeout, &count);
+  return count;
 }
 
 __extern_always_inline int
@@ -583,9 +593,9 @@ INTERNAL_SYSCALL_getcpu_3 (int *err, unsigned *cpu, unsigned *node,
 __extern_always_inline int
 INTERNAL_SYSCALL_getcwd_2 (int *err, char *buf, size_t size)
 {
-  int ret;
-  *err = __nacl_irt_getcwd (buf, size, &ret);
-  return ret;
+  int len;
+  *err = __nacl_irt_getcwd (buf, size, &len);
+  return len;
 }
 
 __extern_always_inline gid_t
@@ -1159,8 +1169,9 @@ INTERNAL_SYSCALL_pivot_root_2 (int *err, const char *new_root,
 __extern_always_inline int
 INTERNAL_SYSCALL_poll_3 (int *err, struct pollfd *fds, nfds_t nfds, int timeout)
 {
-  *err = __nacl_irt_poll (fds, nfds, timeout);
-  return 0;
+  int count;
+  *err = __nacl_irt_poll (fds, nfds, timeout, &count);
+  return count;
 }
 
 __extern_always_inline int
@@ -1168,8 +1179,9 @@ INTERNAL_SYSCALL_ppoll_5 (int *err, struct pollfd *fds, nfds_t nfds,
 			  const struct timespec *timeout,
 			  const sigset_t *sigmask, size_t sigset_size)
 {
-  *err = __nacl_irt_ppoll (fds, nfds, timeout, sigmask, sigset_size);
-  return 0;
+  int count;
+  *err = __nacl_irt_ppoll (fds, nfds, timeout, sigmask, sigset_size, &count);
+  return count;
 }
 
 __extern_always_inline int
@@ -1187,9 +1199,10 @@ INTERNAL_SYSCALL_pselect6_6 (int *err, int nfds, fd_set *readfds,
                              const struct timeval *timeout,
                              void *sigmask)
 {
+  int count;
   *err = __nacl_irt_pselect (nfds, readfds, writefds, exceptfds, timeout,
-                             sigmask);
-  return 0;
+                             sigmask, &count);
+  return count;
 }
 
 __extern_always_inline long
@@ -1424,8 +1437,9 @@ INTERNAL_SYSCALL_select_5 (int *err, int nfds, fd_set *readfds,
 			   fd_set *writefds, fd_set *exceptfds,
 			   const struct timeval *timeout)
 {
-  *err = __nacl_irt_select (nfds, readfds, writefds, exceptfds, timeout);
-  return 0;
+  int count;
+  *err = __nacl_irt_select (nfds, readfds, writefds, exceptfds, timeout, &count);
+  return count;
 }
 
 __extern_always_inline int
@@ -1646,16 +1660,18 @@ INTERNAL_SYSCALL_signalfd_3 (int *err, int fd, const sigset_t *mask,
 __extern_always_inline int
 INTERNAL_SYSCALL_socket_3 (int *err, int domain, int type, int protocol)
 {
-  *err = __nacl_irt_socket (domain, type, protocol);
-  return 0;
+  int sd;
+  *err = __nacl_irt_socket (domain, type, protocol, &sd);
+  return sd;
 }
 
 __extern_always_inline int
 INTERNAL_SYSCALL_accept_3 (int *err, int sockfd, struct sockaddr* addr,
                            socklen_t* addr_len)
 {
-  *err = __nacl_irt_accept (sockfd, addr, addr_len);
-  return 0;
+  int sd;
+  *err = __nacl_irt_accept (sockfd, addr, addr_len, &sd);
+  return sd;
 }
 
 __extern_always_inline int

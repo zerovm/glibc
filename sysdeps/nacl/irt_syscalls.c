@@ -284,7 +284,7 @@ size_t (*__nacl_irt_query) (const char *interface_ident,
 int (*__nacl_irt_mkdir) (const char* pathname, mode_t mode);
 int (*__nacl_irt_rmdir) (const char* pathname);
 int (*__nacl_irt_chdir) (const char* pathname);
-int (*__nacl_irt_getcwd) (char* buf, size_t size, int* ret);
+int (*__nacl_irt_getcwd) (char* buf, size_t size, int *len);
 
 void (*__nacl_irt_exit) (int status);
 int (*__nacl_irt_gettod) (struct timeval *tv);
@@ -305,44 +305,45 @@ int (*__nacl_irt_fstat) (int fd, struct nacl_abi_stat *);
 int (*__nacl_irt_stat) (const char *pathname, struct nacl_abi_stat *);
 int (*__nacl_irt_getdents) (int fd, struct dirent *, size_t count,
 			    size_t *nread);
-int (*__nacl_irt_socket) (int domain, int type, int protocol);
+int (*__nacl_irt_socket) (int domain, int type, int protocol, int *sd);
 int (*__nacl_irt_accept) (int sockfd, struct sockaddr *addr,
-                          socklen_t *addrlen);
+                          socklen_t *addrlen, int *sd);
 int (*__nacl_irt_bind) (int sockfd, const struct sockaddr *addr, socklen_t addrlen);
 int (*__nacl_irt_listen) (int sockfd, int backlog);
 int (*__nacl_irt_connect) (int sockfd, const struct sockaddr *addr,
                            socklen_t addrlen);
 int (*__nacl_irt_send) (int sockfd, const void *buf, size_t len, int flags,
-                        int* ret);
+                        int *count);
 int (*__nacl_irt_sendmsg) (int sockfd, const struct msghdr *msg, int flags,
-                           int* ret);
+                           int *count);
 int (*__nacl_irt_sendto) (int sockfd, const void *buf, size_t len, int flags,
                           const struct sockaddr *dest_addr, socklen_t addrlen,
-						  int* ret);
-int (*__nacl_irt_recv) (int sockfd, void *buf, size_t len, int flags, int* ret);
-int (*__nacl_irt_recvmsg) (int sockfd, struct msghdr *msg, int flags, int* ret);
+						  int *count);
+int (*__nacl_irt_recv) (int sockfd, void *buf, size_t len, int flags, int *count);
+int (*__nacl_irt_recvmsg) (int sockfd, struct msghdr *msg, int flags, int *count);
 int (*__nacl_irt_recvfrom) (int sockfd, void *buf, size_t len, int flags,
-                            struct sockaddr *dest_addr, socklen_t* addrlen, int* ret);
+                            struct sockaddr *dest_addr, socklen_t* addrlen, int *count);
 
-int (*__nacl_irt_epoll_create) (int size);
+int (*__nacl_irt_epoll_create) (int size, int *fd);
+int (*__nacl_irt_epoll_create1) (int flags, int *fd);
 int (*__nacl_irt_epoll_ctl) (int epfd, int op, int fd,
                              struct epoll_event *event);
 int (*__nacl_irt_epoll_pwait) (int epfd, struct epoll_event *events,
-                                 int maxevents, int timeout,
-                                 const sigset_t *sigmask, size_t sigset_size);
+    int maxevents, int timeout, const sigset_t *sigmask, size_t sigset_size,
+	int *count);
 int (*__nacl_irt_epoll_wait) (int epfd, struct epoll_event *events,
-                                int maxevents, int timeout);
+                                int maxevents, int timeout, int *count);
 int (*__nacl_irt_poll) (struct pollfd *fds, nfds_t nfds,
-                          int timeout);
+                          int timeout, int *count);
 int (*__nacl_irt_ppoll) (struct pollfd *fds, nfds_t nfds,
-                           const struct timespec *timeout,
-                           const sigset_t *sigmask, size_t sigset_size);
+    const struct timespec *timeout, const sigset_t *sigmask,
+	size_t sigset_size, int *count);
 int (*__nacl_irt_select) (int nfds, fd_set *readfds,
-                                fd_set *writefds, fd_set *exceptfds,
-                                const struct timeval *timeout);
+    fd_set *writefds, fd_set *exceptfds, const struct timeval *timeout,
+	int *count);
 int (*__nacl_irt_pselect) (int nfds, fd_set *readfds,
-                                fd_set *writefds, fd_set *exceptfds,
-                                const struct timeval *timeout, void* sigmask);
+    fd_set *writefds, fd_set *exceptfds, const struct timeval *timeout,
+	void* sigmask, int *count);
 int (*__nacl_irt_getpeername) (int sockfd, struct sockaddr *addr,
                                socklen_t *addrlen);
 int (*__nacl_irt_getsockname) (int sockfd, struct sockaddr *addr,
@@ -610,6 +611,7 @@ init_irt_table (void)
   __nacl_irt_getcwd = not_implemented;
 
   __nacl_irt_epoll_create = not_implemented;
+  __nacl_irt_epoll_create1 = not_implemented;
   __nacl_irt_epoll_ctl = not_implemented;
   __nacl_irt_epoll_pwait = not_implemented;
   __nacl_irt_epoll_wait = not_implemented;
