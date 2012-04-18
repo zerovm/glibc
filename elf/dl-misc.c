@@ -100,6 +100,8 @@ _dl_debug_vdprintf (int fd, int tag_p, const char *fmt, va_list arg)
 
       if (tag_p > 0)
 	{
+#ifndef __native_client__
+          /* avoid assert for native client due to bad pid */
 	  /* Generate the tag line once.  It consists of the PID and a
 	     colon followed by a tab.  */
 	  if (pid == 0)
@@ -118,6 +120,7 @@ _dl_debug_vdprintf (int fd, int tag_p, const char *fmt, va_list arg)
 	  assert (niov < NIOVMAX);
 	  iov[niov].iov_len = 12;
 	  iov[niov++].iov_base = pidbuf;
+#endif
 
 	  /* No more tags until we see the next newline.  */
 	  tag_p = -1;
