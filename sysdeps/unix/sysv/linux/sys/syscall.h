@@ -23,28 +23,6 @@
    But instead of duplicating this we use the information available
    from the kernel sources.  */
 #include <asm/unistd.h>
-#ifdef __i386__
-#  define __NR_accept		2325
-#  define __NR_bind		2326
-#  define __NR_listen		2327
-#  define __NR_connect		2328
-#  define __NR_send		2329
-#  define __NR_sendto		2330
-#  define __NR_sendmsg		2331
-#  define __NR_recv		2332
-#  define __NR_recvfrom		2333
-#  define __NR_recvmsg		2334
-#  define __NR_shutdown		2335
-#  define __NR_getsockopt		2336
-#  define __NR_setsockopt		2337
-#  define __NR_getsockname		2338
-#  define __NR_getpeername		2339
-#  define __NR_socketpair		2340
-#endif
-#ifdef __x86_64__
-#  define __NR_send		2329
-#  define __NR_recv		2332
-#endif
 
 #ifndef _LIBC
 /* The Linux kernel header file defines macros `__NR_<name>', but some

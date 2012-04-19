@@ -210,7 +210,7 @@ shared-only-routines += $file
   for arg; do
     echo -n "$sprtr"
     case $arg in
-      [abIpPBN]*) echo -n "void *$arg";;
+      [abIpP]*) echo -n "void *$arg";;
       f*) echo -n "int $arg[2]";;
       i*) echo -n "int $arg";;
       n*) echo -n "size_t $arg";;

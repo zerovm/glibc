@@ -11,22 +11,3 @@ init_module	EXTRA	init_module	i:pip	init_module
 umount		EXTRA	umount		i:s	__umount	umount
 umount2		EXTRA	umount2		i:si	__umount2	umount2
 vhangup		EXTRA	vhangup		i:	vhangup
-
-# proper socket implementations:
-accept		-	accept		Ci:iBN	__libc_accept	__accept accept
-bind		-	bind		i:ipi	__bind		bind
-connect		-	connect		Ci:ipi	__libc_connect	__connect_internal __connect connect
-getpeername	-	getpeername	i:ipp	__getpeername	getpeername
-getsockname	-	getsockname	i:ipp	__getsockname	getsockname
-getsockopt	-	getsockopt	i:iiiBN	__getsockopt	getsockopt
-listen		-	listen		i:ii	__listen	listen
-recvfrom	-	recvfrom	Ci:ibniBN	__libc_recvfrom	__recvfrom recvfrom
-recvmsg		-	recvmsg		Ci:ipi	__libc_recvmsg	__recvmsg recvmsg
-recv		-	recv		Ci:ibni	__libc_recv	__recv recv
-send		-	send		Ci:ibni	__libc_send	__send send
-sendmsg		-	sendmsg		Ci:ipi	__libc_sendmsg	__sendmsg sendmsg
-sendto		-	sendto		Ci:ibnibn	__libc_sendto	__sendto sendto
-setsockopt	-	setsockopt	i:iiibn	__setsockopt	setsockopt
-shutdown	-	shutdown	i:ii	__shutdown	shutdown
-socket		-	socket		i:iii	__socket	socket
-socketpair	-	socketpair	i:iiif	__socketpair	socketpair
