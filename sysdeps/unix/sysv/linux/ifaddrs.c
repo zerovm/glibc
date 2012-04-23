@@ -143,7 +143,6 @@ __netlink_request (struct netlink_handle *h, int type)
   struct nlmsghdr *nlmh;
   ssize_t read_len;
   bool done = false;
-
 #ifdef PAGE_SIZE
   /* Help the compiler optimize out the malloc call if PAGE_SIZE
      is constant and smaller or equal to PTHREAD_STACK_MIN/4.  */
@@ -819,7 +818,6 @@ getifaddrs (struct ifaddrs **ifap)
     }
 
   *ifap = &ifas[0].ifa;
-
  exit_free:
   __netlink_free_handle (&nh);
   __netlink_close (&nh);

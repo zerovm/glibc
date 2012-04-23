@@ -2,6 +2,9 @@
 #define _IRT_SYSCALLS_H
 
 #include <sys/types.h>
+#include <sys/epoll.h>
+#include <sys/select.h>
+#include <poll.h>
 #include <stddef.h>
 #include <fcntl.h>
 #include <time.h>
@@ -12,6 +15,10 @@ struct dirent;
 struct nacl_abi_stat;
 struct timeval;
 struct timespec;
+struct sockaddr;
+struct msghdr;
+
+#define socklen_t unsigned int
 
 extern size_t (*__nacl_irt_query)(const char *interface_ident,
                                   void *table, size_t tablesize);
@@ -23,6 +30,65 @@ extern int (*__nacl_irt_nanosleep) (const struct timespec *req,
                                     struct timespec *rem);
 extern int (*__nacl_irt_sched_yield) (void);
 extern int (*__nacl_irt_sysconf) (int name, int *value);
+
+extern int (*__nacl_irt_mkdir) (const char* pathname, mode_t mode);
+extern int (*__nacl_irt_rmdir) (const char* pathname);
+extern int (*__nacl_irt_chdir) (const char* pathname);
+extern int (*__nacl_irt_getcwd) (char* buf, size_t size, int *len);
+
+extern int (*__nacl_irt_epoll_create) (int size, int *fd);
+extern int (*__nacl_irt_epoll_create1) (int flags, int *fd);
+extern int (*__nacl_irt_epoll_ctl) (int epfd, int op, int fd,
+                                    struct epoll_event *event);
+extern int (*__nacl_irt_epoll_pwait) (int epfd, struct epoll_event *events,
+            int maxevents, int timeout, const sigset_t *sigmask,
+            size_t sigset_size, int *count);
+extern int (*__nacl_irt_epoll_wait) (int epfd, struct epoll_event *events,
+                                 int maxevents, int timeout, int *count);
+extern int (*__nacl_irt_poll) (struct pollfd *fds, nfds_t nfds,
+                           int timeout, int *count);
+extern int (*__nacl_irt_ppoll) (struct pollfd *fds, nfds_t nfds,
+            const struct timespec *timeout, const sigset_t *sigmask,
+            size_t sigset_size, int *count);
+extern int (*__nacl_irt_socket) (int domain, int type, int protocol, int *sd);
+extern int (*__nacl_irt_accept) (int sockfd, struct sockaddr *addr,
+                                 socklen_t *addrlen, int *sd);
+extern int (*__nacl_irt_bind) (int sockfd, const struct sockaddr *addr,
+                               socklen_t addrlen);
+extern int (*__nacl_irt_listen) (int sockfd, int backlog);
+extern int (*__nacl_irt_connect) (int sockfd, const struct sockaddr *addr,
+                                  socklen_t addrlen);
+extern int (*__nacl_irt_send) (int sockfd, const void *buf, size_t len,
+                               int flags, int *count);
+extern int (*__nacl_irt_sendmsg) (int sockfd, const struct msghdr *msg,
+                                  int flags, int *count);
+extern int (*__nacl_irt_sendto) (int sockfd, const void *buf, size_t len,
+            int flags, const struct sockaddr *dest_addr, socklen_t addrlen,
+            int *count);
+extern int (*__nacl_irt_recv) (int sockfd, void *buf, size_t len, int flags,
+                               int *count);
+extern int (*__nacl_irt_recvmsg) (int sockfd, struct msghdr *msg,
+                                  int flags, int *count);
+extern int (*__nacl_irt_recvfrom) (int sockfd, void *buf, size_t len, int flags,
+            struct sockaddr *dest_addr, socklen_t* addrlen, int *count);
+extern int (*__nacl_irt_select) (int nfds, fd_set *readfds,
+                                 fd_set *writefds, fd_set *exceptfds,
+                                 const struct timeval *timeout, int *count);
+extern int (*__nacl_irt_pselect) (int nfds, fd_set *readfds,
+            fd_set *writefds, fd_set *exceptfds, const struct timeval *timeout,
+			void* sigmask, int *count);
+extern int (*__nacl_irt_getpeername) (int sockfd, struct sockaddr *addr,
+                                      socklen_t *addrlen);
+extern int (*__nacl_irt_getsockname) (int sockfd, struct sockaddr *addr,
+                                      socklen_t *addrlen);
+extern int (*__nacl_irt_getsockopt) (int sockfd, int level, int optname,
+                      void *optval, socklen_t *optlen);
+extern int (*__nacl_irt_setsockopt) (int sockfd, int level, int optname,
+                      const void *optval, socklen_t optlen);
+extern int (*__nacl_irt_socketpair) (int domain, int type, int protocol,
+                                     int sv[2]);
+extern int (*__nacl_irt_shutdown) (int sockfd, int how);
+
 
 extern int (*__nacl_irt_open) (const char *pathname, int oflag, mode_t cmode,
                                int *newfd);
@@ -76,6 +142,7 @@ extern int (*__nacl_irt_open_resource) (const char* file, int *fd);
 
 extern int (*__nacl_irt_clock_getres) (clockid_t clk_id, struct timespec *res);
 extern int (*__nacl_irt_clock_gettime) (clockid_t clk_id, struct timespec *tp);
+#undef socklen_t
 
 #ifdef _LIBC
 void init_irt_table (void) attribute_hidden;
@@ -110,7 +177,6 @@ void init_irt_table (void) attribute_hidden;
 #include <sys/poll.h>
 #include <sys/ptrace.h>
 #include <sys/times.h>
-#include <sys/types.h>
 #include <sys/wait.h>
 #include <time.h>
 #include <utime.h>
