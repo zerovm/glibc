@@ -40,6 +40,7 @@
 #  define __NR_getsockname		2338
 #  define __NR_getpeername		2339
 #  define __NR_socketpair		2340
+#  define __NR_socket		2341
 #endif
 #ifdef __x86_64__
 #  define __NR_send		2329
