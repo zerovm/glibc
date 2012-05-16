@@ -47,7 +47,7 @@ int __nacl_futex_wait (volatile int *addr, int val, unsigned int bitset,
       self->addr = addr;
       self->bitset = bitset;
 
-      list_add_tail (&self->list, &waiters_list);
+      list_add (&self->list, &waiters_list);
 
       if (timeout)
 	{
