@@ -25,7 +25,8 @@
 #include <bits/pthreadtypes.h>
 #include <kernel-features.h>
 
-#define FUTEX_WAIT		0
+/* FUTEX_WAIT is not implemented under NaCl */
+#define FUTEX_WAIT_ABS		32
 #define FUTEX_WAKE		1
 #define FUTEX_REQUEUE		3
 #define FUTEX_CMP_REQUEUE	4
@@ -78,12 +79,18 @@
 
 
 #define lll_futex_wait(futex, val, private) \
-  lll_futex_timed_wait (futex, val, NULL, private)
+  lll_futex_timed_wait_abs (futex, val, NULL, private)
 
-#define lll_futex_timed_wait(ftx, val, timespec, private)		\
-   INLINE_SYSCALL(futex, 4, (ftx),					\
-		  __lll_private_flag (FUTEX_WAIT, private),		\
-		  (val), (timespec))
+#define lll_futex_timed_wait_abs(ftx, val, timespec, private)		\
+    ({									\
+      INTERNAL_SYSCALL_DECL (err);					\
+      INTERNAL_SYSCALL (futex, err, 4, (ftx),				\
+			__lll_private_flag (FUTEX_WAIT_ABS, private),	\
+			(val), (timespec));				\
+      if (__builtin_expect (err, 0))					\
+	__set_errno (err);						\
+      -err;								\
+    })
 
 #define lll_futex_wake(ftx, nr, private)				\
    INLINE_SYSCALL(futex, 3, (ftx),					\

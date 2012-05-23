@@ -77,6 +77,7 @@ pthread_rwlock_timedrdlock (rwlock, abstime)
 	  break;
 	}
 
+#ifndef lll_futex_timed_wait_abs
       /* Get the current time.  So far we support only one clock.  */
       struct timeval tv;
       (void) gettimeofday (&tv, NULL);
@@ -97,6 +98,7 @@ pthread_rwlock_timedrdlock (rwlock, abstime)
 	  result = ETIMEDOUT;
 	  break;
 	}
+#endif
 
       /* Remember that we are a reader.  */
       if (++rwlock->__data.__nr_readers_queued == 0)
@@ -113,8 +115,13 @@ pthread_rwlock_timedrdlock (rwlock, abstime)
       lll_unlock (rwlock->__data.__lock, rwlock->__data.__shared);
 
       /* Wait for the writer to finish.  */
+#ifndef lll_futex_timed_wait_abs
       err = lll_futex_timed_wait (&rwlock->__data.__readers_wakeup,
 				  waitval, &rt, rwlock->__data.__shared);
+#else
+      err = lll_futex_timed_wait_abs (&rwlock->__data.__readers_wakeup,
+				      waitval, abstime, rwlock->__data.__shared);
+#endif
 
       /* Get the lock.  */
       lll_lock (rwlock->__data.__lock, rwlock->__data.__shared);

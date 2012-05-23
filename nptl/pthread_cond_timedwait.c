@@ -97,6 +97,7 @@ __pthread_cond_timedwait (cond, mutex, abstime)
 
   while (1)
     {
+#ifndef lll_futex_timed_wait_abs
       struct timespec rt;
       {
 #ifdef __NR_clock_gettime
@@ -146,6 +147,7 @@ __pthread_cond_timedwait (cond, mutex, abstime)
 
 	  goto timeout;
 	}
+#endif
 
       unsigned int futex_val = cond->__data.__futex;
 
@@ -156,8 +158,13 @@ __pthread_cond_timedwait (cond, mutex, abstime)
       cbuffer.oldtype = __pthread_enable_asynccancel ();
 
       /* Wait until woken by signal or broadcast.  */
+#ifndef lll_futex_timed_wait_abs
       err = lll_futex_timed_wait (&cond->__data.__futex,
 				  futex_val, &rt, pshared);
+#else
+      err = lll_futex_timed_wait_abs (&cond->__data.__futex,
+				      futex_val, abstime, pshared);
+#endif
 
       /* Disable asynchronous cancellation.  */
       __pthread_disable_asynccancel (cbuffer.oldtype);

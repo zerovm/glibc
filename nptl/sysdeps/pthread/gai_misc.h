@@ -34,6 +34,36 @@
       lll_futex_wake (waitlist->counterp, 1, LLL_PRIVATE);		      \
   } while (0)
 
+#ifdef lll_futex_timed_wait
+#define GAI_MISC_FUTEX_WAIT(status, futexaddr, oldval, timeout) \
+  (status) = lll_futex_timed_wait (futexaddr, oldval, timeout, LLL_PRIVATE);
+#else
+#define GAI_MISC_FUTEX_WAIT(status, futexaddr, oldval, timeout) \
+  if (timeout)								      \
+    {									      \
+      struct timeval tv;						      \
+      struct timespec abstime;						      \
+									      \
+      /* Get the current time.  */					      \
+      (void) __gettimeofday (&tv, NULL);				      \
+									      \
+      /* Compute absolute timeout.  */					      \
+      abstime.tv_sec = tv.tv_sec + ((struct timespec *)(timeout))->tv_sec;    \
+      abstime.tv_nsec =							      \
+	  tv.tv_usec * 1000 + ((struct timespec *)(timeout))->tv_nsec;	      \
+      if (abstime.tv_nsec >= 1000000000)				      \
+	{								      \
+	  abstime.tv_nsec -= 1000000000;				      \
+	  ++abstime.tv_sec;						      \
+	}								      \
+      (status) = lll_futex_timed_wait_abs (futexaddr, oldval, &abstime,	      \
+					   LLL_PRIVATE);		      \
+    }									      \
+  else 									      \
+    (status) = lll_futex_timed_wait_abs (futexaddr, oldval, NULL,	      \
+					 LLL_PRIVATE);
+#endif
+
 #define GAI_MISC_WAIT(result, futex, timeout, cancel) \
   do {									      \
     volatile int *futexaddr = &futex;					      \
@@ -50,8 +80,7 @@
 	int status;							      \
 	do								      \
 	  {								      \
-	    status = lll_futex_timed_wait (futexaddr, oldval, timeout,	      \
-					   LLL_PRIVATE);		      \
+	    GAI_MISC_FUTEX_WAIT (status, futexaddr, oldval, timeout);	      \
 	    if (status != -EWOULDBLOCK)					      \
 	      break;							      \
 									      \

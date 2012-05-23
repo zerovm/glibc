@@ -54,7 +54,7 @@ int __nacl_futex_wait (volatile int *addr, int val, unsigned int bitset,
 	  retcode = __nacl_irt_cond_timed_wait_abs (
 	      self->condvar_desc, global_futex_emulation_mutex_desc, timeout);
 	  /* TODO(khim): Do something about linux<->NaCl error codes mix.  */
-	  if (retcode == 116)
+	  if (retcode == 110)
 	    retcode = -ETIMEDOUT;
 	  else if (retcode)
 	    retcode = -EINTR;

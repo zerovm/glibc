@@ -73,6 +73,7 @@ __lll_robust_timedlock_wait (int *futex, const struct timespec *abstime,
 
   do
     {
+#ifndef lll_futex_timed_wait_abs
       struct timeval tv;
       struct timespec rt;
 
@@ -91,6 +92,7 @@ __lll_robust_timedlock_wait (int *futex, const struct timespec *abstime,
       /* Already timed out?  */
       if (rt.tv_sec < 0)
 	return ETIMEDOUT;
+#endif
 
       /* Wait.  */
       if (__builtin_expect (oldval & FUTEX_OWNER_DIED, 0))
@@ -101,7 +103,13 @@ __lll_robust_timedlock_wait (int *futex, const struct timespec *abstime,
 	  && atomic_compare_and_exchange_bool_acq (futex, newval, oldval))
 	continue;
 
+#ifndef lll_futex_timed_wait_abs
       lll_futex_timed_wait (futex, newval, &rt, private);
+#else
+      if (lll_futex_timed_wait_abs (futex, newval, abstime, private)
+	  == -ETIMEDOUT)
+	return ETIMEDOUT;
+#endif
 
     try:
       ;

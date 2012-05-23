@@ -52,6 +52,7 @@ sem_timedwait (sem_t *sem, const struct timespec *abstime)
 
   while (1)
     {
+#ifndef lll_futex_timed_wait_abs
       struct timeval tv;
       struct timespec rt;
       int sec, nsec;
@@ -80,12 +81,18 @@ sem_timedwait (sem_t *sem, const struct timespec *abstime)
       /* Do wait.  */
       rt.tv_sec = sec;
       rt.tv_nsec = nsec;
+#endif
 
       /* Enable asynchronous cancellation.  Required by the standard.  */
       int oldtype = __pthread_enable_asynccancel ();
 
+#ifndef lll_futex_timed_wait_abs
       err = lll_futex_timed_wait (&isem->value, 0, &rt,
 				  isem->private ^ FUTEX_PRIVATE_FLAG);
+#else
+      err = lll_futex_timed_wait_abs (&isem->value, 0, abstime,
+				      isem->private ^ FUTEX_PRIVATE_FLAG);
+#endif
 
       /* Disable asynchronous cancellation.  */
       __pthread_disable_asynccancel (oldtype);

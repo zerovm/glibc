@@ -58,6 +58,7 @@ __lll_timedlock_wait (int *futex, const struct timespec *abstime, int private)
   /* Try locking.  */
   while (atomic_exchange_acq (futex, 2) != 0)
     {
+#ifndef lll_futex_timed_wait_abs
       struct timeval tv;
 
       /* Get the current time.  */
@@ -78,6 +79,10 @@ __lll_timedlock_wait (int *futex, const struct timespec *abstime, int private)
 
       /* Wait.  */
       lll_futex_timed_wait (futex, 2, &rt, private);
+#else
+      if (lll_futex_timed_wait_abs (futex, 2, abstime, private) == -ETIMEDOUT)
+        return ETIMEDOUT;
+#endif
     }
 
   return 0;
@@ -95,6 +100,7 @@ __lll_timedwait_tid (int *tidp, const struct timespec *abstime)
   /* Repeat until thread terminated.  */
   while ((tid = *tidp) != 0)
     {
+#ifndef lll_futex_timed_wait_abs
       struct timeval tv;
       struct timespec rt;
 
@@ -118,6 +124,11 @@ __lll_timedwait_tid (int *tidp, const struct timespec *abstime)
 	 the private futex operations for this.  */
       if (lll_futex_timed_wait (tidp, tid, &rt, LLL_SHARED) == -ETIMEDOUT)
 	return ETIMEDOUT;
+#else
+      if (lll_futex_timed_wait_abs (tidp, tid, abstime, LLL_SHARED)
+	  == -ETIMEDOUT)
+	return ETIMEDOUT;
+#endif
     }
 
   return 0;

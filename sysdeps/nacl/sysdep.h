@@ -475,8 +475,8 @@ INTERNAL_SYSCALL_futex_3 (int *err,
   switch (futex_operation.decoded_futex_operation.operation)
     {
       case FUTEX_WAKE:
-	*err = __nacl_futex_wake (addr.addr, val, __FUTEX_BITSET_MATCH_ANY,
-				    &count);
+	*err = -__nacl_futex_wake (addr.addr, val, __FUTEX_BITSET_MATCH_ANY,
+				   &count);
 	return count;
       default:
 	if (__builtin_constant_p (
@@ -506,9 +506,9 @@ INTERNAL_SYSCALL_futex_4 (int *err,
 {
   switch (futex_operation.decoded_futex_operation.operation)
     {
-      case FUTEX_WAIT:
-	*err = __nacl_futex_wait (addr.addr, val1, __FUTEX_BITSET_MATCH_ANY,
-				    val2.timeout);
+      case FUTEX_WAIT_ABS:
+	*err = -__nacl_futex_wait (addr.addr, val1, __FUTEX_BITSET_MATCH_ANY,
+				   val2.timeout);
 	return 0;
       /* TODO(khim): hook up PI-locks to some IRT-handleable functions.  */
       case FUTEX_LOCK_PI:
@@ -546,12 +546,12 @@ INTERNAL_SYSCALL_futex_6 (int *err,
   switch (futex_operation.decoded_futex_operation.operation)
     {
       case FUTEX_WAKE_OP:
-	*err = __nacl_futex_wake_op (addr1.addr, addr2.addr,
-				       val1, val2, val3, &count);
+	*err = -__nacl_futex_wake_op (addr1.addr, addr2.addr,
+				      val1, val2, val3, &count);
 	return count;
       case FUTEX_CMP_REQUEUE:
-	*err = __nacl_futex_cmp_requeue (addr1.addr, addr2.addr,
-					   val1, val2, val3, &count);
+	*err = -__nacl_futex_cmp_requeue (addr1.addr, addr2.addr,
+					  val1, val2, val3, &count);
 	return count;
       default:
 	if (__builtin_constant_p (

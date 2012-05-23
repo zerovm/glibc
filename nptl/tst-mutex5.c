@@ -112,6 +112,11 @@ do_test (void)
     {
       int clk_tck = sysconf (_SC_CLK_TCK);
 
+      /* Use some sane default if _SC_CLK_TCK is unsupported. */
+      if (clk_tck <= 0) {
+	clk_tck = 100;
+      }
+
       gettimeofday (&tv2, NULL);
 
       tv2.tv_sec -= tv.tv_sec;

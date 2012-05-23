@@ -434,6 +434,7 @@ pthread_mutex_timedlock (mutex, abstime)
 			goto failpp;
 		      }
 
+#ifndef lll_futex_timed_wait_abs
 		    struct timeval tv;
 		    struct timespec rt;
 
@@ -459,6 +460,13 @@ pthread_mutex_timedlock (mutex, abstime)
 		    lll_futex_timed_wait (&mutex->__data.__lock,
 					  ceilval | 2, &rt,
 					  PTHREAD_MUTEX_PSHARED (mutex));
+#else
+		    if (lll_futex_timed_wait_abs (&mutex->__data.__lock,
+						  ceilval | 2, abstime,
+						  PTHREAD_MUTEX_PSHARED (mutex))
+			== -ETIMEDOUT);
+		      goto failpp;
+#endif
 		  }
 	      }
 	    while (atomic_compare_and_exchange_val_acq (&mutex->__data.__lock,
