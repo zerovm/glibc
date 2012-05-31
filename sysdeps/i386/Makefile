@@ -60,6 +60,7 @@ CFLAGS-dl-fini.c += -mpreferred-stack-boundary=4
 CFLAGS-dl-open.c += -mpreferred-stack-boundary=4
 CFLAGS-dl-close.c += -mpreferred-stack-boundary=4
 CFLAGS-dl-error.c += -mpreferred-stack-boundary=4
+CFLAGS-rtld.c += -mpreferred-stack-boundary=4
 endif
 ifeq ($(subdir),dlfcn)
 CFLAGS-dlopen.c += -mpreferred-stack-boundary=4
