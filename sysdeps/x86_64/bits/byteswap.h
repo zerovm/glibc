@@ -110,7 +110,7 @@
 # if __WORDSIZE == 64
 #  define __bswap_64(x) \
      (__extension__							      \
-      ({ register unsigned long __v, __x = (x);				      \
+      ({ register unsigned long long __v, __x = (x);			      \
 	 if (__builtin_constant_p (__x))				      \
 	   __v = __bswap_constant_64 (__x);				      \
 	 else								      \
