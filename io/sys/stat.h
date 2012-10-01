@@ -204,7 +204,7 @@ __BEGIN_DECLS
 #endif
 
 
-#ifndef __USE_FILE_OFFSET64
+#if !defined __USE_FILE_OFFSET64 || defined __native_client__
 /* Get file attributes for FILE and put them in BUF.  */
 extern int stat (__const char *__restrict __file,
 		 struct stat *__restrict __buf) __THROW __nonnull ((1, 2));
@@ -226,15 +226,17 @@ extern int __REDIRECT_NTH (fstat, (int __fd, struct stat *__buf), fstat64)
 #endif
 #ifdef __USE_LARGEFILE64
 extern int stat64 (__const char *__restrict __file,
-		   struct stat64 *__restrict __buf) __THROW __nonnull ((1, 2));
-extern int fstat64 (int __fd, struct stat64 *__buf) __THROW __nonnull ((2));
+		   struct stat64 *__restrict __buf) NACL_LFS_ALIAS (stat)
+     __THROW __nonnull ((1, 2));
+extern int fstat64 (int __fd, struct stat64 *__buf) NACL_LFS_ALIAS (fstat)
+     __THROW __nonnull ((2));
 #endif
 
 #ifdef __USE_ATFILE
 /* Similar to stat, get the attributes for FILE and put them in BUF.
    Relative path names are interpreted relative to FD unless FD is
    AT_FDCWD.  */
-# ifndef __USE_FILE_OFFSET64
+# if !defined __USE_FILE_OFFSET64 || defined __native_client__
 extern int fstatat (int __fd, __const char *__restrict __file,
 		    struct stat *__restrict __buf, int __flag)
      __THROW __nonnull ((2, 3));
@@ -249,13 +251,15 @@ extern int __REDIRECT_NTH (fstatat, (int __fd, __const char *__restrict __file,
 #  endif
 # endif
 
+# ifdef __USE_LARGEFILE64
 extern int fstatat64 (int __fd, __const char *__restrict __file,
 		      struct stat64 *__restrict __buf, int __flag)
-     __THROW __nonnull ((2, 3));
+     NACL_LFS_ALIAS(fstatat) __THROW __nonnull ((2, 3));
+# endif
 #endif
 
 #if defined __USE_BSD || defined __USE_XOPEN_EXTENDED
-# ifndef __USE_FILE_OFFSET64
+# if !defined __USE_FILE_OFFSET64 || defined __native_client__
 /* Get file attributes about FILE and put them in BUF.
    If FILE is a symbolic link, do not follow it.  */
 extern int lstat (__const char *__restrict __file,
@@ -273,7 +277,7 @@ extern int __REDIRECT_NTH (lstat,
 # ifdef __USE_LARGEFILE64
 extern int lstat64 (__const char *__restrict __file,
 		    struct stat64 *__restrict __buf)
-     __THROW __nonnull ((1, 2));
+     NACL_LFS_ALIAS(lstat) __THROW __nonnull ((1, 2));
 # endif
 #endif
 
