@@ -153,9 +153,15 @@ SECTIONS
   .data.rel.ro : { *(.data.rel.ro.local* .gnu.linkonce.d.rel.ro.local.*) *(.data.rel.ro* .gnu.linkonce.d.rel.ro.*) }
   .dynamic        : { *(.dynamic) } :seg_dynamic :seg_rwdata
   .got            : { *(.got) } :seg_rwdata
-  . = DATA_SEGMENT_RELRO_END (12, .);
+  /* This command ensures that the first 3 entries of .got.plt are separated
+     by page boundary from the rest of .got.plt and marks the end of RELRO
+     segment.  This segment is part of read-write segment that is made read-only
+     after loading the library.  The first 3 entries of .got.plt are special.
+     They are filled by the linker and are not changed after loading.  The rest
+     of .got.plt is filled lazily and so must stay writable.  That's why
+     the first 3 .got.plt entries mark the end of RELRO segment. */
+  . = DATA_SEGMENT_RELRO_END (24, .);
   .got.plt        : { *(.got.plt) }
-  . = ALIGN(CONSTANT (MAXPAGESIZE)); /* nacl wants page alignment */
   .data           :
   {
     *(.data .data.* .gnu.linkonce.d.*)
