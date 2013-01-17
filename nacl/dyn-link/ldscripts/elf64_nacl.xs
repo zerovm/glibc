@@ -84,24 +84,16 @@ SECTIONS
   .rodata         : { *(.rodata .rodata.* .gnu.linkonce.r.*) }
   .rodata1        : { *(.rodata1) }
   .eh_frame_hdr : { *(.eh_frame_hdr) }
-
-  /* TODO(mseaborn): Apply the following line only when linking ld.so.
-     Aligning to a page boundary is only necessary for executables
-     loaded by sel_ldr, which is extra strict (see
-     http://code.google.com/p/nativeclient/issues/detail?id=193), but
-     it increases the file size by adding padding.  libc.so and other
-     libraries do not need this. */
-  . = ALIGN(CONSTANT (MAXPAGESIZE)); /* nacl wants page alignment. TODO(pasko):
-                                        COMMONPAGESIZE? */
-  /* TODO(mseaborn): These two should be in seg_rodata instead.
-     However, that requires fixing some other cases. */
-  .eh_frame       : ONLY_IF_RO { KEEP (*(.eh_frame)) } :seg_rwdata
+  .eh_frame       : ONLY_IF_RO { KEEP (*(.eh_frame)) }
   .gcc_except_table   : ONLY_IF_RO { *(.gcc_except_table .gcc_except_table.*) }
   /* Adjust the address for the data segment.  We want to adjust up to
      the same address within the page on the next page up.  */
   . = ALIGN (CONSTANT (MAXPAGESIZE)) - ((CONSTANT (MAXPAGESIZE) - .) & (CONSTANT (MAXPAGESIZE) - 1)); . = DATA_SEGMENT_ALIGN (CONSTANT (MAXPAGESIZE), CONSTANT (COMMONPAGESIZE));
+  /* Executables loaded by sel_ldr are not required to have seg_rwdata aligned
+     to page boundary.  So we can omit alignment here both for ld.so and normal
+     libraries. */      
   /* Exception handling  */
-  .eh_frame       : ONLY_IF_RW { KEEP (*(.eh_frame)) }
+  .eh_frame       : ONLY_IF_RW { KEEP (*(.eh_frame)) } :seg_rwdata
   .gcc_except_table   : ONLY_IF_RW { *(.gcc_except_table .gcc_except_table.*) }
   /* Thread Local Storage sections  */
   .tdata	  : { *(.tdata .tdata.* .gnu.linkonce.td.*) } :seg_rwdata :seg_tls
