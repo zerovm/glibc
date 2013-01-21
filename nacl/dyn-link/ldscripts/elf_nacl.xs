@@ -17,8 +17,11 @@ PHDRS
 }
 SECTIONS
 {
-  /* ELF headers are not included in any PT_LOAD segment */
-  . = SEGMENT_START("text", 0);
+  /* NaCl runtime treats ld.so as an executable.  NaCl executables must have
+     page-aligned code and data segments, so linker script for ld.so is patched
+     to remove SIZEOF_HEADERS below and make code segment aligned to page
+     boundary. */
+  . = SEGMENT_START("text", 0) + SIZEOF_HEADERS;
   _begin = .;
   /* The ALIGN(32) instructions below are workarounds.
      TODO(mseaborn): Get the object files to include the correct
@@ -47,7 +50,15 @@ SECTIONS
   PROVIDE (_etext = .);
   PROVIDE (etext = .);
 
-  . = SEGMENT_START("text", 0) + 0x10000000;
+  /* Adjust data segment so that is has the same position within the page as
+     the end of code segment.  In this case linker can store them without any
+     zeros in between.
+     
+     NaCl runtime treats ld.so as an executable which must have page-aligned
+     read-only data segment.  So the last term is replaced with 0 while patching
+     linker script for ld.so. */
+  . = SEGMENT_START("text", 0) + 0x10000000 +
+      (. & (CONSTANT (MAXPAGESIZE) - 1));
   .note.gnu.build-id : { *(.note.gnu.build-id) } :seg_rodata
   .hash           : { *(.hash) }
   .gnu.hash       : { *(.gnu.hash) }

@@ -303,8 +303,11 @@ generated += librtld.map librtld.mk rtld-libc.a librtld.os.map
 
 z-now-yes = -Wl,-z,now
 
+
+
 $(objpfx)ld.so: $(objpfx)librtld.os $(ld-map)
 	@rm -f $@.lds
+	# Modify elf64_nacl.xs and elf_nacl.xs linker scripts for ld.so.
 	# NaCl loader refuses to run ld.so with more than 3 loadable segments.
 	# Remove the bss segment.
 	$(LINK.o) -nostdlib -nostartfiles -shared $(z-now-$(bind-now))	\
@@ -316,6 +319,8 @@ $(objpfx)ld.so: $(objpfx)librtld.os $(ld-map)
 		      -e 's/seg_bss      PT_LOAD FLAGS(6) ;       \/\* read + write \*\///' \
 		      -e 's/} :seg_bss/}/' \
 		      -e 's/\. = DATA_SEGMENT_END (\.);//' \
+		      -e 's/\. = SEGMENT_START("text", 0) + SIZEOF_HEADERS;/\. = SEGMENT_START("text", 0);/' \
+		      -e 's/(\. & (CONSTANT (MAXPAGESIZE) - 1));/0;/' \
 		      -e 's/\. = ALIGN (CONSTANT (MAXPAGESIZE));//' \
 		      -e 's/\. = ALIGN (CONSTANT (COMMONPAGESIZE));//' \
 		  > $@.lds

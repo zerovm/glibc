@@ -1368,6 +1368,13 @@ cannot allocate TLS data structures for initial thread");
 	  l->l_text_end = l->l_addr + c->mapend;
 
 	if (l->l_phdr == 0
+#ifdef __native_client__
+	    /* Header can not be located in executable segment.  Code is copied with
+	       nacl_dyncode_copy using exact non-page-aligned bounds.  The header
+	       remains filled with HLT.  We can't copy it because NaCl does not allow
+	       data in executable segments.  */
+	    && (c->prot & PROT_EXEC) == 0
+#endif
 	    && (ElfW(Off)) c->mapoff <= header->e_phoff
 	    && ((size_t) (c->mapend - c->mapstart + c->mapoff)
 		>= header->e_phoff + header->e_phnum * sizeof (ElfW(Phdr))))
