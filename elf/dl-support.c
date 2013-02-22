@@ -246,8 +246,11 @@ void
 internal_function
 _dl_non_dynamic_init (void)
 {
-  if (HP_TIMING_AVAIL)
-    HP_TIMING_NOW (_dl_cpuclock_offset);
+  /*
+   * d'b: disable rtdsc. by some unknown reason this part isn't working
+   * if (HP_TIMING_AVAIL)
+   *   HP_TIMING_NOW (_dl_cpuclock_offset);
+   */
 
   if (!_dl_pagesize)
     _dl_pagesize = __getpagesize ();
