@@ -43,6 +43,7 @@ uintptr_t __stack_chk_guard attribute_relro;
 # include <atomic.h>
 #endif
 
+#include <zrt.h>
 
 #ifdef LIBC_START_MAIN
 # ifdef LIBC_START_DISABLE_INLINE
@@ -205,6 +206,16 @@ LIBC_START_MAIN (int (*main) (int, char **, char ** MAIN_AUXVEC_DECL),
   if (__builtin_expect (GLRO(dl_debug_mask) & DL_DEBUG_IMPCALLS, 0))
     GLRO(dl_debug_printf) ("\ntransferring control: %s\n\n", argv[0]);
 #endif
+
+  /*try to init zrt if available*/
+  struct zcalls_zrt_t* zcalls_zrt_init;
+  if ( __query_zcalls && 
+       ZCALLS_ZRT == __query_zcalls(ZCALLS_ZRT, (void**)&zcalls_zrt_init) ){
+      if ( zcalls_zrt_init && zcalls_zrt_init->zrt_setup ){
+	  zcalls_zrt_init->zrt_setup();
+      }
+  }
+
 
 #ifdef HAVE_CLEANUP_JMP_BUF
   /* Memory for the cancellation buffer.  */

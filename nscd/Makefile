@@ -40,9 +40,12 @@ nscd-modules := nscd connections pwdcache getpwnam_r getpwuid_r grpcache \
 ifeq ($(have-thread-library),yes)
 
 ifneq (yesyes,$(have-fpie)$(build-shared))
+ifeq (yes,$(build-shared)) #--enable-shared
 others += nscd
-endif
 install-sbin := nscd
+endif
+endif
+
 
 extra-objs := $(nscd-modules:=.o)
 

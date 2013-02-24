@@ -20,6 +20,10 @@
 #
 #	Makefile configuration options for the GNU C library.
 #
+
+ZRT_LINK=$(ZRT_ROOT)/lib/zrt.o
+#include Makeconfig.zrt
+
 ifneq (,)
 This makefile requires GNU Make.
 endif
@@ -432,7 +436,7 @@ ifndef +link
 						     $(start-installed-name))\
 			   $(+preinit) $(link-extra-libs) \
 			   $(common-objpfx)libc% $(+postinit),$^) \
-	      $(link-extra-libs) $(link-libc) $(+postctor) $(+postinit)
+	      $(link-extra-libs) $(link-libc) $(+postctor) $(+postinit) $(ZRT_LINK)
 endif
 # Command for statically linking programs with the C library.
 ifndef +link-static
@@ -444,7 +448,8 @@ ifndef +link-static
 						     $(start-installed-name))\
 			   $(+preinit) $(link-extra-libs-static) \
 			   $(common-objpfx)libc% $(+postinit),$^) \
-	      $(link-extra-libs-static) $(link-libc-static) $(+postctor) $(+postinit)
+	      $(link-extra-libs-static) $(link-libc-static) $(+postctor) $(+postinit) \
+              $(ZRT_LINK)
 endif
 # Command for statically linking bounded-pointer programs with the C library.
 ifndef +link-bounded
@@ -456,11 +461,12 @@ ifndef +link-bounded
 						     $(start-installed-name))\
 			   $(+preinit) $(link-extra-libs-bounded) \
 			   $(common-objpfx)libc% $(+postinit),$^) \
-	      $(link-extra-libs-bounded) $(link-libc-bounded) $(+postctor) $(+postinit)
+	      $(link-extra-libs-bounded) $(link-libc-bounded) $(+postctor) $(+postinit) \
+              $(ZRT_LINK)
 endif
 ifndef config-LDFLAGS
 ifeq (yesyes,$(build-shared)$(elf))
-config-LDFLAGS = -Wl,-dynamic-linker=$(slibdir)/$(rtld-installed-name)
+config-LDFLAGS = -Wl,-dynamic-linker=$(slibdir)/$(rtld-installed-name) $(ZRT_LINK)
 endif
 endif
 ifndef link-libc
@@ -471,7 +477,7 @@ ifeq ($(elf),yes)
 # run the linked programs.
 link-libc = -Wl,-rpath-link=$(rpath-link) \
 	    $(common-objpfx)libc.so$(libc.so-version) \
-	    $(common-objpfx)$(patsubst %,$(libtype.ons),c) $(gnulib)
+	    $(common-objpfx)$(patsubst %,$(libtype.ons),c) $(gnulib) $(ZRT_LINK)
 # This is how to find at build-time things that will be installed there.
 rpath-dirs = math elf dlfcn nss nis rt resolv crypt
 endif
@@ -635,7 +641,7 @@ endif	   					# -s
 ifndef	+cflags
 # If `CFLAGS' was defined, use that.
 ifdef		CFLAGS
-+cflags	:= $(filter-out -I%,$(CFLAGS))
++cflags	:= $(filter-out -I%,$(CFLAGS)) 
 endif		# CFLAGS
 endif	# +cflags
 
@@ -650,6 +656,7 @@ endif	# $(+cflags) == ""
 # Don't duplicate options if we inherited variables from the parent.
 +cflags	:= $(sort $(+cflags))
 
+#+cflags := -I$(ZRT_ROOT)/lib
 
 # These are flags given to the C compiler to tell it to look for
 # include files (including ones given in angle brackets) in the parent
@@ -658,7 +665,7 @@ endif	# $(+cflags) == ""
 +sysdep-includes = $(addprefix -I,$(+sysdep_dirs))
 +includes = -I$(..)include $(if $(subdir),$(objpfx:%/=-I%)) \
 	    $(+sysdep-includes) $(includes) \
-	    $(patsubst %/,-I%,$(..)) $(libio-include) -I. $(sysincludes)
+	    $(patsubst %/,-I%,$(..)) $(libio-include) -I. $(sysincludes) -I$(ZRT_ROOT)/lib
 
 # Since libio has several internal header files, we use a -I instead
 # of many little headers in the include directory.
