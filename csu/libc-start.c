@@ -209,14 +209,6 @@ LIBC_START_MAIN (int (*main) (int, char **, char ** MAIN_AUXVEC_DECL),
 
   /*try to init zrt if available*/
   struct zcalls_zrt_t* zcalls_zrt_init;
-  if ( __query_zcalls && 
-       ZCALLS_ZRT == __query_zcalls(ZCALLS_ZRT, (void**)&zcalls_zrt_init) ){
-      if ( zcalls_zrt_init && zcalls_zrt_init->zrt_setup ){
-	  zcalls_zrt_init->zrt_setup();
-      }
-  }
-
-
 #ifdef HAVE_CLEANUP_JMP_BUF
   /* Memory for the cancellation buffer.  */
   struct pthread_unwind_buf unwind_buf;
@@ -233,6 +225,12 @@ LIBC_START_MAIN (int (*main) (int, char **, char ** MAIN_AUXVEC_DECL),
 
       /* Store the new cleanup handler info.  */
       THREAD_SETMEM (self, cleanup_jmp_buf, &unwind_buf);
+
+      if ( ZCALLS_ZRT == __query_zcalls(ZCALLS_ZRT, (void**)&zcalls_zrt_init) ){
+	  if ( zcalls_zrt_init && zcalls_zrt_init->zrt_setup ){
+	      zcalls_zrt_init->zrt_setup();
+	  }
+      }
 
       /* Run the program.  */
       result = main (argc, argv, __environ MAIN_AUXVEC_PARAM);
@@ -263,9 +261,11 @@ LIBC_START_MAIN (int (*main) (int, char **, char ** MAIN_AUXVEC_DECL),
 	__exit_thread (0);
     }
 #else
+
   /* Nothing fancy, just call the function.  */
   result = main (argc, argv, __environ MAIN_AUXVEC_PARAM);
 #endif
 
   exit (result);
 }
+

@@ -642,8 +642,7 @@ init_irt_table (void)
 
     /*IRT syscalls can be redefined, it's totally saves nacl implementation*/
     struct zcalls_init_t* zcalls;
-    if ( __query_zcalls && 
-	 ZCALLS_INIT == __query_zcalls(ZCALLS_INIT, (void**)&zcalls) &&
+    if ( ZCALLS_INIT == __query_zcalls(ZCALLS_INIT, (void**)&zcalls) &&
 	 zcalls ){
 	/*basic calls*/
 	__nacl_irt_exit        = zcalls->exit;
@@ -697,6 +696,9 @@ init_irt_table (void)
 	/*clock calls*/
 	__nacl_irt_clock_getres   = zcalls->getres;
 	__nacl_irt_clock_gettime  = u.nacl_irt_clock.gettime;
+
+	/*run zcall init*/
+	zcalls->init();
     }
 }
 
