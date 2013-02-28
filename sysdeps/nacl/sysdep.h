@@ -4,6 +4,7 @@
 #if !defined(__ASSEMBLER__)
 #include <futex_emulation.h>
 #include <irt_syscalls.h>
+#include <irt_zcalls.h>
 #include <lowlevellock.h>
 
 /* Implementation of all syscalls for use in platform- and OS- independent code
@@ -351,8 +352,13 @@ INTERNAL_SYSCALL_fchownat_5 (int *err, int dirfd, const char *pathname,
 __extern_always_inline int
 INTERNAL_SYSCALL_fcntl_3 (int *err, int fd, int cmd, void *arg)
 {
-  *err = (38 /* ENOSYS */);
-  return 0;
+    int ret=0;
+    if ( __zcall_fcntl(fd, cmd, arg) < 0 ){
+	ret=-1;
+	*err = errno;
+	errno=0;
+    }
+  return ret;
 }
 
 __extern_always_inline int

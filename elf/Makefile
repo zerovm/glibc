@@ -31,7 +31,7 @@ dl-routines	= $(addprefix dl-,load cache lookup object reloc deps \
 			          runtime error init fini debug misc \
 				  version profile conflict tls origin \
 				  execstack caller open close trampoline) \
-		  nacl_read_tp irt_syscalls \
+		  nacl_read_tp irt_syscalls irt_zcalls \
 		  nacl_dyncode_create nacl_dyncode_map nacl_dyncode_alloc \
 		  futex_emulation nacl_dyncode_valgrind
 all-dl-routines = $(dl-routines) $(sysdep-dl-routines)
