@@ -358,7 +358,7 @@ INTERNAL_SYSCALL_fcntl_3 (int *err, int fd, int cmd, void *arg)
 	*err = errno;
 	errno=0;
     }
-  return ret;
+    return ret;
 }
 
 __extern_always_inline int
@@ -2012,8 +2012,13 @@ INTERNAL_SYSCALL_uname_1 (int *err, struct utsname *buf)
 __extern_always_inline int
 INTERNAL_SYSCALL_unlink_1 (int *err, const char *pathname)
 {
-  *err = (38 /* ENOSYS */);
-  return 0;
+    int ret=0;
+    if ( __zcall_unlink(pathname) < 0 ){
+	ret=-1;
+	*err = errno;
+	errno=0;
+    }
+    return ret;
 }
 
 __extern_always_inline int

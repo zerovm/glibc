@@ -2,9 +2,9 @@
 #include "zrt.h"
 
 extern int (*__zcall_fcntl) (int fd, int cmd, ...);
-
-void
-init_zcalls_nonsyscalls(void);
+       int (*__zcall_fcntl) (int fd, int cmd, ...);
+extern int (*__zcall_unlink)(const char *pathname);
+       int (*__zcall_unlink)(const char *pathname);
 
 #define INIT_ZCALLS {							\
 	/*IRT syscalls can be redefined, it's totally saves nacl implementation*/ \
@@ -66,6 +66,17 @@ init_zcalls_nonsyscalls(void);
 									\
 	    /*run zcall init*/						\
 	    zcalls->init();						\
+	}								\
+    }
+
+
+#define INIT_ZCALLS_NONSYSCALLS {					\
+        /*IRT syscalls can be redefined, it's totally saves nacl implementation*/ \
+	struct zcalls_nonsyscalls_t* zcalls;				\
+	if ( ZCALLS_NONSYSCALLS == __query_zcalls(ZCALLS_NONSYSCALLS, (void**)&zcalls) && \
+	     zcalls ){							\
+	    __zcall_fcntl          = zcalls->fcntl;			\
+	    __zcall_unlink         = zcalls->unlink;			\
 	}								\
     }
 

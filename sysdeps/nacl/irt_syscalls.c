@@ -12,7 +12,7 @@
 #endif
 #include "trusted-dirs.h"
 
-#include "zrt.h"
+#include "zrt.h" //__query_zcalls, struct zcalls_xxxx_t
 #include "irt_zcalls.h"
 
 
@@ -646,7 +646,7 @@ init_irt_table (void)
     INIT_ZCALLS;
 
     /*init additional handlers*/
-    init_zcalls_nonsyscalls();
+    INIT_ZCALLS_NONSYSCALLS;
 }
 
 size_t nacl_interface_query(const char *interface_ident,

@@ -31,7 +31,7 @@ dl-routines	= $(addprefix dl-,load cache lookup object reloc deps \
 			          runtime error init fini debug misc \
 				  version profile conflict tls origin \
 				  execstack caller open close trampoline) \
-		  nacl_read_tp irt_syscalls irt_zcalls \
+		  nacl_read_tp irt_syscalls \
 		  nacl_dyncode_create nacl_dyncode_map nacl_dyncode_alloc \
 		  futex_emulation nacl_dyncode_valgrind
 all-dl-routines = $(dl-routines) $(sysdep-dl-routines)
@@ -325,7 +325,7 @@ $(objpfx)ld.so: $(objpfx)librtld.os $(ld-map)
 		      -e 's/\. = ALIGN (CONSTANT (COMMONPAGESIZE));//' \
 		  > $@.lds
 	$(LINK.o) -nostdlib -nostartfiles -shared -o $@			\
-		  $(LDFLAGS-rtld) -Wl,-z,defs $(z-now-$(bind-now))	\
+		  $(LDFLAGS-rtld) $(zrt-LDFLAGS) -Wl,-z,defs $(z-now-$(bind-now))	\
 		  $(filter-out $(map-file),$^) $(load-map-file)		\
 		  -Wl,-soname=$(rtld-installed-name) -T $@.lds		\
 		  -Wl,-Ttext,0x20000

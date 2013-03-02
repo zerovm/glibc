@@ -35,17 +35,33 @@ nscd-modules := nscd connections pwdcache getpwnam_r getpwuid_r grpcache \
 		getgrnam_r getgrgid_r hstcache gethstbyad_r gethstbynm3_r \
 		getsrvbynm_r getsrvbypt_r servicescache \
 		dbg_log nscd_conf nscd_stat cache mem nscd_setup_thread \
-		xmalloc xstrdup aicache initgrcache gai res_hconf
+		xmalloc xstrdup aicache initgrcache gai 
+
+
+ifneq (yes,$(build-static-nss))
+nscd-modules += res_hconf
+endif
 
 ifeq ($(have-thread-library),yes)
 
-ifneq (yesyes,$(have-fpie)$(build-shared))
-ifeq (yes,$(build-shared)) #--enable-shared
-others += nscd
-install-sbin := nscd
-endif
-endif
+#z it was not buildable with --enable-shared=no
+#ifneq(yesyes,$(have-fpie)$(build-shared))
+#others += nscd
+#endif
+#install-sbin := nscd
 
+#it's working but problems while linking nss
+# ifneq (yesyes,$(have-fpie)$(build-shared))
+# ifeq (yes,$(build-shared)) #--enable-shared
+# others += nscd
+# install-sbin := nscd
+# endif
+# endif
+
+ifneq (yesyes,$(have-fpie)$(build-shared))
+others += nscd
+endif
+install-sbin := nscd
 
 extra-objs := $(nscd-modules:=.o)
 

@@ -565,6 +565,8 @@ LDFLAGS-c.so = -nostdlib -nostartfiles
 LDLIBS-c.so += $(libc.so-gnulib)
 # Give libc.so an entry point and make it directly runnable itself.
 LDFLAGS-c.so += -e __libc_main
+#link zcalls
+LDFLAGS-c.so += $(zrt-LDFLAGS)
 # If lazy relocation is disabled add the -z now flag.
 ifeq ($(bind-now),yes)
 LDFLAGS-c.so += -Wl,-z,now

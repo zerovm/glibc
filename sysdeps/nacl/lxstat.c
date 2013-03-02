@@ -3,8 +3,7 @@
 
 int __lxstat (int vers, const char *name, struct stat *buf)
 {
-  errno = ENOSYS;
-  return -1;
+    return __xstat (vers, name, buf);
 }
 hidden_def (__lxstat)
 weak_alias (__lxstat, _lxstat);

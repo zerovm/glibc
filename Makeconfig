@@ -22,7 +22,7 @@
 #
 
 ZRT_LINK=$(ZRT_ROOT)/lib/zrt.o
-#include Makeconfig.zrt
+zrt-LDFLAGS=$(ZRT_LINK)
 
 ifneq (,)
 This makefile requires GNU Make.
@@ -415,6 +415,7 @@ endif
 relro-LDFLAGS = -Wl,-z,relro
 LDFLAGS.so += $(relro-LDFLAGS)
 LDFLAGS-rtld += $(relro-LDFLAGS)
+#LDFLAGS-rtld += $(ZRT_LINK)
 
 ifeq (yes,$(have-hash-style))
 # For the time being we unconditionally use 'both'.  At some time we
@@ -428,6 +429,7 @@ endif
 # Command for linking programs with the C library.
 ifndef +link
 +link = $(CC) -nostdlib -nostartfiles -o $@ \
+	      $(zrt-LDFLAGS) \
 	      $(sysdep-LDFLAGS) $(config-LDFLAGS) $(LDFLAGS) $(LDFLAGS-$(@F)) \
 	      $(combreloc-LDFLAGS) $(relro-LDFLAGS) $(hashstyle-LDFLAGS) \
 	      $(addprefix $(csu-objpfx),$(start-installed-name)) \
@@ -436,11 +438,12 @@ ifndef +link
 						     $(start-installed-name))\
 			   $(+preinit) $(link-extra-libs) \
 			   $(common-objpfx)libc% $(+postinit),$^) \
-	      $(link-extra-libs) $(link-libc) $(+postctor) $(+postinit) $(ZRT_LINK)
+	      $(link-extra-libs) $(link-libc) $(+postctor) $(+postinit)
 endif
 # Command for statically linking programs with the C library.
 ifndef +link-static
 +link-static = $(CC) -nostdlib -nostartfiles -static -o $@ \
+	      $(zrt-LDFLAGS) \
 	      $(sysdep-LDFLAGS) $(LDFLAGS) $(LDFLAGS-$(@F))  \
 	      $(addprefix $(csu-objpfx),$(static-start-installed-name)) \
 	      $(+preinit) $(+prector) \
@@ -448,12 +451,12 @@ ifndef +link-static
 						     $(start-installed-name))\
 			   $(+preinit) $(link-extra-libs-static) \
 			   $(common-objpfx)libc% $(+postinit),$^) \
-	      $(link-extra-libs-static) $(link-libc-static) $(+postctor) $(+postinit) \
-              $(ZRT_LINK)
+	      $(link-extra-libs-static) $(link-libc-static) $(+postctor) $(+postinit)
 endif
 # Command for statically linking bounded-pointer programs with the C library.
 ifndef +link-bounded
 +link-bounded = $(CC) -nostdlib -nostartfiles -static -fbounded-pointers -o $@ \
+	      $(zrt-LDFLAGS) \
 	      $(sysdep-LDFLAGS) $(LDFLAGS)  \
 	      $(addprefix $(csu-objpfx),b$(static-start-installed-name)) \
 	      $(+preinit) $(+prector) \
@@ -461,12 +464,11 @@ ifndef +link-bounded
 						     $(start-installed-name))\
 			   $(+preinit) $(link-extra-libs-bounded) \
 			   $(common-objpfx)libc% $(+postinit),$^) \
-	      $(link-extra-libs-bounded) $(link-libc-bounded) $(+postctor) $(+postinit) \
-              $(ZRT_LINK)
+	      $(link-extra-libs-bounded) $(link-libc-bounded) $(+postctor) $(+postinit)
 endif
 ifndef config-LDFLAGS
 ifeq (yesyes,$(build-shared)$(elf))
-config-LDFLAGS = -Wl,-dynamic-linker=$(slibdir)/$(rtld-installed-name) $(ZRT_LINK)
+config-LDFLAGS = -Wl,-dynamic-linker=$(slibdir)/$(rtld-installed-name)
 endif
 endif
 ifndef link-libc
@@ -477,7 +479,7 @@ ifeq ($(elf),yes)
 # run the linked programs.
 link-libc = -Wl,-rpath-link=$(rpath-link) \
 	    $(common-objpfx)libc.so$(libc.so-version) \
-	    $(common-objpfx)$(patsubst %,$(libtype.ons),c) $(gnulib) $(ZRT_LINK)
+	    $(common-objpfx)$(patsubst %,$(libtype.ons),c) $(gnulib)
 # This is how to find at build-time things that will be installed there.
 rpath-dirs = math elf dlfcn nss nis rt resolv crypt
 endif
@@ -641,7 +643,7 @@ endif	   					# -s
 ifndef	+cflags
 # If `CFLAGS' was defined, use that.
 ifdef		CFLAGS
-+cflags	:= $(filter-out -I%,$(CFLAGS)) 
++cflags	:= $(filter-out -I%,$(CFLAGS))
 endif		# CFLAGS
 endif	# +cflags
 
@@ -656,7 +658,6 @@ endif	# $(+cflags) == ""
 # Don't duplicate options if we inherited variables from the parent.
 +cflags	:= $(sort $(+cflags))
 
-#+cflags := -I$(ZRT_ROOT)/lib
 
 # These are flags given to the C compiler to tell it to look for
 # include files (including ones given in angle brackets) in the parent
