@@ -14,7 +14,8 @@ libpthread-routines := $(filter-out pt-vfork,$(libpthread-routines))
 
 
 stdio-common-routines := $(sysdep-routines) tempname
-io-routines := $(sysdep-routines) unlink
+io-routines := $(sysdep-routines) unlink getcwd
+posix-routines := $(sysdep-routines) pathconf fpathconf
 
 #do not link ld.so for static executable running on zerovm
 ifeq (yes,$(build-shared)) #--enable-shared
