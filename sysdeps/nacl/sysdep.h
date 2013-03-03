@@ -356,7 +356,9 @@ INTERNAL_SYSCALL_fcntl_3 (int *err, int fd, int cmd, void *arg)
     if ( __zcall_fcntl(fd, cmd, arg) < 0 ){
 	ret=-1;
 	*err = errno;
-	errno=0;
+    }
+    else{
+	*err=0;
     }
     return ret;
 }
@@ -2017,6 +2019,9 @@ INTERNAL_SYSCALL_unlink_1 (int *err, const char *pathname)
 	ret=-1;
 	*err = errno;
 	errno=0;
+    }
+    else{
+	*err=0;
     }
     return ret;
 }

@@ -107,12 +107,12 @@ _IO_new_fdopen (fd, mode)
   if (fd_flags == -1)
     return NULL;
 
-  if (((fd_flags & O_ACCMODE) == O_RDONLY && !(read_write & _IO_NO_WRITES))
-      || ((fd_flags & O_ACCMODE) == O_WRONLY && !(read_write & _IO_NO_READS)))
-    {
-      MAYBE_SET_EINVAL;
-      return NULL;
-    }
+  /* if (((fd_flags & O_ACCMODE) == O_RDONLY && !(read_write & _IO_NO_WRITES)) */
+  /*     || ((fd_flags & O_ACCMODE) == O_WRONLY && !(read_write & _IO_NO_READS))) */
+  /*   { */
+  /*     MAYBE_SET_EINVAL; */
+  /*     return NULL; */
+  /*   } */
 
   /* The May 93 draft of P1003.4/D14.1 (redesignated as 1003.1b)
      [System Application Program Interface (API) Amendment 1:

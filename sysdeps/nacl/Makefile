@@ -4,11 +4,17 @@ rtld-installed-name = $(patsubst %.$(NACL_FAKE_SONAME),%.1,$(ld.so-version))
 # by libc.so.
 libpthread-routines := $(filter-out pt-vfork,$(libpthread-routines))
 
-ifeq ($(subdir),stdio-common)
-sysdep_routines += tempname
-endif
+# ifeq ($(subdir),stdio-common)
+# sysdep_routines += tempname
+# endif
+
+# ifeq ($(subdir),io)
+# sysdep_routines += unlink
+# endif
+
 
 stdio-common-routines := $(sysdep-routines) tempname
+io-routines := $(sysdep-routines) unlink
 
 #do not link ld.so for static executable running on zerovm
 ifeq (yes,$(build-shared)) #--enable-shared

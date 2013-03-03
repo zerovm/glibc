@@ -111,7 +111,7 @@
 
 
 struct NaClImcMsgHdr;
-struct nacl_abi_stat;
+struct stat;
 struct timeval;
 struct timespec;
 
@@ -120,11 +120,11 @@ typedef int (*TYPE_nacl_dup)(int oldfd);
 typedef int (*TYPE_nacl_dup2)(int oldfd, int newfd);
 typedef int (*TYPE_nacl_read) (int desc, void *buf, size_t count);
 typedef int (*TYPE_nacl_close) (int desc);
-typedef int (*TYPE_nacl_fstat) (int fd, struct nacl_abi_stat *stbp);
+typedef int (*TYPE_nacl_fstat) (int fd, struct stat *stbp);
 typedef int (*TYPE_nacl_write) (int desc, void const *buf, size_t count);
 typedef int (*TYPE_nacl_open) (char const *pathname, int flags, mode_t mode);
 typedef int (*TYPE_nacl_lseek) (int desc, nacl_abi_off_t *offset, int whence);
-typedef int (*TYPE_nacl_stat) (const char *file, struct nacl_abi_stat *st);
+typedef int (*TYPE_nacl_stat) (const char *file, struct stat *st);
 
 typedef int (*TYPE_nacl_imc_recvmsg) (int desc,
                                       struct NaClImcMsgHdr *nmhp,

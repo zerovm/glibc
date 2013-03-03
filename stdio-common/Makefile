@@ -32,7 +32,6 @@ routines	:=							      \
 	fscanf scanf sscanf						      \
 	perror psignal							      \
 	tmpfile tmpfile64 tmpnam tmpnam_r tempnam tempname		      \
-	tmpfile tmpfile64 tmpnam tmpnam_r tempnam 			      \
 	getline getw putw						      \
 	remove rename renameat						      \
 	flockfile ftrylockfile funlockfile				      \
