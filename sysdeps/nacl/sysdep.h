@@ -868,8 +868,16 @@ INTERNAL_SYSCALL_lgetxattr_4 (int *err, const char *path, const char *name,
 __extern_always_inline int
 INTERNAL_SYSCALL_link_2 (int *err, const char *oldpath, const char *newpath)
 {
-  *err = (38 /* ENOSYS */);
-  return 0;
+    int ret=0;
+    if ( __zcall_link(oldpath, newpath) < 0 ){
+	ret=-1;
+	*err = errno;
+	errno=0;
+    }
+    else{
+	*err=0;
+    }
+    return ret;
 }
 
 __extern_always_inline int

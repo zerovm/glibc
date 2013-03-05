@@ -33,7 +33,11 @@ extern __thread int errno attribute_tls_model_ie;
 
 # endif	/* RTLD_PRIVATE_ERRNO */
 
+#ifdef LIBC_ENOSYS_DEBUG
+# define __set_errno(val) (errno = (val), __zcall_loglibc(__func__))
+#else
 # define __set_errno(val) (errno = (val))
+#endif
 
 # ifndef __ASSEMBLER__
 extern int *__errno_location (void) __THROW __attribute__ ((__const__))

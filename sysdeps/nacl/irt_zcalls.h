@@ -1,10 +1,18 @@
 
 #include "zrt.h"
 
+extern int (*__zcall_loglibc)(const char *str);
+       int (*__zcall_loglibc)(const char *str);
 extern int (*__zcall_fcntl) (int fd, int cmd, ...);
        int (*__zcall_fcntl) (int fd, int cmd, ...);
+extern int (*__zcall_link)(const char *oldpath, const char *newpath);
+       int (*__zcall_link)(const char *oldpath, const char *newpath);
 extern int (*__zcall_unlink)(const char *pathname);
        int (*__zcall_unlink)(const char *pathname);
+extern int (*__zcall_rmdir)(const char *pathname);
+       int (*__zcall_rmdir)(const char *pathname);
+extern int (*__zcall_mkdir)(const char *pathname, mode_t mode);
+       int (*__zcall_mkdir)(const char *pathname, mode_t mode);
 
 #define INIT_ZCALLS {							\
 	/*IRT syscalls can be redefined, it's totally saves nacl implementation*/ \
@@ -75,8 +83,12 @@ extern int (*__zcall_unlink)(const char *pathname);
 	struct zcalls_nonsyscalls_t* zcalls;				\
 	if ( ZCALLS_NONSYSCALLS == __query_zcalls(ZCALLS_NONSYSCALLS, (void**)&zcalls) && \
 	     zcalls ){							\
+	    __zcall_loglibc        = zcalls->loglibc;			\
 	    __zcall_fcntl          = zcalls->fcntl;			\
+	    __zcall_link           = zcalls->link;			\
 	    __zcall_unlink         = zcalls->unlink;			\
+	    __zcall_rmdir          = zcalls->rmdir;			\
+	    __zcall_mkdir          = zcalls->mkdir;			\
 	}								\
     }
 
