@@ -21,9 +21,6 @@
 #	Makefile configuration options for the GNU C library.
 #
 
-ZRT_LINK=$(ZRT_ROOT)/lib/zrt.o
-zrt-LDFLAGS=$(ZRT_LINK)
-
 ifneq (,)
 This makefile requires GNU Make.
 endif
@@ -87,6 +84,12 @@ export sysdep_dir := $(sysdep_dir)
 
 # Get the values defined by options to `configure'.
 include $(common-objpfx)config.make
+
+ifeq (yes,$(strip $(zrt)))
+zrt-BUILD=$(ZRT_ROOT)/lib/zrt.o
+zrt-INCLUDE=-I$(ZRT_ROOT)/lib
+zrt-LDFLAGS=$(ZRT_ROOT)/lib/zrt.o
+endif
 
 # What flags to give to sources which call user provided callbacks
 uses-callbacks = $(exceptions)
@@ -415,7 +418,6 @@ endif
 relro-LDFLAGS = -Wl,-z,relro
 LDFLAGS.so += $(relro-LDFLAGS)
 LDFLAGS-rtld += $(relro-LDFLAGS)
-#LDFLAGS-rtld += $(ZRT_LINK)
 
 ifeq (yes,$(have-hash-style))
 # For the time being we unconditionally use 'both'.  At some time we
@@ -666,7 +668,7 @@ endif	# $(+cflags) == ""
 +sysdep-includes = $(addprefix -I,$(+sysdep_dirs))
 +includes = -I$(..)include $(if $(subdir),$(objpfx:%/=-I%)) \
 	    $(+sysdep-includes) $(includes) \
-	    $(patsubst %/,-I%,$(..)) $(libio-include) -I. $(sysincludes) -I$(ZRT_ROOT)/lib
+	    $(patsubst %/,-I%,$(..)) $(libio-include) -I. $(sysincludes) $(zrt-INCLUDE)
 
 # Since libio has several internal header files, we use a -I instead
 # of many little headers in the include directory.

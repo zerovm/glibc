@@ -91,6 +91,7 @@ add-on-subdirs = @add_on_subdirs@
 sysdeps-add-ons = @sysdeps_add_ons@
 cross-compiling = @cross_compiling@
 force-install = @force_install@
+zrt = @zrt@
 
 # Build tools.
 LDFLAGS = -L$(..)nacl/dyn-link

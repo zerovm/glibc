@@ -25,6 +25,9 @@
 /* Define if using XCOFF. Set by --with-xcoff.  */
 #undef	HAVE_XCOFF
 
+/* Define if using ZRT. Set by --with-zrt.  */
+#undef	HAVE_ZRT
+
 /* Define if C symbols are asm symbols.  Don't define if C symbols
    have a `_' prepended to make the asm symbol.  */
 #undef	NO_UNDERSCORES

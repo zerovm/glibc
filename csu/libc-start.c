@@ -43,7 +43,9 @@ uintptr_t __stack_chk_guard attribute_relro;
 # include <atomic.h>
 #endif
 
+#ifdef HAVE_ZRT
 #include <zrt.h>
+#endif
 
 #ifdef LIBC_START_MAIN
 # ifdef LIBC_START_DISABLE_INLINE
@@ -224,14 +226,16 @@ LIBC_START_MAIN (int (*main) (int, char **, char ** MAIN_AUXVEC_DECL),
       /* Store the new cleanup handler info.  */
       THREAD_SETMEM (self, cleanup_jmp_buf, &unwind_buf);
 
-	  /*try to init zrt if available*/
-	  struct zcalls_zrt_t* zcalls_zrt_init;
+#ifdef HAVE_ZRT
+      /*try to init zrt if available*/
+      struct zcalls_zrt_t* zcalls_zrt_init;
 
       if ( ZCALLS_ZRT == __query_zcalls(ZCALLS_ZRT, (void**)&zcalls_zrt_init) ){
-		  if ( zcalls_zrt_init && zcalls_zrt_init->zrt_setup ){
-		      zcalls_zrt_init->zrt_setup();
-		  }
+	  if ( zcalls_zrt_init && zcalls_zrt_init->zrt_setup ){
+	      zcalls_zrt_init->zrt_setup();
+	  }
       }
+#endif
 
       /* Run the program.  */
       result = main (argc, argv, __environ MAIN_AUXVEC_PARAM);

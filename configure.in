@@ -79,6 +79,11 @@ AC_ARG_WITH([xcoff],
                            [if using the XCOFF object format]),
 	    [xcoff=$withval],
 	    [xcoff=no])
+AC_ARG_WITH([zrt],
+            AC_HELP_STRING([--with-zrt],
+                           [if building libc-zrt lubrary]),
+	    [zrt=$withval],
+	    [zrt=no])
 AC_ARG_WITH([cvs],
             AC_HELP_STRING([--without-cvs],
                            [if CVS should not be used]),
@@ -2188,6 +2193,7 @@ AC_SUBST(libc_cv_cpp_asm_debuginfo)
 AC_SUBST(use_ldconfig)
 AC_SUBST(ldd_rewrite_script)
 
+AC_SUBST(zrt)
 AC_SUBST(elf) AC_SUBST(xcoff)
 if test $elf = yes; then
   AC_DEFINE(HAVE_ELF)
@@ -2195,6 +2201,10 @@ fi
 if test $xcoff = yes; then
   AC_DEFINE(HAVE_XCOFF)
 fi
+if test $zrt = yes; then
+  AC_DEFINE(HAVE_ZRT)
+fi
+
 
 AC_SUBST(static)
 AC_SUBST(shared)
