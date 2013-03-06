@@ -86,7 +86,6 @@ export sysdep_dir := $(sysdep_dir)
 include $(common-objpfx)config.make
 
 ifeq (yes,$(strip $(zrt)))
-zrt-BUILD=$(ZRT_ROOT)/lib/zrt.o
 zrt-INCLUDE=-I$(ZRT_ROOT)/lib
 zrt-LDFLAGS=$(ZRT_ROOT)/lib/zrt.o
 endif

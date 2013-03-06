@@ -29,7 +29,7 @@ include Makeconfig
 
 # This is the default target; it makes everything except the tests.
 .PHONY: all
-all: $(zrt-BUILD) lib others
+all: lib others
 
 ifneq ($(AUTOCONF),no)
 
