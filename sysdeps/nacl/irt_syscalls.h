@@ -20,19 +20,15 @@ struct msghdr;
 
 #define socklen_t unsigned int
 
-extern size_t (*__nacl_irt_query)(const char *interface_ident,
-                                  void *table, size_t tablesize);
+int nacl_irt_getcwd(char* buf, size_t size, int *len);
+
 
 extern void (*__nacl_irt_exit) (int status);
 extern int (*__nacl_irt_gettod) (struct timeval *tv);
 extern int (*__nacl_irt_clock) (clock_t *ticks);
 extern int (*__nacl_irt_nanosleep) (const struct timespec *req,
                                     struct timespec *rem);
-extern int (*__nacl_irt_sched_yield) (void);
-extern int (*__nacl_irt_sysconf) (int name, int *value);
 
-extern int (*__nacl_irt_mkdir) (const char* pathname, mode_t mode);
-extern int (*__nacl_irt_rmdir) (const char* pathname);
 extern int (*__nacl_irt_chdir) (const char* pathname);
 extern int (*__nacl_irt_getcwd) (char* buf, size_t size, int *len);
 
@@ -205,4 +201,4 @@ struct robust_list_head
 #endif
 
 #endif
-#endif
+#endif 

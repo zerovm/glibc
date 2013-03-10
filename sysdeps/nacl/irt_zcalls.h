@@ -13,6 +13,14 @@ extern int (*__zcall_rmdir)(const char *pathname);
        int (*__zcall_rmdir)(const char *pathname);
 extern int (*__zcall_mkdir)(const char *pathname, mode_t mode);
        int (*__zcall_mkdir)(const char *pathname, mode_t mode);
+extern int (*__zcall_chmod)(const char *path, mode_t mode);
+       int (*__zcall_chmod)(const char *path, mode_t mode);
+extern int (*__zcall_fchmod)(int fd, mode_t mode);
+       int (*__zcall_fchmod)(int fd, mode_t mode);
+extern int (*__zcall_chown)(const char *path, uid_t owner, gid_t group);
+       int (*__zcall_chown)(const char *path, uid_t owner, gid_t group);
+extern int (*__zcall_fchown)(int fd, uid_t owner, gid_t group);
+       int (*__zcall_fchown)(int fd, uid_t owner, gid_t group);
 
 #define INIT_ZCALLS {							\
 	/*IRT syscalls can be redefined, it's totally saves nacl implementation*/ \
@@ -71,7 +79,9 @@ extern int (*__zcall_mkdir)(const char *pathname, mode_t mode);
 	    /*clock calls*/						\
 	    __nacl_irt_clock_getres   = zcalls->getres;			\
 	    __nacl_irt_clock_gettime  = zcalls->gettime;		\
-									\
+	    /*another calls*/						\
+	    __nacl_irt_chdir          = zcalls->chdir;			\
+	    								\
 	    /*run zcall init*/						\
 	    zcalls->init();						\
 	}								\
@@ -89,6 +99,10 @@ extern int (*__zcall_mkdir)(const char *pathname, mode_t mode);
 	    __zcall_unlink         = zcalls->unlink;			\
 	    __zcall_rmdir          = zcalls->rmdir;			\
 	    __zcall_mkdir          = zcalls->mkdir;			\
+	    __zcall_chmod          = zcalls->chmod;			\
+	    __zcall_fchmod         = zcalls->fchmod;			\
+	    __zcall_chown          = zcalls->chown;			\
+	    __zcall_fchown         = zcalls->fchown;			\
 	}								\
     }
 

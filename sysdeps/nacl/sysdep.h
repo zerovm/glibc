@@ -238,6 +238,12 @@ INTERNAL_SYSCALL_dup3_3 (int *err, int oldfd, int newfd, int flags)
   return 0;
 }
 
+//__extern_always_inline int
+//INTERNAL_SYSCALL_epoll_create_1 (int *err, int size)
+//{
+//  *err = (38 /* ENOSYS */);
+//  return 0;
+//}
 __extern_always_inline int
 INTERNAL_SYSCALL_epoll_create_1 (int *err, int size)
 {
@@ -246,6 +252,12 @@ INTERNAL_SYSCALL_epoll_create_1 (int *err, int size)
   return fd;
 }
 
+//__extern_always_inline int
+//INTERNAL_SYSCALL_epoll_create1_1 (int *err, int flags)
+//{
+//  *err = (38 /* ENOSYS */);
+//  return 0;
+//}
 __extern_always_inline int
 INTERNAL_SYSCALL_epoll_create1_1 (int *err, int flags)
 {
@@ -254,6 +266,13 @@ INTERNAL_SYSCALL_epoll_create1_1 (int *err, int flags)
   return fd;
 }
 
+//__extern_always_inline int
+//INTERNAL_SYSCALL_epoll_ctl_4 (int *err, int epfd, int op, int fd,
+//			      struct epoll_event *event)
+//{
+//  *err = (38 /* ENOSYS */);
+//  return 0;
+//}
 __extern_always_inline int
 INTERNAL_SYSCALL_epoll_ctl_4 (int *err, int epfd, int op, int fd,
 			      struct epoll_event *event)
@@ -262,6 +281,14 @@ INTERNAL_SYSCALL_epoll_ctl_4 (int *err, int epfd, int op, int fd,
   return 0;
 }
 
+//__extern_always_inline int
+//INTERNAL_SYSCALL_epoll_pwait_6 (int *err, int epfd, struct epoll_event *events,
+//				int maxevents, int timeout,
+//				const sigset_t *sigmask, size_t sigset_size)
+//{
+//  *err = (38 /* ENOSYS */);
+//  return 0;
+//}
 __extern_always_inline int
 INTERNAL_SYSCALL_epoll_pwait_6 (int *err, int epfd, struct epoll_event *events,
 				int maxevents, int timeout,
@@ -281,6 +308,13 @@ INTERNAL_SYSCALL_execve_3 (int *err, const char *filename, char *const argv[],
   return 0;
 }
 
+//__extern_always_inline int
+//INTERNAL_SYSCALL_epoll_wait_4 (int *err, int epfd, struct epoll_event *events,
+//			       int maxevents, int timeout)
+//{
+//  *err = (38 /* ENOSYS */);
+//  return 0;
+//}
 __extern_always_inline int
 INTERNAL_SYSCALL_epoll_wait_4 (int *err, int epfd, struct epoll_event *events,
 			       int maxevents, int timeout)
@@ -937,7 +971,7 @@ INTERNAL_SYSCALL_mincore_3 (int *err, void *addr, size_t length,
 __extern_always_inline int
 INTERNAL_SYSCALL_mkdir_2 (int *err, const char *pathname, mode_t mode)
 {
-  *err = __nacl_irt_mkdir (pathname, mode);
+  *err = __zcall_mkdir (pathname, mode);
   return 0;
 }
 
@@ -1182,6 +1216,12 @@ INTERNAL_SYSCALL_pivot_root_2 (int *err, const char *new_root,
   return 0;
 }
 
+//__extern_always_inline int
+//INTERNAL_SYSCALL_poll_3 (int *err, struct pollfd *fds, nfds_t nfds, int timeout)
+//{
+//  *err = (38 /* ENOSYS */);
+//  return 0;
+//}
 __extern_always_inline int
 INTERNAL_SYSCALL_poll_3 (int *err, struct pollfd *fds, nfds_t nfds, int timeout)
 {
@@ -1190,6 +1230,14 @@ INTERNAL_SYSCALL_poll_3 (int *err, struct pollfd *fds, nfds_t nfds, int timeout)
   return count;
 }
 
+//__extern_always_inline int
+//INTERNAL_SYSCALL_ppoll_5 (int *err, struct pollfd *fds, nfds_t nfds,
+//			  const struct timespec *timeout,
+//			  const sigset_t *sigmask, size_t sigset_size)
+//{
+//  *err = (38 /* ENOSYS */);
+//  return 0;
+//}
 __extern_always_inline int
 INTERNAL_SYSCALL_ppoll_5 (int *err, struct pollfd *fds, nfds_t nfds,
 			  const struct timespec *timeout,
@@ -1209,6 +1257,15 @@ INTERNAL_SYSCALL_prctl_5 (int *err, int option, unsigned long arg2,
   return 0;
 }
 
+//__extern_always_inline int
+//INTERNAL_SYSCALL_pselect6_6 (int *err, int nfds, fd_set *readfds,
+//                             fd_set *writefds, fd_set *exceptfds,
+//                             const struct timeval *timeout,
+//                             void *sigmask)
+//{
+//  *err = (38 /* ENOSYS */);
+//  return 0;
+//}
 __extern_always_inline int
 INTERNAL_SYSCALL_pselect6_6 (int *err, int nfds, fd_set *readfds,
                              fd_set *writefds, fd_set *exceptfds,
@@ -1331,7 +1388,7 @@ INTERNAL_SYSCALL_renameat_4 (int *err, int olddfd, const char *oldname,
 __extern_always_inline int
 INTERNAL_SYSCALL_rmdir_1 (int *err, const char *pathname)
 {
-  *err = __nacl_irt_rmdir (pathname);
+  *err = __zcall_rmdir (pathname);
   return 0;
 }
 
@@ -1448,6 +1505,14 @@ INTERNAL_SYSCALL_sched_setscheduler_3 (int *err, pid_t pid, int policy,
 #ifdef __i386__
 #define INTERNAL_SYSCALL_select_5 INTERNAL_SYSCALL__newselect_5
 #endif
+//__extern_always_inline int
+//INTERNAL_SYSCALL_select_5 (int *err, int nfds, fd_set *readfds,
+//			   fd_set *writefds, fd_set *exceptfds,
+//			   const struct timeval *timeout)
+//{
+//  *err = (38 /* ENOSYS */);
+//  return 0;
+//}
 __extern_always_inline int
 INTERNAL_SYSCALL_select_5 (int *err, int nfds, fd_set *readfds,
 			   fd_set *writefds, fd_set *exceptfds,
@@ -1673,6 +1738,12 @@ INTERNAL_SYSCALL_signalfd_3 (int *err, int fd, const sigset_t *mask,
   return INTERNAL_SYSCALL_signalfd4_4 (err, fd, mask, sigsetsize, 0);
 }
 
+//__extern_always_inline int
+//INTERNAL_SYSCALL_socket_3 (int *err, int domain, int type, int protocol)
+//{
+//  *err = (38 /* ENOSYS */);
+//  return 0;
+//}
 __extern_always_inline int
 INTERNAL_SYSCALL_socket_3 (int *err, int domain, int type, int protocol)
 {
@@ -1681,6 +1752,13 @@ INTERNAL_SYSCALL_socket_3 (int *err, int domain, int type, int protocol)
   return sd;
 }
 
+//__extern_always_inline int
+//INTERNAL_SYSCALL_accept_3 (int *err, int sockfd, struct sockaddr* addr,
+//                           socklen_t* addr_len)
+//{
+//  *err = (38 /* ENOSYS */);
+//  return 0;
+//}
 __extern_always_inline int
 INTERNAL_SYSCALL_accept_3 (int *err, int sockfd, struct sockaddr* addr,
                            socklen_t* addr_len)
@@ -1690,6 +1768,13 @@ INTERNAL_SYSCALL_accept_3 (int *err, int sockfd, struct sockaddr* addr,
   return sd;
 }
 
+//__extern_always_inline int
+//INTERNAL_SYSCALL_bind_3 (int *err, int sockfd, struct sockaddr* addr,
+//                         socklen_t addr_len)
+//{
+//  *err = (38 /* ENOSYS */);
+//  return 0;
+//}
 __extern_always_inline int
 INTERNAL_SYSCALL_bind_3 (int *err, int sockfd, struct sockaddr* addr,
                          socklen_t addr_len)
@@ -1698,6 +1783,13 @@ INTERNAL_SYSCALL_bind_3 (int *err, int sockfd, struct sockaddr* addr,
   return 0;
 }
 
+//__extern_always_inline int
+//INTERNAL_SYSCALL_getpeername_3 (int *err, int sockfd, struct sockaddr* addr,
+//                                socklen_t* addr_len)
+//{
+//  *err = (38 /* ENOSYS */);
+//  return 0;
+//}
 __extern_always_inline int
 INTERNAL_SYSCALL_getpeername_3 (int *err, int sockfd, struct sockaddr* addr,
                                 socklen_t* addr_len)
@@ -1706,6 +1798,13 @@ INTERNAL_SYSCALL_getpeername_3 (int *err, int sockfd, struct sockaddr* addr,
   return 0;
 }
 
+//__extern_always_inline int
+//INTERNAL_SYSCALL_getsockname_3 (int *err, int sockfd, struct sockaddr* addr,
+//                                socklen_t* addr_len)
+//{
+//  *err = (38 /* ENOSYS */);
+//  return 0;
+//}
 __extern_always_inline int
 INTERNAL_SYSCALL_getsockname_3 (int *err, int sockfd, struct sockaddr* addr,
                                 socklen_t* addr_len)
@@ -1714,6 +1813,13 @@ INTERNAL_SYSCALL_getsockname_3 (int *err, int sockfd, struct sockaddr* addr,
   return 0;
 }
 
+//__extern_always_inline int
+//INTERNAL_SYSCALL_getsockopt_5 (int *err, int sockfd, int level, int optname,
+//                               void *optval, socklen_t *optlen)
+//{
+//  *err = (38 /* ENOSYS */);
+//  return 0;
+//}
 __extern_always_inline int
 INTERNAL_SYSCALL_getsockopt_5 (int *err, int sockfd, int level, int optname,
                                void *optval, socklen_t *optlen)
@@ -1722,6 +1828,13 @@ INTERNAL_SYSCALL_getsockopt_5 (int *err, int sockfd, int level, int optname,
   return 0;
 }
 
+//__extern_always_inline int
+//INTERNAL_SYSCALL_setsockopt_5 (int *err, int sockfd, int level, int optname,
+//                               const void *optval, socklen_t optlen)
+//{
+//  *err = (38 /* ENOSYS */);
+//  return 0;
+//}
 __extern_always_inline int
 INTERNAL_SYSCALL_setsockopt_5 (int *err, int sockfd, int level, int optname,
                                const void *optval, socklen_t optlen)
@@ -1730,6 +1843,12 @@ INTERNAL_SYSCALL_setsockopt_5 (int *err, int sockfd, int level, int optname,
   return 0;
 }
 
+//__extern_always_inline int
+//INTERNAL_SYSCALL_listen_2 (int *err, int sockfd, int backlog)
+//{
+//  *err = (38 /* ENOSYS */);
+//  return 0;
+//}
 __extern_always_inline int
 INTERNAL_SYSCALL_listen_2 (int *err, int sockfd, int backlog)
 {
@@ -1737,6 +1856,13 @@ INTERNAL_SYSCALL_listen_2 (int *err, int sockfd, int backlog)
   return 0;
 }
 
+//__extern_always_inline int
+//INTERNAL_SYSCALL_connect_3 (int *err, int sockfd, struct sockaddr* addr,
+//                            socklen_t addr_len)
+//{
+//  *err = (38 /* ENOSYS */);
+//  return 0;
+//}
 __extern_always_inline int
 INTERNAL_SYSCALL_connect_3 (int *err, int sockfd, struct sockaddr* addr,
                             socklen_t addr_len)
@@ -1745,6 +1871,13 @@ INTERNAL_SYSCALL_connect_3 (int *err, int sockfd, struct sockaddr* addr,
   return 0;
 }
 
+//__extern_always_inline int
+//INTERNAL_SYSCALL_socketpair_4 (int *err, int domain, int type, int protocol,
+//                             int sv[2])
+//{
+//  *err = (38 /* ENOSYS */);
+//  return 0;
+//}
 __extern_always_inline int
 INTERNAL_SYSCALL_socketpair_4 (int *err, int domain, int type, int protocol,
                              int sv[2])
@@ -1753,6 +1886,12 @@ INTERNAL_SYSCALL_socketpair_4 (int *err, int domain, int type, int protocol,
   return 0;
 }
 
+//__extern_always_inline int
+//INTERNAL_SYSCALL_shutdown_2 (int *err, int sockfd, int how)
+//{
+//  *err = (38 /* ENOSYS */);
+//  return 0;
+//}
 __extern_always_inline int
 INTERNAL_SYSCALL_shutdown_2 (int *err, int sockfd, int how)
 {
@@ -1760,6 +1899,12 @@ INTERNAL_SYSCALL_shutdown_2 (int *err, int sockfd, int how)
   return 0;
 }
 
+//__extern_always_inline int
+//INTERNAL_SYSCALL_send_4 (int *err, int sockfd, const void *buf, size_t len, int flags)
+//{
+//  *err = (38 /* ENOSYS */);
+//  return 0;
+//}
 __extern_always_inline int
 INTERNAL_SYSCALL_send_4 (int *err, int sockfd, const void *buf, size_t len, int flags)
 {
@@ -1768,6 +1913,14 @@ INTERNAL_SYSCALL_send_4 (int *err, int sockfd, const void *buf, size_t len, int 
   return ret;
 }
 
+//__extern_always_inline int
+//INTERNAL_SYSCALL_sendto_6 (int *err, int sockfd, const void *buf, size_t len,
+//                           int flags, const struct sockaddr *dest_addr,
+//						   socklen_t addrlen)
+//{
+//  *err = (38 /* ENOSYS */);
+//  return 0;
+//}
 __extern_always_inline int
 INTERNAL_SYSCALL_sendto_6 (int *err, int sockfd, const void *buf, size_t len,
                            int flags, const struct sockaddr *dest_addr,
@@ -1778,6 +1931,12 @@ INTERNAL_SYSCALL_sendto_6 (int *err, int sockfd, const void *buf, size_t len,
   return ret;
 }
 
+//__extern_always_inline int
+//INTERNAL_SYSCALL_recv_4 (int *err, int sockfd, void *buf, size_t len, int flags)
+//{
+//  *err = (38 /* ENOSYS */);
+//  return 0;
+//}
 __extern_always_inline int
 INTERNAL_SYSCALL_recv_4 (int *err, int sockfd, void *buf, size_t len, int flags)
 {
@@ -1786,6 +1945,13 @@ INTERNAL_SYSCALL_recv_4 (int *err, int sockfd, void *buf, size_t len, int flags)
   return ret;
 }
 
+//__extern_always_inline int
+//INTERNAL_SYSCALL_recvfrom_6 (int *err, int sockfd, void *buf, size_t len, int flags,
+//                           struct sockaddr *dest_addr, socklen_t *addrlen)
+//{
+//  *err = (38 /* ENOSYS */);
+//  return 0;
+//}
 __extern_always_inline int
 INTERNAL_SYSCALL_recvfrom_6 (int *err, int sockfd, void *buf, size_t len, int flags,
                            struct sockaddr *dest_addr, socklen_t *addrlen)
@@ -1795,6 +1961,12 @@ INTERNAL_SYSCALL_recvfrom_6 (int *err, int sockfd, void *buf, size_t len, int fl
   return ret;
 }
 
+//__extern_always_inline int
+//INTERNAL_SYSCALL_sendmsg_3 (int *err, int sockfd, const struct msghdr *msg, int flags)
+//{
+//  *err = (38 /* ENOSYS */);
+//  return 0;
+//}
 __extern_always_inline int
 INTERNAL_SYSCALL_sendmsg_3 (int *err, int sockfd, const struct msghdr *msg, int flags)
 {
@@ -1803,6 +1975,12 @@ INTERNAL_SYSCALL_sendmsg_3 (int *err, int sockfd, const struct msghdr *msg, int 
   return ret;
 }
 
+//__extern_always_inline int
+//INTERNAL_SYSCALL_recvmsg_3 (int *err, int sockfd, struct msghdr *msg, int flags)
+//{
+//  *err = (38 /* ENOSYS */);
+//  return 0;
+//}
 __extern_always_inline int
 INTERNAL_SYSCALL_recvmsg_3 (int *err, int sockfd, struct msghdr *msg, int flags)
 {

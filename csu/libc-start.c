@@ -141,13 +141,6 @@ LIBC_START_MAIN (int (*main) (int, char **, char ** MAIN_AUXVEC_DECL),
      functions are using thread functions if these are available and
      we need to setup errno.  */
   __pthread_initialize_minimal ();
-  /* TODO(mseaborn): In the long term we could implement a futex
-     syscall for NaCl and so this ad-hoc initialisation would not be
-     necessary.  See:
-     http://code.google.com/p/nativeclient/issues/detail?id=1244  */
-# ifdef __native_client__
-  __nacl_futex_init ();
-# endif
 
   /* Set up the stack checker's canary.  */
   uintptr_t stack_chk_guard = _dl_setup_stack_chk_guard ();

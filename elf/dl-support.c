@@ -33,11 +33,6 @@
 #include <unsecvars.h>
 #include <hp-timing.h>
 
-#ifdef __native_client__
-#include <irt.h>
-#include <irt_syscalls.h>
-#endif
-
 extern char *__progname;
 char **_dl_argv = &__progname;	/* This is checked for some error messages.  */
 
@@ -190,11 +185,6 @@ _dl_aux_init (ElfW(auxv_t) *av)
       case AT_HWCAP:
 	GLRO(dl_hwcap) = (unsigned long int) av->a_un.a_val;
 	break;
-#ifdef __native_client__
-      case AT_SYSINFO:
-	__nacl_irt_query = (TYPE_nacl_irt_query) av->a_un.a_val;
-	break;
-#endif
 #ifdef NEED_DL_SYSINFO
       case AT_SYSINFO:
 	GL(dl_sysinfo) = av->a_un.a_val;

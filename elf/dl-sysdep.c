@@ -39,11 +39,6 @@
 #include <hp-timing.h>
 #include <tls.h>
 
-#ifdef __native_client__
-#include <irt.h>
-#include <irt_syscalls.h>
-#endif
-
 #ifdef _DL_FIRST_PLATFORM
 # define _DL_FIRST_EXTRA (_DL_FIRST_PLATFORM + _DL_PLATFORMS_COUNT)
 #else
@@ -182,11 +177,6 @@ _dl_sysdep_start (void **start_argptr,
       case AT_FPUCW:
 	GLRO(dl_fpu_control) = av->a_un.a_val;
 	break;
-#ifdef __native_client__
-      case AT_SYSINFO:
-	__nacl_irt_query = (TYPE_nacl_irt_query) av->a_un.a_val;
-	break;
-#endif
 #ifdef NEED_DL_SYSINFO
       case AT_SYSINFO:
 	new_sysinfo = av->a_un.a_val;
