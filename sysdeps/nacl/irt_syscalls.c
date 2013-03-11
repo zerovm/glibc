@@ -2,6 +2,8 @@
 #include <sys/stat.h>
 #include <time.h>
 #include <nacl_stat.h>
+#include <nacl_syscalls.h>
+#include <irt.h>
 #undef stat
 #include <irt_syscalls.h>
 #ifdef IS_IN_rtld
@@ -22,12 +24,13 @@ int nacl_irt_getcwd(char* buf, size_t size, int *len){
 }
 
 
+static int not_implemented(void) {
+    return (38 /* ENOSYS */);
+}
 
 size_t (*__nacl_irt_query) (const char *interface_ident,
 			    void *table, size_t tablesize);
 
-//int (*__zcall_mkdir) (const char* pathname, mode_t mode);
-//int (*__zcall_rmdir) (const char* pathname);
 int (*__nacl_irt_chdir) (const char* pathname);
 int (*__nacl_irt_getcwd) (char* buf, size_t size, int *len);
 
@@ -137,13 +140,89 @@ int (*__nacl_irt_open_resource) (const char* file, int *fd);
 int (*__nacl_irt_clock_getres) (clockid_t clk_id, struct timespec *res);
 int (*__nacl_irt_clock_gettime) (clockid_t clk_id, struct timespec *tp);
 
+#define DEFAULT_UNINITIALIZED not_implemented
+
+static void set_irt_uninitialized(){
+    __nacl_irt_query=DEFAULT_UNINITIALIZED;
+    __nacl_irt_chdir=DEFAULT_UNINITIALIZED;
+    __nacl_irt_getcwd=DEFAULT_UNINITIALIZED;
+    __nacl_irt_exit=DEFAULT_UNINITIALIZED;
+    __nacl_irt_gettod=DEFAULT_UNINITIALIZED;
+    __nacl_irt_clock=DEFAULT_UNINITIALIZED;
+    __nacl_irt_nanosleep=DEFAULT_UNINITIALIZED;
+    __nacl_irt_sched_yield=DEFAULT_UNINITIALIZED;
+    __nacl_irt_sysconf=DEFAULT_UNINITIALIZED;
+    __nacl_irt_open=DEFAULT_UNINITIALIZED;
+    __nacl_irt_close=DEFAULT_UNINITIALIZED;
+    __nacl_irt_read=DEFAULT_UNINITIALIZED;
+    __nacl_irt_write=DEFAULT_UNINITIALIZED;
+    __nacl_irt_seek=DEFAULT_UNINITIALIZED;
+    __nacl_irt_dup=DEFAULT_UNINITIALIZED;
+    __nacl_irt_dup2=DEFAULT_UNINITIALIZED;
+    __nacl_irt_fstat=DEFAULT_UNINITIALIZED;
+    __nacl_irt_stat=DEFAULT_UNINITIALIZED;
+    __nacl_irt_getdents=DEFAULT_UNINITIALIZED;
+    __nacl_irt_socket=DEFAULT_UNINITIALIZED;
+    __nacl_irt_accept=DEFAULT_UNINITIALIZED;
+    __nacl_irt_bind=DEFAULT_UNINITIALIZED;
+    __nacl_irt_listen=DEFAULT_UNINITIALIZED;
+    __nacl_irt_connect=DEFAULT_UNINITIALIZED;
+    __nacl_irt_send=DEFAULT_UNINITIALIZED;
+    __nacl_irt_sendmsg=DEFAULT_UNINITIALIZED;
+    __nacl_irt_sendto=DEFAULT_UNINITIALIZED;
+    __nacl_irt_recv=DEFAULT_UNINITIALIZED;
+    __nacl_irt_recvmsg=DEFAULT_UNINITIALIZED;
+    __nacl_irt_recvfrom=DEFAULT_UNINITIALIZED;
+    __nacl_irt_epoll_create=DEFAULT_UNINITIALIZED;
+    __nacl_irt_epoll_create1=DEFAULT_UNINITIALIZED;
+    __nacl_irt_epoll_ctl=DEFAULT_UNINITIALIZED;
+    __nacl_irt_epoll_pwait=DEFAULT_UNINITIALIZED;
+    __nacl_irt_epoll_wait=DEFAULT_UNINITIALIZED;
+    __nacl_irt_poll=DEFAULT_UNINITIALIZED;
+    __nacl_irt_ppoll=DEFAULT_UNINITIALIZED;
+    __nacl_irt_select=DEFAULT_UNINITIALIZED;
+    __nacl_irt_pselect=DEFAULT_UNINITIALIZED;
+    __nacl_irt_getpeername=DEFAULT_UNINITIALIZED;
+    __nacl_irt_getsockname=DEFAULT_UNINITIALIZED;
+    __nacl_irt_getsockopt=DEFAULT_UNINITIALIZED;
+    __nacl_irt_setsockopt=DEFAULT_UNINITIALIZED;
+    __nacl_irt_socketpair=DEFAULT_UNINITIALIZED;
+    __nacl_irt_shutdown=DEFAULT_UNINITIALIZED;
+    __nacl_irt_sysbrk=DEFAULT_UNINITIALIZED;
+    __nacl_irt_mmap=DEFAULT_UNINITIALIZED;
+    __nacl_irt_munmap=DEFAULT_UNINITIALIZED;
+    __nacl_irt_dyncode_create=DEFAULT_UNINITIALIZED;
+    __nacl_irt_dyncode_modify=DEFAULT_UNINITIALIZED;
+    __nacl_irt_dyncode_delete=DEFAULT_UNINITIALIZED;
+    __nacl_irt_thread_create=DEFAULT_UNINITIALIZED;
+    __nacl_irt_thread_exit=DEFAULT_UNINITIALIZED;
+    __nacl_irt_thread_nice=DEFAULT_UNINITIALIZED;
+    __nacl_irt_mutex_create=DEFAULT_UNINITIALIZED;
+    __nacl_irt_mutex_destroy=DEFAULT_UNINITIALIZED;
+    __nacl_irt_mutex_lock=DEFAULT_UNINITIALIZED;
+    __nacl_irt_mutex_unlock=DEFAULT_UNINITIALIZED;
+    __nacl_irt_mutex_trylock=DEFAULT_UNINITIALIZED;
+    __nacl_irt_cond_create=DEFAULT_UNINITIALIZED;
+    __nacl_irt_cond_destroy=DEFAULT_UNINITIALIZED;
+    __nacl_irt_cond_signal=DEFAULT_UNINITIALIZED;
+    __nacl_irt_cond_broadcast=DEFAULT_UNINITIALIZED;
+    __nacl_irt_cond_wait=DEFAULT_UNINITIALIZED;
+    __nacl_irt_cond_timed_wait_abs=DEFAULT_UNINITIALIZED;
+    __nacl_irt_tls_init=DEFAULT_UNINITIALIZED;
+    __nacl_irt_tls_get=DEFAULT_UNINITIALIZED;
+    __nacl_irt_open_resource=DEFAULT_UNINITIALIZED;
+    __nacl_irt_clock_getres=DEFAULT_UNINITIALIZED;
+    __nacl_irt_clock_gettime=DEFAULT_UNINITIALIZED;
+}
+
 void
 init_irt_table (void)
 {
+    set_irt_uninitialized();
+
     /*setup zrt zcalls*/
     INIT_ZCALLS;
 
     /*init additional handlers*/
     INIT_ZCALLS_NONSYSCALLS;
 }
-
