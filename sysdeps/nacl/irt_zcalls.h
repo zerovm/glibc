@@ -1,6 +1,9 @@
 
 #include "zrt.h"
 
+#define USER_ID_STUB  1
+#define GROUP_ID_STUB 1
+
 extern int (*__zcall_loglibc)(const char *str);
        int (*__zcall_loglibc)(const char *str);
 extern int (*__zcall_fcntl) (int fd, int cmd, ...);

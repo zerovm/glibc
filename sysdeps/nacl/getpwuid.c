@@ -18,19 +18,31 @@
    02111-1307 USA.  */
 
 #include <pwd.h>
+#include <errno.h>
+
+#include <irt_zcalls.h>
 
 #ifdef	HAVE_CONFIG_H
 # include "config.h"
 #endif
 
+const struct passwd s_passwd_data_1 = {
+    "username",      /* username */
+    "password",      /* user password */
+    USER_ID_STUB,    /* user ID */
+    GROUP_ID_STUB,   /* group ID */
+    "userinfo",      /* user information */
+    "/",             /* home directory */
+    "zrt shell"      /* shell program */
+};
 
-#define LOOKUP_TYPE	struct passwd
-#define FUNCTION_NAME	getpwuid
-#define DATABASE_NAME	passwd
-#define ADD_PARAMS	uid_t uid
-#define ADD_VARIABLES	uid
-#define BUFLEN		NSS_BUFLEN_PASSWD
 
-#ifndef HAVE_ZRT
-#include "../nss/getXXbyYY.c"
-#endif
+struct passwd* getpwuid(uid_t uid)
+{
+    if ( uid == 1 )
+	return &s_passwd_data_1;
+    else{
+	__set_errno(ENOENT);    /*uid mismatch*/
+    }
+    return NULL;
+}
