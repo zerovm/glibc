@@ -18,6 +18,10 @@
 
 #include <sys/types.h>
 #include <errno.h>
+#include <unistd.h>
+#include <fcntl.h>
+
+#include <config.h>
 
 /* Truncate PATH to LENGTH bytes.  */
 int
@@ -25,10 +29,28 @@ __truncate (path, length)
      const char *path;
      off_t length;
 {
-  __set_errno (ENOSYS);
-  return -1;
+#ifdef HAVE_ZRT
+    /*truncate support moved to misc/truncate.c instead of sysdeps/nacl/truncate.c because it unexpectedly don't works*/
+    int fd, ret, save;
+
+    fd = open (path, O_WRONLY);
+    if (fd < 0)
+	return -1;
+
+    ret = ftruncate(fd, length);
+    save = errno;
+    (void) close (fd);
+    if (ret < 0)
+	__set_errno (save);
+    return ret;
+#else
+    __set_errno (ENOSYS);
+    return -1;
+#endif
 }
 weak_alias (__truncate, truncate)
 
+#ifndef HAVE_ZRT
 stub_warning (truncate)
 #include <stub-tag.h>
+#endif //HAVE_ZRT
