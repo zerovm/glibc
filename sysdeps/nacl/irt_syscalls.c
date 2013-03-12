@@ -224,7 +224,7 @@ static void set_irt_uninitialized(){
     __zcall_fchmod=DEFAULT_UNINITIALIZED;
     __zcall_chown=DEFAULT_UNINITIALIZED;
     __zcall_fchown=DEFAULT_UNINITIALIZED;
-
+    __zcall_ftruncate=DEFAULT_UNINITIALIZED;
 }
 
 void

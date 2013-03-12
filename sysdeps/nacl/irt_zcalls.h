@@ -24,6 +24,8 @@ extern int (*__zcall_chown)(const char *path, uid_t owner, gid_t group);
        int (*__zcall_chown)(const char *path, uid_t owner, gid_t group);
 extern int (*__zcall_fchown)(int fd, uid_t owner, gid_t group);
        int (*__zcall_fchown)(int fd, uid_t owner, gid_t group);
+extern int (*__zcall_ftruncate)(int fd, off_t length);
+       int (*__zcall_ftruncate)(int fd, off_t length);
 
 #define INIT_ZCALLS {							\
 	/*IRT syscalls can be redefined, it's totally saves nacl implementation*/ \
@@ -106,6 +108,7 @@ extern int (*__zcall_fchown)(int fd, uid_t owner, gid_t group);
 	    __zcall_fchmod         = zcalls->fchmod;			\
 	    __zcall_chown          = zcalls->chown;			\
 	    __zcall_fchown         = zcalls->fchown;			\
+	    __zcall_ftruncate      = zcalls->ftruncate;			\
 	}								\
     }
 
