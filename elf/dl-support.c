@@ -17,6 +17,7 @@
    Software Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA
    02111-1307 USA.  */
 
+/* Copyright (c) 2013 LiteStack, Inc. All rights reserved. */
 /* This file defines some things that for the dynamic linker are defined in
    rtld.c and dl-sysdep.c in ways appropriate to bootstrap dynamic linking.  */
 
