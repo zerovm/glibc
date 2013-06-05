@@ -117,18 +117,35 @@ abort (void)
       raise (SIGABRT);
     }
 
-  /* Now try to abort using the system specific command.  */
+  /*Yaroslav Litvinov*/
+  /* /\* Now try to abort using the system specific command.  *\/ */
+  /* if (stage == 6) */
+  /*   { */
+  /*     ++stage; */
+  /*     ABORT_INSTRUCTION; */
+  /*   } */
+
+  /* /\* If we can't signal ourselves and the abort instruction failed, exit.  *\/ */
+  /* if (stage == 7) */
+  /*   { */
+  /*     ++stage; */
+  /*     _exit (127); */
+  /*   } */
+
+  /*ZRT try exit with error code instead abort instruction - segmenetation fault*/
+
+  /* If we can't signal ourselves and the abort instruction failed, exit.  */
   if (stage == 6)
     {
       ++stage;
-      ABORT_INSTRUCTION;
+      _exit (127);
     }
 
-  /* If we can't signal ourselves and the abort instruction failed, exit.  */
+  /* Now try to abort using the system specific command.  */
   if (stage == 7)
     {
       ++stage;
-      _exit (127);
+      ABORT_INSTRUCTION;
     }
 
   /* If even this fails try to use the provided instruction to crash
