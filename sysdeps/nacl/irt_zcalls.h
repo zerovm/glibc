@@ -1,4 +1,7 @@
 
+#ifndef __IRT_ZCALLS_H__
+#define __IRT_ZCALLS_H__
+
 #include "zrt.h"
 
 #define USER_ID_STUB  1
@@ -112,3 +115,4 @@ extern int (*__zcall_ftruncate)(int fd, off_t length);
 	}								\
     }
 
+#endif //__IRT_ZCALLS_H__

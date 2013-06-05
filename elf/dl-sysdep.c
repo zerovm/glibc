@@ -201,9 +201,6 @@ _dl_sysdep_start (void **start_argptr,
       DL_PLATFORM_AUXV
 #endif
       }
-#ifdef __native_client__
-  init_irt_table ();
-#endif
 
 #ifndef HAVE_AUX_SECURE
   if (seen != -1)

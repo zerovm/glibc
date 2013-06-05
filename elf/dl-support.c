@@ -231,9 +231,6 @@ _dl_aux_init (ElfW(auxv_t) *av)
       DL_PLATFORM_AUXV
 # endif
       }
-#ifdef __native_client__
-  init_irt_table ();
-#endif
   if (seen == 0xf)
     {
       __libc_enable_secure = uid != 0 || gid != 0;

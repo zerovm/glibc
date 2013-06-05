@@ -45,6 +45,8 @@ uintptr_t __stack_chk_guard attribute_relro;
 
 #ifdef HAVE_ZRT
 #include <zrt.h>
+#include <irt_syscalls.h>
+#include <nvram/nvram.h> //NVRAM_MAX_RECORDS_IN_SECTION
 #endif
 
 #ifdef LIBC_START_MAIN
@@ -107,13 +109,64 @@ LIBC_START_MAIN (int (*main) (int, char **, char ** MAIN_AUXVEC_DECL),
 
 #ifndef SHARED
   char *__unbounded *__unbounded ubp_ev = &ubp_av[argc + 1];
+  
+#ifdef HAVE_ZRT
+  char **nvram_args;
+  char **nvram_envs;
+  char  *args_buf;
+  char  *envs_buf;
+
+  /*Initialize syscall functions*/
+  init_irt_table ();
+
+  /*init env & args readed from nvram*/  
+  struct zcalls_env_args_init_t* zcalls_env_args_init;
+  if ( ZCALLS_ENV_ARGS_INIT == __query_zcalls(ZCALLS_ENV_ARGS_INIT, 
+					      (void**)&zcalls_env_args_init) ){
+      if ( zcalls_env_args_init && 
+	   zcalls_env_args_init->read_nvram_get_args_envs &&
+	   zcalls_env_args_init->get_nvram_args_envs ){
+	  /*retrieve lengths of args & env variables*/
+	  int arg_buf_size;
+	  int env_buf_size;
+	  int env_count;
+	  zcalls_env_args_init->read_nvram_get_args_envs( &arg_buf_size, 
+							  &env_buf_size, &env_count);
+	  /*preallocate array to save args*/
+	  nvram_args = alloca( NVRAM_MAX_RECORDS_IN_SECTION * sizeof(char*) );
+	  /*preallocate buffer to copy for arguments parsed from nvram*/
+	  args_buf = alloca( arg_buf_size +1 ); /*+null term char*/
+
+	  /*preallocate array to save envs*/
+	  nvram_envs = alloca( (env_count+1) * sizeof(char*) );
+	  /*preallocate buffer to copy for env vars  parsed from nvram*/
+	  envs_buf = alloca( env_buf_size +1 ); /*+null term char*/
+	  
+	  /*retrieve args & envs into two-dimentional arrays*/
+	  zcalls_env_args_init->get_nvram_args_envs( nvram_args, args_buf, arg_buf_size,
+						     nvram_envs, envs_buf, env_buf_size);
+
+	  /*always expecting that argv0 is passed at entry point */
+	  nvram_args[0] = (char*)argv[0];
+	  /*calculate args count*/
+	  int arg_count=0;
+	  while( nvram_args[arg_count] != NULL );
+	      ++arg_count;
+
+	  /*set libc variables that would be used for further initialization*/
+	  argc = arg_count;
+	  argv = nvram_args;
+	  ubp_ev = nvram_envs;
+      }
+  }
+#endif
 
   INIT_ARGV_and_ENVIRON;
 
   /* Store the lowest stack address.  This is done in ld.so if this is
      the code for the DSO.  */
   __libc_stack_end = stack_end;
-
+  
 # ifdef HAVE_AUX_VECTOR
   /* First process the auxiliary vector since we need to find the
      program header to locate an eventually present PT_TLS entry.  */
