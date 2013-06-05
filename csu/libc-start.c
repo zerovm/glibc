@@ -145,12 +145,9 @@ LIBC_START_MAIN (int (*main) (int, char **, char ** MAIN_AUXVEC_DECL),
 	  /*retrieve args & envs into two-dimentional arrays*/
 	  zcalls_env_args_init->get_nvram_args_envs( nvram_args, args_buf, arg_buf_size,
 						     nvram_envs, envs_buf, env_buf_size);
-
-	  /*always expecting that argv0 is passed at entry point */
-	  nvram_args[0] = (char*)argv[0];
 	  /*calculate args count*/
 	  int arg_count=0;
-	  while( nvram_args[arg_count] != NULL );
+	  while( nvram_args[arg_count] != NULL )
 	      ++arg_count;
 
 	  /*set libc variables that would be used for further initialization*/
