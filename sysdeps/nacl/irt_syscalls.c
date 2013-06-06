@@ -214,7 +214,6 @@ static void set_irt_uninitialized(){
     __nacl_irt_clock_getres=DEFAULT_UNINITIALIZED;
     __nacl_irt_clock_gettime=DEFAULT_UNINITIALIZED;
 
-    __zcall_loglibc=DEFAULT_UNINITIALIZED;
     __zcall_fcntl=DEFAULT_UNINITIALIZED;
     __zcall_link=DEFAULT_UNINITIALIZED;
     __zcall_unlink=DEFAULT_UNINITIALIZED;

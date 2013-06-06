@@ -7,8 +7,6 @@
 #define USER_ID_STUB  1
 #define GROUP_ID_STUB 1
 
-extern int (*__zcall_loglibc)(const char *str);
-       int (*__zcall_loglibc)(const char *str);
 extern int (*__zcall_fcntl) (int fd, int cmd, ...);
        int (*__zcall_fcntl) (int fd, int cmd, ...);
 extern int (*__zcall_link)(const char *oldpath, const char *newpath);
@@ -101,7 +99,6 @@ extern int (*__zcall_ftruncate)(int fd, off_t length);
 	struct zcalls_nonsyscalls_t* zcalls;				\
 	if ( ZCALLS_NONSYSCALLS == __query_zcalls(ZCALLS_NONSYSCALLS, (void**)&zcalls) && \
 	     zcalls ){							\
-	    __zcall_loglibc        = zcalls->loglibc;			\
 	    __zcall_fcntl          = zcalls->fcntl;			\
 	    __zcall_link           = zcalls->link;			\
 	    __zcall_unlink         = zcalls->unlink;			\
