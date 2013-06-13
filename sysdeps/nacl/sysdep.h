@@ -115,8 +115,15 @@ INTERNAL_SYSCALL_capset_2 (int *err, struct __user_cap_header_struct *hdrp,
 __extern_always_inline int
 INTERNAL_SYSCALL_chdir_1 (int *err, const char *path)
 {
-    *err = __nacl_irt_chdir (path);
-    return 0;
+    int ret=0;
+    if ( __nacl_irt_chdir (path) < 0 ){
+	ret=-1;
+	*err = errno;
+    }
+    else{
+	*err=0;
+    }
+    return ret;
 }
 
 __extern_always_inline int
@@ -209,7 +216,14 @@ INTERNAL_SYSCALL_clone_4(int *err, int (*fn)(void *), void *child_stack,
 __extern_always_inline int
 INTERNAL_SYSCALL_close_1 (int *err, unsigned int fd)
 {
-    *err = __nacl_irt_close(fd);
+    int ret=0;
+    if ( __nacl_irt_close(fd) < 0 ){
+	ret=-1;
+	*err = errno;
+    }
+    else{
+	*err=0;
+    }
     return 0;
 }
 
@@ -234,14 +248,24 @@ __extern_always_inline int
 INTERNAL_SYSCALL_dup_1 (int *err, int oldfd)
 {
     int newfd;
-    *err = __nacl_irt_dup (oldfd, &newfd);
+    if ( __nacl_irt_dup (oldfd, &newfd) < 0 ){
+	*err = errno;
+    }
+    else{
+	*err=0;
+    }
     return newfd;
 }
 
 __extern_always_inline int
 INTERNAL_SYSCALL_dup2_2 (int *err, int oldfd, int newfd)
 {
-    *err = __nacl_irt_dup2 (oldfd, newfd);
+    if ( __nacl_irt_dup2 (oldfd, newfd) < 0 ){
+	*err = errno;
+    }
+    else{
+	*err=0;
+    }
     return newfd;
 }
 
@@ -580,7 +604,13 @@ __extern_always_inline int
 INTERNAL_SYSCALL_getcwd_2 (int *err, char *buf, size_t size)
 {
     int len;
-    *err = nacl_irt_getcwd (buf, size, &len);
+    if ( __nacl_irt_getcwd (buf, size, &len) < 0 ){
+	len=-1;
+	*err = errno;
+    }
+    else{
+	*err=0;
+    }
     return len;
 }
 
@@ -719,7 +749,13 @@ __extern_always_inline int
 INTERNAL_SYSCALL_open_3 (int *err, const char *pathname, int flags, mode_t mode)
 {
     int newfd;
-    *err = __nacl_irt_open (pathname, flags, mode, &newfd);
+    if ( __nacl_irt_open (pathname, flags, mode, &newfd) < 0 ){
+	newfd=-1;
+	*err = errno;
+    }
+    else{
+	*err=0;
+    }
     return newfd;
 }
 
@@ -922,8 +958,15 @@ INTERNAL_SYSCALL_mincore_3 (int *err, void *addr, size_t length,
 __extern_always_inline int
 INTERNAL_SYSCALL_mkdir_2 (int *err, const char *pathname, mode_t mode)
 {
-    *err = __zcall_mkdir (pathname, mode);
-    return 0;
+    int ret;
+    if ( __zcall_mkdir (pathname, mode) < 0 ){
+	ret=-1;
+	*err = errno;
+    }
+    else{
+	*err=0;
+    }
+    return ret;
 }
 
 __extern_always_inline int
@@ -1102,8 +1145,15 @@ INTERNAL_SYSCALL_munlockall_0 (int *err)
 __extern_always_inline int
 INTERNAL_SYSCALL_munmap_2 (int *err, void *addr, size_t length)
 {
-    *err = __nacl_irt_munmap(addr, length);
-    return 0;
+    int ret=0;
+    if ( __nacl_irt_munmap(addr, length) < 0 ){
+	ret=-1;
+	*err = errno;
+    }
+    else{
+	*err=0;
+    }
+    return ret;
 }
 
 struct nfsctl_arg;
@@ -2111,7 +2161,12 @@ __extern_always_inline ssize_t
 INTERNAL_SYSCALL_write_3 (int *err, int fd, const void *buf, size_t count)
 {
     size_t nwrote;
-    *err = __nacl_irt_write (fd, buf, count, &nwrote);
+    if ( __nacl_irt_write (fd, buf, count, &nwrote) < 0 ){
+	*err = errno;
+    }
+    else{
+	*err=0;
+    }
     return nwrote;
 }
 
