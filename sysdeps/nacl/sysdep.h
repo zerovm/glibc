@@ -224,7 +224,7 @@ INTERNAL_SYSCALL_close_1 (int *err, unsigned int fd)
     else{
 	*err=0;
     }
-    return 0;
+    return ret;
 }
 
 __extern_always_inline __caddr_t
