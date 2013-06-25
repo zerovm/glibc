@@ -189,11 +189,18 @@
 # undef  _XOPEN_SOURCE_EXTENDED
 # define _XOPEN_SOURCE_EXTENDED	1
 # undef	 _LARGEFILE64_SOURCE
-/* Native client applications shouldn't use functions with 64 suffix.
-   Unfortunately, we can't make glibc itself to live without them. */
-# if !defined __native_client__ || defined _LIBC
+
+/* /\* Native client applications shouldn't use functions with 64 suffix. */
+/*    Unfortunately, we can't make glibc itself to live without them. *\/ */
+/* # if !defined __native_client__ || defined _LIBC */
+/* #  define _LARGEFILE64_SOURCE	1 */
+/* # endif */
+
+/* Zerovm application must support functions with 64 suffix.*/
+#if defined __native_client__ || (!defined __native_client__ && defined _LIBC)
 #  define _LARGEFILE64_SOURCE	1
 # endif
+
 # undef  _BSD_SOURCE
 # define _BSD_SOURCE	1
 # undef  _SVID_SOURCE
@@ -285,9 +292,12 @@
 #endif
 
 #ifdef _LARGEFILE64_SOURCE
-/* Native client applications shouldn't use functions with 64 suffix.
-   Unfortunately, we can't make glibc itself to live without them. */
-# if !defined __native_client__ || defined _LIBC
+/* /\* Native client applications shouldn't use functions with 64 suffix. */
+/*    Unfortunately, we can't make glibc itself to live without them. *\/ */
+/* # if !defined __native_client__ || defined _LIBC */
+/* #  define __USE_LARGEFILE64	1 */
+/* # endif */
+#if defined __native_client__ || (!defined __native_client__ && defined _LIBC)
 #  define __USE_LARGEFILE64	1
 # endif
 #endif
