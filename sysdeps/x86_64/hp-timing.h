@@ -24,18 +24,27 @@
 
 /* The "=A" constraint used in 32-bit mode does not work in 64-bit mode.  */
 # undef HP_TIMING_NOW
+#ifdef __native_client__
+# define HP_TIMING_NOW(Var) (0)
+#else
 # define HP_TIMING_NOW(Var) \
   ({ unsigned int _hi, _lo; \
      asm volatile ("rdtsc" : "=a" (_lo), "=d" (_hi)); \
      (Var) = ((unsigned long long int) _hi << 32) | _lo; })
+#endif //__native_client__
+
 
 /* The funny business for 32-bit mode is not required here.  */
 # undef HP_TIMING_ACCUM
+#ifdef __native_client__
+# define HP_TIMING_ACCUM(Sum, Diff)   (0)
+#else
 # define HP_TIMING_ACCUM(Sum, Diff)					      \
   do {									      \
     hp_timing_t __diff = (Diff) - GLRO(dl_hp_timing_overhead);		      \
     __asm__ __volatile__ ("lock; addq %1, %0"				      \
 			  : "=m" (Sum) : "r" (__diff), "m" (Sum));	      \
   } while (0)
+#endif //__native_client__
 
 #endif /* hp-timing.h */
