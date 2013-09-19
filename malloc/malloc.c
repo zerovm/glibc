@@ -2962,6 +2962,7 @@ static Void_t* sYSMALLOc(nb, av) INTERNAL_SIZE_T nb; mstate av;
     /* Don't try if size wraps around 0 */
     if ((unsigned long)(size) > (unsigned long)(nb)) {
 
+#ifndef __native_client__
       mm = (char*)(MMAP(0, size, PROT_READ|PROT_WRITE, MAP_PRIVATE));
 
       if (mm != MAP_FAILED) {
@@ -3012,6 +3013,7 @@ static Void_t* sYSMALLOc(nb, av) INTERNAL_SIZE_T nb; mstate av;
 
         return chunk2mem(p);
       }
+#endif //__native_client__
     }
   }
 #endif
