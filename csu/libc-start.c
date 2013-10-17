@@ -250,6 +250,7 @@ LIBC_START_MAIN (int (*main) (int, char **, char ** MAIN_AUXVEC_DECL),
 	}
 #endif
 
+
 #ifdef HAVE_ZRT
 	/*setup args, envs just after warmup in zrt_setup*/
 	char **nvram_args;
@@ -294,6 +295,12 @@ LIBC_START_MAIN (int (*main) (int, char **, char ** MAIN_AUXVEC_DECL),
 		__environ MAIN_AUXVEC_PARAM = nvram_envs;
 	    }
 	}
+
+	/*premain callback*/
+	if ( zcalls_zrt_init && zcalls_zrt_init->zrt_premain ){
+	    zcalls_zrt_init->zrt_premain();
+	}
+
 #endif
 
 	/* Run the program.  */
