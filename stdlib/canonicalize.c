@@ -26,6 +26,7 @@
 #include <sys/stat.h>
 #include <errno.h>
 #include <stddef.h>
+#include <irt_zcalls.h>  //__zcall_stat_realpath
 
 #include <shlib-compat.h>
 
@@ -159,7 +160,8 @@ __realpath (const char *name, char *resolved)
 	  dest = __mempcpy (dest, start, end - start);
 	  *dest = '\0';
 
-	  if (__lxstat64 (_STAT_VER, rpath, &st) < 0)
+	  /*stat for only realpath function, it's resided in zrt*/
+	  if (__zcall_stat_realpath(rpath, &st) < 0)
 	    goto error;
 
 	  if (S_ISLNK (st.st_mode))

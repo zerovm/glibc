@@ -9,6 +9,7 @@ int __getpagesize ()
   /* NaCl does not have a syscall for getting the page size.  The page
      size is fixed at 64k for compatiblity with Windows. */
   return 0x10000;
+  //return 0x1000;
 }
 libc_hidden_def (__getpagesize)
 weak_alias (__getpagesize, getpagesize)

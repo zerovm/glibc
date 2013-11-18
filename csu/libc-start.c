@@ -295,6 +295,9 @@ LIBC_START_MAIN (int (*main) (int, char **, char ** MAIN_AUXVEC_DECL),
 		__environ MAIN_AUXVEC_PARAM = nvram_envs;
 	    }
 	}
+	extern char **__libc_argv attribute_hidden;
+	/*update internal glibc arguments*/
+	__libc_argv = argv;
 
 	/*premain callback*/
 	if ( zcalls_zrt_init && zcalls_zrt_init->zrt_premain ){
