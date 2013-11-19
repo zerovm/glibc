@@ -11,7 +11,6 @@ __ptr_t __mmap (__ptr_t addr, size_t len, int prot, int flags,
 {
   int result = __nacl_irt_mmap (&addr, len, prot, flags, fd, offset);
   if (result != 0) {
-    errno = result;
     return MAP_FAILED;
   }
   return addr;

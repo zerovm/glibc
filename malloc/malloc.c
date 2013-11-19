@@ -3574,6 +3574,8 @@ public_mALLOc(size_t bytes)
     (void)mutex_unlock(&ar_ptr->mutex);
   assert(!victim || chunk_is_mmapped(mem2chunk(victim)) ||
 	 ar_ptr == arena_for_chunk(mem2chunk(victim)));
+  if (victim ==NULL)
+    errno=ENOMEM;
   return victim;
 }
 #ifdef libc_hidden_def
