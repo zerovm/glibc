@@ -20,11 +20,13 @@
 #include <ucontext.h>
 
 void
-makecontext (ucontext_t *ucp, void (*func) (void), int argc, ...)
+__makecontext (ucontext_t *ucp, void (*func) (void), int argc, ...)
 {
   __set_errno (ENOSYS);
 }
 
+weak_alias (__makecontext, makecontext)
 
-stub_warning (makecontext)
-#include <stub-tag.h>
+//stub_warning (makecontext)
+//#include <stub-tag.h>
+

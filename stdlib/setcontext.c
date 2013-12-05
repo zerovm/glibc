@@ -28,7 +28,7 @@ __setcontext (ucp)
 }
 
 
-stub_warning (setcontext)
-#include <stub-tag.h>
+//stub_warning (setcontext)
+//#include <stub-tag.h>
 
 weak_alias (__setcontext, setcontext)

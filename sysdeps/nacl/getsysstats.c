@@ -1,5 +1,6 @@
 #include <errno.h>
 #include <irt_syscalls.h>
+#include <irt_zcalls.h>  //__zcall_get_phys_pages, __zcall_get_phys_pages
 
 /* Return the number of processors configured on the system. */
 int
@@ -27,14 +28,12 @@ __get_nprocs ()
 long int
 __get_phys_pages ()
 {
-  errno = ENOSYS;
-  return -1;
+    return __zcall_get_phys_pages();
 }
 
 /* Return the number of available physical pages */
 long int
 __get_avphys_pages ()
 {
-  errno = ENOSYS;
-  return -1;
+    return __zcall_get_avphys_pages();
 }

@@ -20,13 +20,14 @@
 #include <ucontext.h>
 
 int
-getcontext (ucp)
+__getcontext (ucp)
      ucontext_t *ucp;
 {
   __set_errno (ENOSYS);
   return -1;
 }
 
+weak_alias (__getcontext, getcontext)
 
-stub_warning (getcontext)
-#include <stub-tag.h>
+//stub_warning (getcontext)
+//#include <stub-tag.h>
