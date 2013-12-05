@@ -20,7 +20,7 @@
 #include <ucontext.h>
 
 int
-swapcontext (oucp, ucp)
+__swapcontext (oucp, ucp)
      ucontext_t *oucp;
      const ucontext_t *ucp;
 {
@@ -28,6 +28,7 @@ swapcontext (oucp, ucp)
   return -1;
 }
 
+weak_alias (__swapcontext, swapcontext)
 
-stub_warning (swapcontext)
-#include <stub-tag.h>
+//stub_warning (swapcontext)
+//#include <stub-tag.h>

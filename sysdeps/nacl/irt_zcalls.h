@@ -29,6 +29,11 @@ extern int (*__zcall_ftruncate)(int fd, off_t length);
        int (*__zcall_ftruncate)(int fd, off_t length);
 extern int (*__zcall_stat_realpath) (const char *abspathname, struct stat *);
        int (*__zcall_stat_realpath) (const char *abspathname, struct stat *);
+extern int (*__zcall_get_phys_pages)();
+       int (*__zcall_get_phys_pages)();
+extern int (*__zcall_get_avphys_pages)();
+       int (*__zcall_get_avphys_pages)();
+
 
 #define INIT_ZCALLS {							\
 	/*IRT syscalls can be redefined, it's totally saves nacl implementation*/ \
@@ -112,6 +117,8 @@ extern int (*__zcall_stat_realpath) (const char *abspathname, struct stat *);
 	    __zcall_fchown         = zcalls->fchown;			\
 	    __zcall_ftruncate      = zcalls->ftruncate;			\
 	    __zcall_stat_realpath  = zcalls->stat_realpath;		\
+	    __zcall_get_phys_pages = zcalls->get_phys_pages;		\
+	    __zcall_get_avphys_pages = zcalls->get_avphys_pages;	\
 	}								\
     }
 

@@ -23,12 +23,11 @@
 int
 __getpid ()
 {
-  __set_errno (ENOSYS);
-  return -1;
+    return 1; /*ZeroVM has only single process */
 }
 libc_hidden_def (__getpid)
-stub_warning (getpid)
+//stub_warning (getpid)
 
 weak_alias (__getpid, getpid)
 libc_hidden_weak (getpid)
-#include <stub-tag.h>
+//#include <stub-tag.h>

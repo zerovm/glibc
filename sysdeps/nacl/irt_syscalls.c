@@ -224,6 +224,8 @@ static void set_irt_uninitialized(){
     __zcall_chown=DEFAULT_UNINITIALIZED;
     __zcall_fchown=DEFAULT_UNINITIALIZED;
     __zcall_ftruncate=DEFAULT_UNINITIALIZED;
+    __zcall_get_phys_pages=DEFAULT_UNINITIALIZED;
+    __zcall_get_avphys_pages=DEFAULT_UNINITIALIZED;
 }
 
 void
