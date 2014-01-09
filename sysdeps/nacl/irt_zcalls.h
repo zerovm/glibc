@@ -29,10 +29,10 @@ extern int (*__zcall_ftruncate)(int fd, off_t length);
        int (*__zcall_ftruncate)(int fd, off_t length);
 extern int (*__zcall_stat_realpath) (const char *abspathname, struct stat *);
        int (*__zcall_stat_realpath) (const char *abspathname, struct stat *);
-extern int (*__zcall_get_phys_pages)();
-       int (*__zcall_get_phys_pages)();
-extern int (*__zcall_get_avphys_pages)();
-       int (*__zcall_get_avphys_pages)();
+extern int (*__zcall_get_phys_pages)(void);
+       int (*__zcall_get_phys_pages)(void);
+extern int (*__zcall_get_avphys_pages)(void);
+       int (*__zcall_get_avphys_pages)(void);
 
 
 #define INIT_ZCALLS {							\

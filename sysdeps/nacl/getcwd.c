@@ -79,6 +79,9 @@ extern int errno;
 # define GETCWD_RETURN_TYPE char *
 #endif
 
+extern char __curr_dir_path[];
+char __curr_dir_path[PATH_MAX+1];
+
 /* Get the pathname of the current working directory, and put it in SIZE
    bytes of BUF.  Returns NULL if the directory couldn't be determined or
    SIZE was too small.  If successful, returns BUF.  In GNU, if BUF is
@@ -108,8 +111,15 @@ __getcwd(char *buf, size_t size)
 	    return NULL;
     }
 
-    if ( allocated > 1 ){
-	memcpy(path, "/\0", 2);
+    struct stat st;
+    if ( stat(__curr_dir_path, &st) != 0 ){
+	__set_errno (ENOENT);
+	return NULL;
+    }
+
+    int curdirpathlen = strlen(__curr_dir_path);
+    if ( allocated > curdirpathlen ){
+	strcpy(path, __curr_dir_path);
 	return path;
     }
     else{
