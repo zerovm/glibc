@@ -400,7 +400,7 @@ __extern_always_inline int
 INTERNAL_SYSCALL_fcntl_3 (int *err, int fd, int cmd, void *arg)
 {
     int ret=0;
-    if ( __zcall_fcntl(fd, cmd, arg) < 0 ){
+    if ( (ret=__zcall_fcntl(fd, cmd, arg)) < 0 ){
 	ret=-1;
 	*err = errno;
     }

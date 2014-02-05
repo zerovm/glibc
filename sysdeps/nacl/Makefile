@@ -6,7 +6,7 @@ libpthread-routines := $(filter-out pt-vfork,$(libpthread-routines))
 
 stdio-common-routines := $(sysdep-routines) tempname remove rename
 io-routines := $(sysdep-routines) getcwd rmdir mkdir umask access
-posix-routines := $(sysdep-routines) pathconf fpathconf
+posix-routines := $(sysdep-routines) pathconf fpathconf pread pwrite
 
 #do not link ld.so for static executable running on zerovm
 ifeq (yes,$(build-shared)) #--enable-shared
