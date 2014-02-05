@@ -429,7 +429,7 @@ $(LINK.o) -shared $(static-libgcc) -Wl,-O1 $(sysdep-LDFLAGS) \
 	  $(extra-B-$(@F:lib%.so=%).so) $(load-map-file) \
 	  -Wl,-soname=lib$(libprefix)$(@F:lib%.so=%).so$($(@F)-version) \
 	  $(LDFLAGS.so) $(LDFLAGS-$(@F:lib%.so=%).so) \
-	  -L$(subst :, -L,$(rpath-link)) -Wl,-rpath-link=$(rpath-link)
+	  -L$(subst :, -L,$(rpath-link)) -Wl,-rpath-link=$(rpath-link) $(zrt-LDFLAGS)
 endef
 else
 ifneq (,$(findstring aix,$(config-os)))
@@ -438,7 +438,7 @@ $(LINK.o) -Wl,-G,-bM:SRE,-bnoentry,-bE:$(<:a=exp) \
 	  $(sysdep-LDFLAGS) $(config-LDFLAGS) $(extra-B-$(@F:lib%.so=%).so) \
 	  $(extra-B-$(@F:lib%.so=%).so) $(load-map-file) \
 	  $(LDFLAGS.so) $(LDFLAGS-$(@F:lib%.so=%).so) \
-	  -L$(subst :, -L,$(rpath-link))
+	  -L$(subst :, -L,$(rpath-link)) $(zrt-LDFLAGS)
 endef
 else
 endif
@@ -566,7 +566,7 @@ LDLIBS-c.so += $(libc.so-gnulib)
 # Give libc.so an entry point and make it directly runnable itself.
 LDFLAGS-c.so += -e __libc_main
 #link zcalls
-LDFLAGS-c.so += $(zrt-LDFLAGS)
+#LDFLAGS-c.so += $(zrt-LDFLAGS) 
 # If lazy relocation is disabled add the -z now flag.
 ifeq ($(bind-now),yes)
 LDFLAGS-c.so += -Wl,-z,now
