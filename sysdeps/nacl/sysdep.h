@@ -247,26 +247,27 @@ INTERNAL_SYSCALL_delete_module_4 (int *err, const char *name_user,
 __extern_always_inline int
 INTERNAL_SYSCALL_dup_1 (int *err, int oldfd)
 {
-    int newfd;
-    if ( __nacl_irt_dup (oldfd, &newfd) < 0 ){
+    int dupfd;
+    if ( (dupfd=__nacl_irt_dup (oldfd)) < 0 ){
 	*err = errno;
     }
     else{
 	*err=0;
     }
-    return newfd;
+    return dupfd;
 }
 
 __extern_always_inline int
 INTERNAL_SYSCALL_dup2_2 (int *err, int oldfd, int newfd)
 {
-    if ( __nacl_irt_dup2 (oldfd, newfd) < 0 ){
+    int dupfd;
+    if ( (dupfd=__nacl_irt_dup2 (oldfd, newfd)) < 0 ){
 	*err = errno;
     }
     else{
 	*err=0;
     }
-    return newfd;
+    return dupfd;
 }
 
 __extern_always_inline int
