@@ -98,7 +98,7 @@ extern int (*__nacl_irt_write) (int fd, const void *buf, size_t count,
                                 size_t *nwrote);
 extern int (*__nacl_irt_seek) (int fd, nacl_abi_off_t offset, int whence,
                                nacl_abi_off_t *new_offset);
-extern int (*__nacl_irt_dup) (int fd, int *newfd);
+extern int (*__nacl_irt_dup) (int fd);
 extern int (*__nacl_irt_dup2) (int fd, int newfd);
 extern int (*__nacl_irt_fstat) (int fd, struct stat *);
 extern int (*__nacl_irt_stat) (const char *pathname, struct stat *);
