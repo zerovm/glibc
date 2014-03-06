@@ -44,6 +44,7 @@ SECTIONS
   PROVIDE (etext = .);
 
   . = DEFINED(__nacl_rodata_start) ? __nacl_rodata_start : .;
+  . = . + 0x1f;
   . = ALIGN(CONSTANT (MAXPAGESIZE)); /* nacl wants page alignment */
   .note.gnu.build-id : { *(.note.gnu.build-id) } :seg_rodata
   .hash           : { *(.hash) }
