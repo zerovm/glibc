@@ -348,8 +348,15 @@ INTERNAL_SYSCALL_faccessat_3 (int *err, int dirfd, const char *pathname,
 __extern_always_inline int
 INTERNAL_SYSCALL_fchdir_1 (int *err, int fd)
 {
-    *err = (38 /* ENOSYS */);
-    return 0;
+    int ret=0;
+    if ( __zcall_fchdir(fd) < 0 ){
+	ret=-1;
+	*err = errno;
+    }
+    else{
+	*err=0;
+    }
+    return ret;
 }
 
 __extern_always_inline int
