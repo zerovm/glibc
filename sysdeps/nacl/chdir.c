@@ -33,8 +33,9 @@ __chdir (path)
       return -1;
     }
 
+  char resolved_path[PATH_MAX];
   struct stat st;
-  if ( !stat(path, &st) ){
+  if ( realpath(path, resolved_path) && !stat(resolved_path, &st) ){
       if ( !S_ISDIR( st.st_mode&S_IFMT ) ){
 	  __set_errno (ENOTDIR);
 	  return -1;
@@ -45,12 +46,12 @@ __chdir (path)
       return -1;
   }
 
-  if ( strlen(path) > PATH_MAX ){
+  if ( strlen(resolved_path) > PATH_MAX ){
       __set_errno (ENOMEM);
       return -1;
   }
   else{
-      strcpy(__curr_dir_path, path);
+      strcpy(__curr_dir_path, resolved_path);
       __set_errno (0);
       return 0;
   }
