@@ -33,6 +33,9 @@ extern int (*__zcall_get_phys_pages)(void);
        int (*__zcall_get_phys_pages)(void);
 extern int (*__zcall_get_avphys_pages)(void);
        int (*__zcall_get_avphys_pages)(void);
+extern int (*__zcall_fchdir)(int fd);
+       int (*__zcall_fchdir)(int fd);
+
 
 
 #define INIT_ZCALLS {							\
@@ -119,6 +122,7 @@ extern int (*__zcall_get_avphys_pages)(void);
 	    __zcall_stat_realpath  = zcalls->stat_realpath;		\
 	    __zcall_get_phys_pages = zcalls->get_phys_pages;		\
 	    __zcall_get_avphys_pages = zcalls->get_avphys_pages;	\
+	    __zcall_fchdir         = zcalls->fchdir;			\
 	}								\
     }
 

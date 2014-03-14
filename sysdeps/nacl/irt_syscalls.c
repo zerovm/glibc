@@ -226,6 +226,7 @@ static void set_irt_uninitialized(){
     __zcall_ftruncate=DEFAULT_UNINITIALIZED;
     __zcall_get_phys_pages=DEFAULT_UNINITIALIZED;
     __zcall_get_avphys_pages=DEFAULT_UNINITIALIZED;
+    __zcall_fchdir=DEFAULT_UNINITIALIZED;
 }
 
 void
