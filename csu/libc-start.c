@@ -200,8 +200,8 @@ LIBC_START_MAIN (int (*main) (int, char **, char ** MAIN_AUXVEC_DECL),
     if (__builtin_expect (GLRO(dl_debug_mask) & DL_DEBUG_IMPCALLS, 0))
 	GLRO(dl_debug_printf) ("\ninitialize program: %s\n\n", argv[0]);
 #endif
-    if (init)
-	(*init) (argc, argv, __environ MAIN_AUXVEC_PARAM);
+
+    /*glibc init moved after zrt init*/
 
 #ifdef SHARED
     /* Auditing checkpoint: we have a new object.  */
@@ -249,6 +249,9 @@ LIBC_START_MAIN (int (*main) (int, char **, char ** MAIN_AUXVEC_DECL),
 	    }
 	}
 #endif
+
+	if (init)
+	    (*init) (argc, argv, __environ MAIN_AUXVEC_PARAM);
 
 
 #ifdef HAVE_ZRT
