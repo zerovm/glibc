@@ -6,6 +6,7 @@
 #include <irt_syscalls.h>
 #include <irt_zcalls.h>
 #include <lowlevellock.h>
+#include <time.h>
 
 /* Implementation of all syscalls for use in platform- and OS- independent code
    as inline functions.  Each function translates the syscall arguments into IRT
@@ -1256,7 +1257,14 @@ INTERNAL_SYSCALL_pselect6_6 (int *err, int nfds, fd_set *readfds,
                              const struct timeval *timeout,
                              void *sigmask)
 {
-    *err = (38 /* ENOSYS */);
+    struct timespec req, rem;
+    TIMEVAL_TO_TIMESPEC(timeout, &req);
+    if ( !nanosleep(&req, &rem) && nfds == 0 ){
+	*err = 0;
+    }
+    else{
+	*err = (38 /* ENOSYS */);
+    }
     return 0;
 }
 
@@ -1492,7 +1500,14 @@ INTERNAL_SYSCALL_select_5 (int *err, int nfds, fd_set *readfds,
 			   fd_set *writefds, fd_set *exceptfds,
 			   const struct timeval *timeout)
 {
-    *err = (38 /* ENOSYS */);
+    struct timespec req, rem;
+    TIMEVAL_TO_TIMESPEC(timeout, &req);
+    if ( !nanosleep(&req, &rem) && nfds == 0 ){
+	*err = 0;
+    }
+    else{
+	*err = (38 /* ENOSYS */);
+    }
     return 0;
 }
 
