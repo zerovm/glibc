@@ -4,6 +4,12 @@
 
 #include "zrt.h"
 
+#define PASSWD_NAME  "LOGNAME"
+#define PASSWD_UID   "UID"
+#define PASSWD_GID   "GID"
+#define PASSWD_HOME  "HOME"
+#define PASSWD_SHELL "SHELL"
+
 #define USER_ID_STUB  1
 #define GROUP_ID_STUB 1
 
