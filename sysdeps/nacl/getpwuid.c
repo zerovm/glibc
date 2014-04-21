@@ -26,21 +26,43 @@
 # include "config.h"
 #endif
 
-const struct passwd s_passwd_data_1 = {
-    "username",      /* username */
-    "password",      /* user password */
-    USER_ID_STUB,    /* user ID */
-    GROUP_ID_STUB,   /* group ID */
-    "userinfo",      /* user information */
-    "/",             /* home directory */
-    "zrt shell"      /* shell program */
+/*ZRT uses folowing envirnoment variables to init struct passwd :
+LOGNAME - pw_name
+UID     - pw_uid
+GID     - pw_gid
+HOME    - pw_dir
+SHELL   - pw_shell
+*/
+
+const struct passwd s_default_passwd = {
+    "root",          /* default username */
+    "x",             /* default user password */
+    USER_ID_STUB,    /* default user ID */
+    GROUP_ID_STUB,   /* default group ID */
+    "",              /* default user information */
+    "/",             /* default home directory */
+    ""               /* default shell program */
 };
 
 
 struct passwd* getpwuid(uid_t uid)
 {
-    if ( uid == 1 )
-	return &s_passwd_data_1;
+    char *env;
+    if ( uid == getuid() ){
+	static struct passwd passwd;
+	passwd = s_default_passwd;
+
+	if ( (env=getenv(PASSWD_NAME)) != NULL )
+	    passwd.pw_name = env;
+	if ( (env=getenv(PASSWD_HOME)) != NULL )
+	    passwd.pw_dir = env;
+	if ( (env=getenv(PASSWD_SHELL)) != NULL )
+	    passwd.pw_shell = env;
+
+	passwd.pw_uid = getuid();
+	passwd.pw_gid = getgid();
+	return &passwd;
+    }
     else{
 	__set_errno(ENOENT);    /*uid mismatch*/
     }

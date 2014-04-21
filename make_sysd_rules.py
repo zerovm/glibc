@@ -82,7 +82,6 @@ override_list = [
     "nptl/sysdeps/unix/sysv/linux/sem_trywait.c",
     "nptl/sysdeps/unix/sysv/linux/sem_wait.c",
     "posix/alarm.c",
-    "posix/getpid.c",
     "posix/glob.c",
     "posix/vfork.c",
     "posix/wait.c",
