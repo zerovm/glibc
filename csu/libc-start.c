@@ -250,10 +250,6 @@ LIBC_START_MAIN (int (*main) (int, char **, char ** MAIN_AUXVEC_DECL),
 	}
 #endif
 
-	if (init)
-	    (*init) (argc, argv, __environ MAIN_AUXVEC_PARAM);
-
-
 #ifdef HAVE_ZRT
 	/*setup args, envs just after warmup in zrt_setup*/
 	char **nvram_args;
@@ -308,6 +304,9 @@ LIBC_START_MAIN (int (*main) (int, char **, char ** MAIN_AUXVEC_DECL),
 	}
 
 #endif
+
+	if (init)
+	    (*init) (argc, argv, __environ MAIN_AUXVEC_PARAM);
 
 	/* Run the program.  */
 	result = main (argc, argv, __environ MAIN_AUXVEC_PARAM);
