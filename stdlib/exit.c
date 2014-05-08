@@ -22,6 +22,12 @@
 #include <sysdep.h>
 #include "exit.h"
 
+#ifdef HAVE_ZRT
+#  include <zrt.h>
+#  include <irt_syscalls.h>
+#endif
+
+
 #include "set-hooks.h"
 DEFINE_HOOK (__libc_atexit, (void))
 
@@ -32,6 +38,16 @@ DEFINE_HOOK (__libc_atexit, (void))
 void
 exit (int status)
 {
+#ifdef HAVE_ZRT
+	/*try to init zrt if available*/
+	struct zcalls_zrt_t* zcalls_zrt_init;
+	if ( ZCALLS_ZRT == __query_zcalls(ZCALLS_ZRT, (void**)&zcalls_zrt_init) ){
+	    if ( zcalls_zrt_init && zcalls_zrt_init->zrt_postmain ){
+		zcalls_zrt_init->zrt_postmain(status);
+	    }
+	}
+#endif
+
   /* We do it this way to handle recursive calls to exit () made by
      the functions registered with `atexit' and `on_exit'. We call
      everyone on the list and use the status value in the last
