@@ -15,6 +15,8 @@
 
 extern int (*__zcall_fcntl) (int fd, int cmd, ...);
        int (*__zcall_fcntl) (int fd, int cmd, ...);
+extern int (*__zcall_rename)(const char *old, const char *new);
+       int (*__zcall_rename)(const char *old, const char *new);
 extern int (*__zcall_link)(const char *oldpath, const char *newpath);
        int (*__zcall_link)(const char *oldpath, const char *newpath);
 extern int (*__zcall_unlink)(const char *pathname);
@@ -116,6 +118,7 @@ extern int (*__zcall_fchdir)(int fd);
 	if ( ZCALLS_NONSYSCALLS == __query_zcalls(ZCALLS_NONSYSCALLS, (void**)&zcalls) && \
 	     zcalls ){							\
 	    __zcall_fcntl          = zcalls->fcntl;			\
+	    __zcall_rename         = zcalls->rename;			\
 	    __zcall_link           = zcalls->link;			\
 	    __zcall_unlink         = zcalls->unlink;			\
 	    __zcall_rmdir          = zcalls->rmdir;			\
