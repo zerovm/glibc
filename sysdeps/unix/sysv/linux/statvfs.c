@@ -22,6 +22,7 @@
 #include <sys/statfs.h>
 #include <sys/statvfs.h>
 
+#include <irt_zcalls.h> //__zcall_statvfs
 extern void __internal_statvfs (const char *name, struct statvfs *buf,
 				struct statfs *fsbuf, struct stat64 *st);
 
@@ -31,6 +32,12 @@ statvfs (const char *file, struct statvfs *buf)
 {
   struct statfs fsbuf;
   struct stat64 st;
+  int ret;
+
+  /*if statvfs zcall is success then return result, 
+    else run glibc implem */
+  if ( (ret=__zcall_statvfs(file, buf)) >= 0 )
+      return ret;
 
   /* Get as much information as possible from the system.  */
   if (__statfs (file, &fsbuf) < 0)

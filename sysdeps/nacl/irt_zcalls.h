@@ -2,6 +2,7 @@
 #ifndef __IRT_ZCALLS_H__
 #define __IRT_ZCALLS_H__
 
+#include <sys/statvfs.h>
 #include "zrt.h"
 
 #define PASSWD_NAME  "LOGNAME"
@@ -17,6 +18,12 @@ extern int (*__zcall_fcntl) (int fd, int cmd, ...);
        int (*__zcall_fcntl) (int fd, int cmd, ...);
 extern int (*__zcall_rename)(const char *old, const char *new);
        int (*__zcall_rename)(const char *old, const char *new);
+extern ssize_t (*__zcall_readlink)(const char *path, char *buf, size_t bufsize);
+       ssize_t (*__zcall_readlink)(const char *path, char *buf, size_t bufsize);
+extern int (*__zcall_symlink)(const char *oldpath, const char *newpath);
+       int (*__zcall_symlink)(const char *oldpath, const char *newpath);
+extern int (*__zcall_statvfs)(const char* path, struct statvfs *buf);
+       int (*__zcall_statvfs)(const char* path, struct statvfs *buf);
 extern int (*__zcall_link)(const char *oldpath, const char *newpath);
        int (*__zcall_link)(const char *oldpath, const char *newpath);
 extern int (*__zcall_unlink)(const char *pathname);
@@ -119,6 +126,9 @@ extern int (*__zcall_fchdir)(int fd);
 	     zcalls ){							\
 	    __zcall_fcntl          = zcalls->fcntl;			\
 	    __zcall_rename         = zcalls->rename;			\
+	    __zcall_readlink       = zcalls->readlink;			\
+	    __zcall_symlink        = zcalls->symlink;			\
+	    __zcall_statvfs        = zcalls->statvfs;			\
 	    __zcall_link           = zcalls->link;			\
 	    __zcall_unlink         = zcalls->unlink;			\
 	    __zcall_rmdir          = zcalls->rmdir;			\

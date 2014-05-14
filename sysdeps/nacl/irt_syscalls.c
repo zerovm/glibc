@@ -216,6 +216,9 @@ static void set_irt_uninitialized(){
 
     __zcall_fcntl=DEFAULT_UNINITIALIZED;
     __zcall_rename=DEFAULT_UNINITIALIZED;
+    __zcall_readlink=DEFAULT_UNINITIALIZED;
+    __zcall_symlink=DEFAULT_UNINITIALIZED;
+    __zcall_statvfs=DEFAULT_UNINITIALIZED;
     __zcall_link=DEFAULT_UNINITIALIZED;
     __zcall_unlink=DEFAULT_UNINITIALIZED;
     __zcall_rmdir=DEFAULT_UNINITIALIZED;
