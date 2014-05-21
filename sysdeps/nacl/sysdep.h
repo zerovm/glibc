@@ -3,6 +3,7 @@
 
 #if !defined(__ASSEMBLER__)
 #include <futex_emulation.h>
+#include <sys/statvfs.h>
 #include <irt_syscalls.h>
 #include <irt_zcalls.h>
 #include <lowlevellock.h>
@@ -1320,8 +1321,15 @@ __extern_always_inline ssize_t
 INTERNAL_SYSCALL_readlink_3 (int *err, const char *path,
 			     char *buf, size_t bufsiz)
 {
-    *err = (38 /* ENOSYS */);
-    return 0;
+    int ret=0;
+    if ( __zcall_readlink(path, buf, bufsiz) < 0 ){
+	ret=-1;
+	*err = errno;
+    }
+    else{
+	*err=0;
+    }
+    return ret;
 }
 
 __extern_always_inline ssize_t
@@ -1888,8 +1896,15 @@ INTERNAL_SYSCALL_swapon_2 (int *err, const char *path, int swapflags)
 __extern_always_inline int
 INTERNAL_SYSCALL_symlink_2 (int *err, const char *oldpath, const char *newpath)
 {
-    *err = (38 /* ENOSYS */);
-    return 0;
+    int ret=0;
+    if ( __zcall_symlink(oldpath, newpath) < 0 ){
+	ret=-1;
+	*err = errno;
+    }
+    else{
+	*err=0;
+    }
+    return ret;
 }
 
 __extern_always_inline int

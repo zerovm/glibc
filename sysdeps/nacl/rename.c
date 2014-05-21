@@ -20,32 +20,13 @@
 #include <unistd.h>
 #include <errno.h>
 
+#include <irt_zcalls.h> //__zcall_rename
+
 /* Rename the file OLD to NEW.  */
 int
 rename (old, new)
      const char *old;
      const char *new;
 {
-  int save = errno;
-  if (__link (old, new) < 0)
-    {
-      if (errno == EEXIST)
-	{
-	  __set_errno (save);
-	  /* Race condition, required for 1003.1 conformance.  */
-	  if (__unlink (new) < 0 ||
-	      __link (old, new) < 0)
-	    return -1;
-	}
-      else
-	return -1;
-    }
-  if (__unlink (old) < 0)
-    {
-      save = errno;
-      if (__unlink (new) == 0)
-	__set_errno (save);
-      return -1;
-    }
-  return 0;
+    return __zcall_rename(old, new);
 }
