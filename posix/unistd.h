@@ -297,7 +297,7 @@ extern int faccessat (int __fd, __const char *__file, int __type, int __flag)
    the current position (if WHENCE is SEEK_CUR),
    or the end of the file (if WHENCE is SEEK_END).
    Return the new file position.  */
-#if !defined __USE_FILE_OFFSET64 || defined __native_client__
+#if !defined __USE_FILE_OFFSET64 || defined __native_client__ || defined __ZRT_HOST
 extern __off_t lseek (int __fd, __off_t __offset, int __whence) __THROW;
 #else
 # ifdef __REDIRECT_NTH
@@ -333,7 +333,7 @@ extern ssize_t read (int __fd, void *__buf, size_t __nbytes) __wur;
 extern ssize_t write (int __fd, __const void *__buf, size_t __n) __wur;
 
 #ifdef __USE_UNIX98
-# if !defined __USE_FILE_OFFSET64 || defined __native_client__
+# if !defined __USE_FILE_OFFSET64 || defined __native_client__ || defined __ZRT_HOST
 /* Read NBYTES into BUF from FD at the given position OFFSET without
    changing the file pointer.  Return the number read, -1 for errors
    or 0 for EOF.
@@ -956,7 +956,7 @@ extern int getdtablesize (void) __THROW;
 
 
 /* Truncate FILE to LENGTH bytes.  */
-# if !defined __USE_FILE_OFFSET64 || defined __native_client__
+# if !defined __USE_FILE_OFFSET64 || defined __native_client__ || defined __ZRT_HOST
 extern int truncate (__const char *__file, __off_t __length)
      __THROW __nonnull ((1)) __wur;
 # else
@@ -978,7 +978,7 @@ extern int truncate64 (__const char *__file, __off64_t __length)
 #if defined __USE_BSD || defined __USE_XOPEN_EXTENDED || defined __USE_XOPEN2K
 
 /* Truncate the file FD is open on to LENGTH bytes.  */
-# if !defined __USE_FILE_OFFSET64 || defined __native_client__
+# if !defined __USE_FILE_OFFSET64 || defined __native_client__ || defined __ZRT_HOST
 extern int ftruncate (int __fd, __off_t __length) __THROW __wur;
 # else
 #  ifdef __REDIRECT_NTH
@@ -1043,7 +1043,7 @@ extern long int syscall (long int __sysno, ...) __THROW;
 # define F_TLOCK 2	/* Test and lock a region for exclusive use.  */
 # define F_TEST  3	/* Test a region for other processes locks.  */
 
-# if !defined __USE_FILE_OFFSET64 || defined __native_client__
+# if !defined __USE_FILE_OFFSET64 || defined __native_client__ || defined __ZRT_HOST
 extern int lockf (int __fd, int __cmd, __off_t __len) __wur;
 # else
 #  ifdef __REDIRECT

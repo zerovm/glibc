@@ -73,7 +73,7 @@ do_clone (struct pthread *pd, const struct pthread_attr *attr,
      that cares whether the thread count is correct.  */
   atomic_increment (&__nptl_nthreads);
 
-#ifndef __native_client__
+#if !defined(__native_client__) && !defined(__ZRT_HOST)
 #error "This code was changed to work only in Native Client"
 #endif
 

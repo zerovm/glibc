@@ -73,7 +73,7 @@
 
 /* The LFS interface is available, except for the asynchronous I/O.  */
 #define _LFS_LARGEFILE		1
-#ifdef __native_client__
+#if defined(__native_client__) || defined (__ZRT_HOST)
 /* Native Client doesn't support obsolete file functions with 64 suffix
    because it uses 64-bit file offsets by default. */
 #define _LFS64_LARGEFILE	0

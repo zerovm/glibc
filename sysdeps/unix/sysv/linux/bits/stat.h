@@ -31,7 +31,7 @@
 #define _MKNOD_VER_LINUX	1
 #define _MKNOD_VER_SVR4		2
 #define _MKNOD_VER		_MKNOD_VER_LINUX /* The bits defined below.  */
-#ifdef __native_client__
+#if defined(__native_client__) || defined(__ZRT_HOST)
 #ifdef __USE_LARGEFILE64
 struct stat64
   {

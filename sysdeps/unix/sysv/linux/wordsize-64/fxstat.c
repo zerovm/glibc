@@ -44,7 +44,7 @@ __fxstat (int vers, int fd, struct stat *buf)
 hidden_def (__fxstat)
 weak_alias (__fxstat, _fxstat);
 #undef __fxstat64
-#ifndef __native_client__
+#if !defined(__native_client__) && !defined(__ZRT_HOST)
 /* NaCl has __fxstat64 implementation in sysdeps/nacl/fxstat64.c.
    TODO(pasko): eliminate incorrect __fxstat implementation above. */
 strong_alias (__fxstat, __fxstat64);

@@ -81,7 +81,7 @@ extern int fcntl (int __fd, int __cmd, ...);
 
    This function is a cancellation point and therefore not marked with
    __THROW.  */
-#if !defined __USE_FILE_OFFSET64 || defined __native_client__
+#if !defined __USE_FILE_OFFSET64 || defined __native_client__ || defined __ZRT_HOST
 extern int open (__const char *__file, int __oflag, ...) __nonnull ((1));
 #else
 # ifdef __REDIRECT
@@ -106,7 +106,7 @@ extern int open64 (__const char *__file, int __oflag, ...)
 
    This function is a cancellation point and therefore not marked with
    __THROW.  */
-# if !defined __USE_FILE_OFFSET64 || defined __native_client__
+# if !defined __USE_FILE_OFFSET64 || defined __native_client__ || defined __ZRT_HOST
 extern int openat (int __fd, __const char *__file, int __oflag, ...)
      __nonnull ((2));
 # else
@@ -127,7 +127,7 @@ extern int openat64 (int __fd, __const char *__file, int __oflag, ...)
 
    This function is a cancellation point and therefore not marked with
    __THROW.  */
-#if !defined __USE_FILE_OFFSET64 || defined __native_client__
+#if !defined __USE_FILE_OFFSET64 || defined __native_client__ || defined __ZRT_HOST
 extern int creat (__const char *__file, __mode_t __mode) __nonnull ((1));
 #else
 # ifdef __REDIRECT
@@ -157,7 +157,7 @@ extern int creat64 (__const char *__file, __mode_t __mode)
 # define F_TLOCK 2	/* Test and lock a region for exclusive use.  */
 # define F_TEST  3	/* Test a region for other processes locks.  */
 
-# if !defined __USE_FILE_OFFSET64 || defined __native_client__
+# if !defined __USE_FILE_OFFSET64 || defined __native_client__ || defined __ZRT_HOST
 extern int lockf (int __fd, int __cmd, __off_t __len);
 # else
 # ifdef __REDIRECT
@@ -175,7 +175,7 @@ extern int lockf64 (int __fd, int __cmd, __off64_t __len)
 #ifdef __USE_XOPEN2K
 /* Advice the system about the expected behaviour of the application with
    respect to the file associated with FD.  */
-# if !defined __USE_FILE_OFFSET64 || defined __native_client__
+# if !defined __USE_FILE_OFFSET64 || defined __native_client__ || defined __ZRT_HOST
 extern int posix_fadvise (int __fd, __off_t __offset, __off_t __len,
 			  int __advise) __THROW;
 # else
@@ -198,7 +198,7 @@ extern int posix_fadvise64 (int __fd, __off64_t __offset, __off64_t __len,
 
    This function is a possible cancellation points and therefore not
    marked with __THROW.  */
-# if !defined __USE_FILE_OFFSET64 || defined __native_client__
+# if !defined __USE_FILE_OFFSET64 || defined __native_client__ || defined __ZRT_HOST
 extern int posix_fallocate (int __fd, __off_t __offset, __off_t __len);
 # else
 # ifdef __REDIRECT

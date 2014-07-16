@@ -32,7 +32,7 @@
 #include <sys/param.h>
 #include <time.h>
 
-#ifdef __native_client__
+#if defined __native_client__ || defined __ZRT_HOST
 # define fork(...) (-1)
 # define kill(...) (-1)
 # define waitpid(...) (-1)
@@ -199,7 +199,7 @@ timeout_handler (int sig __attribute__ ((unused)))
 int
 main (int argc, char *argv[])
 {
-#ifndef __native_client__
+#if !defined __native_client__ && !defined __ZRT_HOST
   int direct = 0;	/* Directly call the test function?  */
 #else
   int direct = 1;	/* In Native Client fork is not implemented.  */

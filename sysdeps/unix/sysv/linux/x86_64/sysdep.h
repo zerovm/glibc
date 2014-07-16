@@ -236,7 +236,7 @@
 # undef INTERNAL_SYSCALL_DECL
 # define INTERNAL_SYSCALL_DECL(err) do { } while (0)
 
-#ifndef __native_client__
+#if !defined(__native_client__) && !defined(__ZRT_HOST)
 # define INTERNAL_SYSCALL_NCS(name, err, nr, args...) \
   ({									      \
     unsigned long int resultvar;					      \
@@ -373,7 +373,7 @@
 
 
 /* Pointer mangling support.  */
-#ifdef __native_client__
+#if defined __native_client__ || defined __ZRT_HOST
 # ifndef __ASSEMBLER__
 #  define PTR_MANGLE(var)	(void) (var)
 #  define PTR_DEMANGLE(var)	(void) (var)

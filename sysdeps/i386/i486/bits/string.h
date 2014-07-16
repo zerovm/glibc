@@ -1377,7 +1377,7 @@ __strchrnul_g (__const char *__s, int __c)
 #endif
 
 
-#ifndef __native_client__
+#if !defined(__native_client__) && !defined(__ZRT_HOST) 
 /* Find the last occurrence of C in S.  */
 #define _HAVE_STRING_ARCH_strrchr 1
 #define strrchr(s, c) \
@@ -1492,7 +1492,7 @@ __strrchr_g (__const char *__s, int __c)
 #endif
 
 
-#ifndef __native_client__
+#if !defined(__native_client__) && !defined(__ZRT_HOST) 
 /* Return the length of the initial segment of S which
    consists entirely of characters not in REJECT.  */
 #define _HAVE_STRING_ARCH_strcspn 1
@@ -1615,7 +1615,7 @@ __strcspn_g (__const char *__s, __const char *__reject)
 #endif
 
 
-#ifndef __native_client__
+#if !defined(__native_client__) && !defined(__ZRT_HOST) 
 /* Return the length of the initial segment of S which
    consists entirely of characters in ACCEPT.  */
 #define _HAVE_STRING_ARCH_strspn 1
@@ -1738,7 +1738,7 @@ __strspn_g (__const char *__s, __const char *__accept)
 #endif
 
 
-#ifndef __native_client__
+#if !defined(__native_client__) && !defined(__ZRT_HOST) 
 /* Find the first occurrence in S of any character in ACCEPT.  */
 #define _HAVE_STRING_ARCH_strpbrk 1
 #define strpbrk(s, accept) \

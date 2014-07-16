@@ -40,7 +40,7 @@
 
 #define _STAT_VER		_STAT_VER_LINUX
 
-#ifdef __native_client__
+#if defined __native_client__ || defined __ZRT_HOST
 #ifdef __USE_LARGEFILE64
 struct stat64
   {

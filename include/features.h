@@ -115,7 +115,7 @@
 
 /* Set _FILE_OFFSET_BITS to 64 for user programs and produce an error if it
    set to other value. */
-#ifdef __native_client__
+#if (defined __native_client__ || defined __ZRT_HOST)
 # ifndef _LIBC
 #  ifndef _FILE_OFFSET_BITS
 #    define _FILE_OFFSET_BITS 64
@@ -128,7 +128,7 @@
 /* In Native Client all file functions work with 64-bit offsets. So we define
    macro for aliasing file functions with suffix 64 to file functions without
    one. */
-#ifdef __native_client__
+#if (defined __native_client__ || defined __ZRT_HOST)
 # define NACL_LFS_ALIAS(func_name) __asm__ (#func_name)
 #else
 # define NACL_LFS_ALIAS(func_name)
@@ -138,7 +138,7 @@
    does not need dynamic tables. This is only done for shared objects so
    we need to use other aliasing scheme there (a function can have two
    different assembler names). */
-#if defined __native_client__ && (!defined SHARED || defined NOT_IN_libc)
+#if (defined __native_client__ || defined __ZRT_HOST) && (!defined SHARED || defined NOT_IN_libc)
 # define NACL_LFS_PRIVATE_ALIAS(func_name) __asm__ (#func_name)
 #else
 # define NACL_LFS_PRIVATE_ALIAS(func_name)
@@ -193,7 +193,7 @@
 /* Native client applications shouldn't use functions with 64 suffix.
    Unfortunately, we can't make glibc itself to live without them. */
 /* Zerovm application must support functions with 64 suffix.*/
-# if !defined __native_client__ || defined _LIBC || defined HAVE_ZRT
+# if (!defined __native_client__ && !defined __ZRT_HOST) || defined _LIBC || defined HAVE_ZRT
 #  define _LARGEFILE64_SOURCE	1
 # endif
 
@@ -291,7 +291,7 @@
 /* Native client applications shouldn't use functions with 64 suffix.
    Unfortunately, we can't make glibc itself to live without them. */
 /* Zerovm application must support functions with 64 suffix.*/
-# if !defined __native_client__ || defined _LIBC || defined HAVE_ZRT
+# if (!defined __native_client__ && !defined __ZRT_HOST) || defined _LIBC || defined HAVE_ZRT
 #  define __USE_LARGEFILE64	1
 # endif
 #endif

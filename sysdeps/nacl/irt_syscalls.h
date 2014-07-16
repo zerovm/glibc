@@ -96,8 +96,8 @@ extern int (*__nacl_irt_close) (int fd);
 extern int (*__nacl_irt_read) (int fd, void *buf, size_t count, size_t *nread);
 extern int (*__nacl_irt_write) (int fd, const void *buf, size_t count,
                                 size_t *nwrote);
-extern int (*__nacl_irt_seek) (int fd, nacl_abi_off_t offset, int whence,
-                               nacl_abi_off_t *new_offset);
+extern int (*__nacl_irt_seek) (int fd, off_t offset, int whence,
+                               off_t *new_offset);
 extern int (*__nacl_irt_dup) (int fd);
 extern int (*__nacl_irt_dup2) (int fd, int newfd);
 extern int (*__nacl_irt_fstat) (int fd, struct stat *);
@@ -107,7 +107,7 @@ extern int (*__nacl_irt_getdents) (int fd, struct dirent *, size_t count,
 
 extern int (*__nacl_irt_sysbrk)(void **newbrk);
 extern int (*__nacl_irt_mmap)(void **addr, size_t len, int prot, int flags,
-                              int fd, nacl_abi_off_t off);
+                              int fd, off_t off);
 extern int (*__nacl_irt_munmap)(void *addr, size_t len);
 
 extern int (*__nacl_irt_dyncode_create) (void *dest, const void *src,
