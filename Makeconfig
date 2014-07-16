@@ -48,6 +48,11 @@ endif # machine
 endif # ARCH
 endif # config.make
 
+ifeq (yesyes,$(cross-compiling)$(strip $(zrt)))
+biarch?=64
+HOST_STATIC_LINK_FLAGS="-lgcc_eh $(link-libc-static)"
+endif
+
 # Directory for object files and libc.a.  If this is not defined, the
 # object files live in the subdirectories where their sources live, and
 # libc.a lives in the parent directory (this probably doesn't work any
@@ -452,7 +457,7 @@ ifndef +link-static
 						     $(start-installed-name))\
 			   $(+preinit) $(link-extra-libs-static) \
 			   $(common-objpfx)libc% $(+postinit),$^) \
-	      $(link-extra-libs-static) $(link-libc-static) $(+postctor) $(+postinit)
+	      $(link-extra-libs-static) $(link-libc-static) $(+postctor) $(+postinit) $(HOST_STATIC_LINK_FLAGS)
 endif
 # Command for statically linking bounded-pointer programs with the C library.
 ifndef +link-bounded
