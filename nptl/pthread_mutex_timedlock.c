@@ -296,7 +296,7 @@ pthread_mutex_timedlock (mutex, abstime)
                     /* HACK: nanosleep_not_cancel has nowhere to link to.
                        TODO(pasko): uncomment when syscall futex is proven (by
                        compiler) not to generate errno ESRCH and EDEADLK.  */
-#if !defined __native_client__ || !defined __x86_64__
+#if (!defined __native_client__ && !defined __ZRT_HOST) || !defined __x86_64__
 		    if (reltime.tv_sec >= 0)
 		      while (nanosleep_not_cancel (&reltime, &reltime) != 0)
 			continue;

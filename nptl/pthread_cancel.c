@@ -101,7 +101,7 @@ pthread_cancel (th)
   return result;
 }
 /* TODO(pasko): move pthread_cancel to libnosys.  */
-#ifdef __native_client__
+#if defined __native_client__ || defined __ZRT_HOST
 stub_warning (pthread_cancel)
 #endif
 

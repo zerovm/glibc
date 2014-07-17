@@ -23,7 +23,7 @@ struct kernel_stat
     unsigned long int __unused5;
 #define _HAVE___UNUSED5
   };
-#ifndef __native_client__
+#if !defined __native_client__ && !defined __ZRT_HOST
 #define _HAVE_STAT___UNUSED4
 #define _HAVE_STAT___UNUSED5
 #define _HAVE_STAT___PAD1

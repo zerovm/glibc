@@ -38,7 +38,7 @@ dl_fatal (const char *str)
 }
 #endif
 
-#ifndef __native_client__
+#if !defined(__native_client__) && !defined(__ZRT_HOST)
 #define DL_SYSDEP_OSCHECK(FATAL)					      \
   do {									      \
     /* Test whether the kernel is new enough.  This test is only performed    \

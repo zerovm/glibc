@@ -356,7 +356,7 @@ asm (".L__X'%ebx = 1\n\t"
 
    The _NCS variant allows non-constant syscall numbers but it is not
    possible to use more than four parameters.  */
-#ifndef __native_client__
+#if !defined __native_client__ && !defined __ZRT_HOST
 #undef INTERNAL_SYSCALL
 #ifdef I386_USE_SYSENTER
 # ifdef SHARED
@@ -513,7 +513,7 @@ asm (".L__X'%ebx = 1\n\t"
 
 /* Disable this for Native Client because it uses two disallowed
    instructions but does not look very useful.  */
-#ifndef __native_client__
+#if !defined __native_client__ && !defined __ZRT_HOST
 /* Consistency check for position-independent code.  */
 #ifdef __PIC__
 # define check_consistency()						      \

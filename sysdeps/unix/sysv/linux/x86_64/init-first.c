@@ -45,7 +45,7 @@ _libc_vdso_platform_setup (void)
   __GI___vdso_clock_gettime = p;
 }
 
-#ifndef __native_client__
+#if !defined __native_client__ && !defined __ZRT_HOST
 # define VDSO_SETUP _libc_vdso_platform_setup
 #endif
 #endif

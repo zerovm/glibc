@@ -616,7 +616,7 @@ mmap (void *start, size_t len, int prot, int flags, int fd, off_t offset)
 
 /* `mmap' replacement.  We do not have to keep track of the sizesince
    `munmap' will get it as a parameter.  */
-#ifndef __native_client__
+#if !defined __native_client__ && !defined __ZRT_HOST
 void *
 mmap64 (void *start, size_t len, int prot, int flags, int fd, off64_t offset)
 {

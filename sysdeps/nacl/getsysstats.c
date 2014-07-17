@@ -12,6 +12,7 @@ __get_nprocs_conf ()
     return 1;
   return result;
 }
+weak_alias (__get_nprocs_conf, get_nprocs_conf)
 
 /* Return the number of processors currently available on the system. */
 int
@@ -23,6 +24,7 @@ __get_nprocs ()
     return 1;
   return result;
 }
+weak_alias (__get_nprocs, get_nprocs)
 
 /* Return the number of physical pages on the system. */
 long int
@@ -30,6 +32,7 @@ __get_phys_pages ()
 {
     return __zcall_get_phys_pages();
 }
+weak_alias (__get_phys_pages, get_phys_pages)
 
 /* Return the number of available physical pages */
 long int
@@ -37,3 +40,4 @@ __get_avphys_pages ()
 {
     return __zcall_get_avphys_pages();
 }
+weak_alias (__get_avphys_pages, get_avphys_pages)

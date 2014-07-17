@@ -168,7 +168,7 @@ __BEGIN_NAMESPACE_STD
 
    This function is a possible cancellation points and therefore not
    marked with __THROW.  */
-#if !defined __USE_FILE_OFFSET64 || defined __native_client__
+#if !defined __USE_FILE_OFFSET64 || defined __native_client__ || defined __ZRT_HOST
 extern FILE *tmpfile (void) __wur;
 #else
 # ifdef __REDIRECT
@@ -241,7 +241,7 @@ extern int fcloseall (void);
 
 
 __BEGIN_NAMESPACE_STD
-#if !defined __USE_FILE_OFFSET64 || defined __native_client__
+#if !defined __USE_FILE_OFFSET64 || defined __native_client__ || defined __ZRT_HOST
 /* Open a file and create a new stream for it.
 
    This function is a possible cancellation point and therefore not
@@ -736,7 +736,7 @@ __END_NAMESPACE_STD
    are originally defined in the Large File Support API.  */
 
 #if defined __USE_LARGEFILE || defined __USE_XOPEN2K
-# if !defined __USE_FILE_OFFSET64 || defined __native_client__
+# if !defined __USE_FILE_OFFSET64 || defined __native_client__ || defined __ZRT_HOST
 /* Seek to a certain position on STREAM.
 
    This function is a possible cancellation point and therefore not
@@ -761,7 +761,7 @@ extern __off64_t __REDIRECT (ftello, (FILE *__stream), ftello64);
 #endif
 
 __BEGIN_NAMESPACE_STD
-#if !defined __USE_FILE_OFFSET64 || defined __native_client__
+#if !defined __USE_FILE_OFFSET64 || defined __native_client__ || defined __ZRT_HOST
 /* Get STREAM's position.
 
    This function is a possible cancellation point and therefore not

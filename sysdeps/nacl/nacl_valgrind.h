@@ -144,29 +144,29 @@ glibc tree. */
 #undef PLAT_amd64_native_client
 #undef PLAT_arm_native_client
 
-#if defined(_AIX) && defined(__64BIT__)
+#if defined(_AIX) && defined(__64BIT__) && !defined(__ZRT_HOST)
 #  define PLAT_ppc64_aix5 1
-#elif defined(_AIX) && !defined(__64BIT__)
+#elif defined(_AIX) && !defined(__64BIT__)  && !defined(__ZRT_HOST)
 #  define PLAT_ppc32_aix5 1
-#elif defined(__APPLE__) && defined(__i386__)
+#elif defined(__APPLE__) && defined(__i386__)  && !defined(__ZRT_HOST)
 #  define PLAT_x86_darwin 1
-#elif defined(__APPLE__) && defined(__x86_64__)
+#elif defined(__APPLE__) && defined(__x86_64__)  && !defined(__ZRT_HOST)
 #  define PLAT_amd64_darwin 1
-#elif defined(__linux__) && defined(__i386__)
+#elif defined(__linux__) && defined(__i386__)  && !defined(__ZRT_HOST)
 #  define PLAT_x86_linux 1
-#elif defined(__linux__) && defined(__x86_64__)
+#elif defined(__linux__) && defined(__x86_64__) && !defined(__ZRT_HOST)
 #  define PLAT_amd64_linux 1
-#elif defined(__linux__) && defined(__powerpc__) && !defined(__powerpc64__)
+#elif defined(__linux__) && defined(__powerpc__) && !defined(__powerpc64__)  && !defined(__ZRT_HOST)
 #  define PLAT_ppc32_linux 1
-#elif defined(__linux__) && defined(__powerpc__) && defined(__powerpc64__)
+#elif defined(__linux__) && defined(__powerpc__) && defined(__powerpc64__)   && !defined(__ZRT_HOST)
 #  define PLAT_ppc64_linux 1
-#elif defined(__linux__) && defined(__arm__)
+#elif defined(__linux__) && defined(__arm__)  && !defined(__ZRT_HOST)
 #  define PLAT_arm_linux 1
-#elif defined(__native_client__) && defined(__i386__)
+#elif (defined(__native_client__) ) && defined(__i386__)
 #  define PLAT_x86_native_client 1
-#elif defined(__native_client__) && defined(__x86_64__)
+#elif (defined(__native_client__) ) && defined(__x86_64__)
 #  define PLAT_amd64_native_client 1
-#elif defined(__native_client__) && defined(__arm__)
+#elif (defined(__native_client__) ) && defined(__arm__)
 #  define PLAT_arm_native_client 1
 #else
 /* If we're not compiling for our target platform, don't generate

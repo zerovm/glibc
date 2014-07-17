@@ -122,6 +122,7 @@ __syslog(int pri, const char *fmt, ...)
 ldbl_hidden_def (__syslog, syslog)
 ldbl_strong_alias (__syslog, syslog)
 
+
 void
 __syslog_chk(int pri, int flag, const char *fmt, ...)
 {

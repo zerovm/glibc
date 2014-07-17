@@ -28,7 +28,7 @@
 __BEGIN_DECLS
 
 /* Return information about the filesystem on which FILE resides.  */
-#if !defined __USE_FILE_OFFSET64 || defined __native_client__
+#if !defined __USE_FILE_OFFSET64 || defined __native_client__ || defined __ZRT_HOST
 extern int statfs (__const char *__file, struct statfs *__buf)
      __THROW __nonnull ((1, 2));
 #else
@@ -47,7 +47,7 @@ extern int statfs64 (__const char *__file, struct statfs64 *__buf)
 
 /* Return information about the filesystem containing the file FILDES
    refers to.  */
-#if !defined __USE_FILE_OFFSET64 || defined __native_client__
+#if !defined __USE_FILE_OFFSET64 || defined __native_client__ || defined __ZRT_HOST
 extern int fstatfs (int __fildes, struct statfs *__buf)
      __THROW __nonnull ((2));
 #else

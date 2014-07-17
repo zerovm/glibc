@@ -30,7 +30,7 @@
 #define __DEV_T_TYPE		__UQUAD_TYPE
 #define __UID_T_TYPE		__U32_TYPE
 #define __GID_T_TYPE		__U32_TYPE
-#ifdef __native_client__
+#if defined __native_client__ || defined __ZRT_HOST
 #define __INO_T_TYPE		__UQUAD_TYPE
 #else
 #define __INO_T_TYPE		__ULONGWORD_TYPE
@@ -39,32 +39,32 @@
 #define __MODE_T_TYPE		__U32_TYPE
 
 #define __NLINK_T_TYPE		__UWORD_TYPE
-#ifdef __native_client__
+#if defined __native_client__ || defined __ZRT_HOST
 #define __OFF_T_TYPE		__SQUAD_TYPE
 #else
 #define __OFF_T_TYPE		__SLONGWORD_TYPE
 #endif
 #define __OFF64_T_TYPE		__SQUAD_TYPE
 #define __PID_T_TYPE		__S32_TYPE
-#ifdef __native_client__
+#if defined __native_client__ || defined __ZRT_HOST
 #define __RLIM_T_TYPE		__UQUAD_TYPE
 #else
 #define __RLIM_T_TYPE		__ULONGWORD_TYPE
 #endif
 #define __RLIM64_T_TYPE		__UQUAD_TYPE
-#ifdef __native_client__
+#if defined __native_client__ || defined __ZRT_HOST
 #define	__BLKCNT_T_TYPE		__SQUAD_TYPE
 #else 
 #define	__BLKCNT_T_TYPE		__SLONGWORD_TYPE
 #endif
 #define	__BLKCNT64_T_TYPE	__SQUAD_TYPE
-#ifdef __native_client__
+#if defined __native_client__ || defined __ZRT_HOST
 #define	__FSBLKCNT_T_TYPE	__UQUAD_TYPE
 #else
 #define	__FSBLKCNT_T_TYPE	__ULONGWORD_TYPE
 #endif
 #define	__FSBLKCNT64_T_TYPE	__UQUAD_TYPE
-#ifdef __native_client__
+#if defined __native_client__ || defined __ZRT_HOST
 #define	__FSFILCNT_T_TYPE	__UQUAD_TYPE
 #else
 #define	__FSFILCNT_T_TYPE	__ULONGWORD_TYPE
@@ -72,7 +72,7 @@
 #define	__FSFILCNT64_T_TYPE	__UQUAD_TYPE
 #define	__ID_T_TYPE		__U32_TYPE
 #define __CLOCK_T_TYPE		__SLONGWORD_TYPE
-#ifdef __native_client__
+#if defined __native_client__ || defined __ZRT_HOST
 # define __TIME_T_TYPE		__SQUAD_TYPE
 #else
 # define __TIME_T_TYPE		__SLONGWORD_TYPE
@@ -84,7 +84,7 @@
 #define __KEY_T_TYPE		__S32_TYPE
 #define __CLOCKID_T_TYPE	__S32_TYPE
 #define __TIMER_T_TYPE		void *
-#ifdef __native_client__
+#if defined __native_client__ || defined __ZRT_HOST
 #define __BLKSIZE_T_TYPE	__SQUAD_TYPE
 #else
 #define __BLKSIZE_T_TYPE	__SLONGWORD_TYPE

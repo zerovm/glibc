@@ -590,7 +590,7 @@ extern char *mktemp (char *__template) __THROW __nonnull ((1)) __wur;
 
    This function is a possible cancellation points and therefore not
    marked with __THROW.  */
-# if !defined __USE_FILE_OFFSET64 || defined __native_client__
+# if !defined __USE_FILE_OFFSET64 || defined __native_client__ || defined __ZRT_HOST
 extern int mkstemp (char *__template) __nonnull ((1)) __wur;
 # else
 #  ifdef __REDIRECT
@@ -622,7 +622,7 @@ extern char *mkdtemp (char *__template) __THROW __nonnull ((1)) __wur;
 
    This function is a possible cancellation points and therefore not
    marked with __THROW.  */
-# if !defined __USE_FILE_OFFSET64 || defined __native_client__
+# if !defined __USE_FILE_OFFSET64 || defined __native_client__ || defined __ZRT_HOST
 extern int mkostemp (char *__template, int __flags) __nonnull ((1)) __wur;
 # else
 #  ifdef __REDIRECT

@@ -159,7 +159,7 @@ extern int closedir (DIR *__dirp) __nonnull ((1));
 
    This function is a possible cancellation point and therefore not
    marked with __THROW.  */
-#if !defined __USE_FILE_OFFSET64 || defined __native_client__
+#if !defined __USE_FILE_OFFSET64 || defined __native_client__ || defined __ZRT_HOST
 extern struct dirent *readdir (DIR *__dirp) __nonnull ((1));
 #else
 # ifdef __REDIRECT
@@ -181,7 +181,7 @@ extern struct dirent64 *readdir64 (DIR *__dirp) NACL_LFS_ALIAS (readdir)
 
    This function is a possible cancellation point and therefore not
    marked with __THROW.  */
-# if !defined __USE_FILE_OFFSET64 || defined __native_client__
+# if !defined __USE_FILE_OFFSET64 || defined __native_client__ || defined __ZRT_HOST
 extern int readdir_r (DIR *__restrict __dirp,
 		      struct dirent *__restrict __entry,
 		      struct dirent **__restrict __result)
@@ -247,7 +247,7 @@ extern int dirfd (DIR *__dirp) __THROW __nonnull ((1));
    Entries for which SELECT returns nonzero are individually malloc'd,
    sorted using qsort with CMP, and collected in a malloc'd array in
    *NAMELIST.  Returns the number of entries selected, or -1 on error.  */
-# if !defined __USE_FILE_OFFSET64 || defined __native_client__
+# if !defined __USE_FILE_OFFSET64 || defined __native_client__ || defined __ZRT_HOST
 extern int scandir (__const char *__restrict __dir,
 		    struct dirent ***__restrict __namelist,
 		    int (*__selector) (__const struct dirent *),
@@ -277,7 +277,7 @@ extern int scandir64 (__const char *__restrict __dir,
 # endif
 
 /* Function to compare two `struct dirent's alphabetically.  */
-# if !defined __USE_FILE_OFFSET64 || defined __native_client__
+# if !defined __USE_FILE_OFFSET64 || defined __native_client__ || defined __ZRT_HOST
 extern int alphasort (__const void *__e1, __const void *__e2)
      __THROW __attribute_pure__ __nonnull ((1, 2));
 # else
@@ -298,7 +298,7 @@ extern int alphasort64 (__const void *__e1, __const void *__e2)
 
 # ifdef __USE_GNU
 /* Function to compare two `struct dirent's by name & version.  */
-#  if !defined __USE_FILE_OFFSET64 || defined __native_client__
+#  if !defined __USE_FILE_OFFSET64 || defined __native_client__ || defined __ZRT_HOST
 extern int versionsort (__const void *__e1, __const void *__e2)
      __THROW __attribute_pure__ __nonnull ((1, 2));
 #  else
@@ -323,7 +323,7 @@ extern int versionsort64 (__const void *__e1, __const void *__e2)
    Reading starts at offset *BASEP, and *BASEP is updated with the new
    position after reading.  Returns the number of bytes read; zero when at
    end of directory; or -1 for errors.  */
-# if !defined __USE_FILE_OFFSET64 || defined __native_client__
+# if !defined __USE_FILE_OFFSET64 || defined __native_client__ || defined __ZRT_HOST
 extern __ssize_t getdirentries (int __fd, char *__restrict __buf,
 				size_t __nbytes,
 				__off_t *__restrict __basep)

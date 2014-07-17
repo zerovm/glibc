@@ -34,7 +34,7 @@
    do not get optimized away.
 
    We need it before sysdep.h in NaCl for INTERNAL_SYSCALL_gettid_0.  */
-#ifdef __native_client__
+#if defined __native_client__ || defined __ZRT_HOST
 void* __nacl_read_tp (void) __attribute__ ((const));
 # define THREAD_SELF ((struct pthread *)__nacl_read_tp ())
 #endif
@@ -89,7 +89,7 @@ typedef struct
 /* Get system call information.  */
 # include <sysdep.h>
 
-#ifdef __native_client__
+#if defined __native_client__ || defined __ZRT_HOST
 #include <irt_syscalls.h>
 #endif
 
@@ -146,7 +146,7 @@ typedef struct
   __asm ("movl %0, %%fs" :: "q" (val))
 
 
-#ifdef __native_client__
+#if defined __native_client__ || defined __ZRT_HOST
 #define TLS_INIT_TP_SYSCALL \
   _result = __nacl_irt_tls_init (_thrdescr);
 #else
@@ -181,7 +181,7 @@ typedef struct
 
 
 /* Return the address of the dtv for the current thread.  */
-#ifndef __native_client__
+#if !defined __native_client__ && !defined __ZRT_HOST
 # define THREAD_DTV() \
   ({ struct pthread *__pd;						      \
      THREAD_GETMEM (__pd, header.dtv); })
@@ -198,7 +198,7 @@ typedef struct
    assignments like
         pthread_descr self = thread_self();
    do not get optimized away.  */
-#ifndef __native_client__
+#if !defined __native_client__ && !defined __ZRT_HOST
 # define THREAD_SELF \
   ({ struct pthread *__self;						      \
      asm ("movq %%fs:%c1,%q0" : "=r" (__self)				      \
@@ -211,7 +211,7 @@ typedef struct
 # define DB_THREAD_SELF CONST_THREAD_AREA (64, FS)
 
 /* Read member of the thread descriptor directly.  */
-#ifdef __native_client__
+#if defined __native_client__ || defined __ZRT_HOST
 # define THREAD_GETMEM(descr, member) \
   descr->member
 #define THREAD_GETMEM_NC(descr, member, idx) \
@@ -279,7 +279,7 @@ typedef struct
 
 
 /* Same as THREAD_SETMEM, but the member offset can be non-constant.  */
-#ifdef __native_client__
+#if defined __native_client__ || defined __ZRT_HOST
 # define THREAD_SETMEM(descr, member, value) \
   descr->member = (value)
 #define THREAD_SETMEM_NC(descr, member, idx, value) \
@@ -335,7 +335,7 @@ typedef struct
 
 
 /* Atomic compare and exchange on TLS, returning old value.  */
-#ifndef __native_client__
+#if !defined __native_client__ && !defined __ZRT_HOST
 #define THREAD_ATOMIC_CMPXCHG_VAL(descr, member, newval, oldval) \
   ({ __typeof (descr->member) __ret;					      \
      __typeof (oldval) __old = (oldval);				      \
@@ -356,7 +356,7 @@ typedef struct
 
 
 /* Atomic set bit.  */
-#ifndef __native_client__
+#if !defined __native_client__ && !defined __ZRT_HOST
 #define THREAD_ATOMIC_BIT_SET(descr, member, bit) \
   (void) ({ if (sizeof ((descr)->member) == 4)				      \
 	      asm volatile (LOCK_PREFIX "orl %1, %%fs:%P0"		      \
@@ -368,7 +368,7 @@ typedef struct
 #endif
 
 
-#ifndef __native_client__
+#if !defined __native_client__ && !defined __ZRT_HOST
 #define CALL_THREAD_FCT(descr) \
   ({ void *__res;							      \
      asm volatile ("movq %%fs:%P2, %%rdi\n\t"				      \
@@ -402,7 +402,7 @@ typedef struct
 #define THREAD_GSCOPE_FLAG_UNUSED 0
 #define THREAD_GSCOPE_FLAG_USED   1
 #define THREAD_GSCOPE_FLAG_WAIT   2
-#ifndef __native_client__
+#if !defined __native_client__ && !defined __ZRT_HOST
 #define THREAD_GSCOPE_RESET_FLAG() \
   do									      \
     { int __res;							      \

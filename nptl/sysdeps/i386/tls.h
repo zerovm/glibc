@@ -35,7 +35,7 @@
    do not get optimized away.
 
    We need it before sysdep.h in NaCl for INTERNAL_SYSCALL_gettid_0.  */
-# ifdef __native_client__
+# if defined __native_client__ || defined __ZRT_HOST
 #  define THREAD_SELF							      \
   ({ struct pthread *__self;						      \
      asm ("movl %%gs:0,%0" : "=r" (__self));				      \
@@ -236,7 +236,7 @@ union user_desc_init
    assignments like
         pthread_descr self = thread_self();
    do not get optimized away.  */
-#ifndef __native_client__
+#if !defined __native_client__ && !defined __ZRT_HOST
 #  define THREAD_SELF \
   ({ struct pthread *__self;						      \
      asm ("movl %%gs:%c1,%0" : "=r" (__self)				      \
@@ -250,7 +250,7 @@ union user_desc_init
   REGISTER_THREAD_AREA (64, 26 * 8, 3) /* x86-64's user_regs_struct->gs */
 
 
-#ifdef __native_client__
+# if defined __native_client__ || defined __ZRT_HOST
 # define THREAD_GETMEM(descr, member) \
   descr->member
 #define THREAD_GETMEM_NC(descr, member, idx) \

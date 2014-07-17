@@ -366,7 +366,7 @@ struct pthread
   /* Resolver state.  */
   struct __res_state res;
 
-#ifdef __native_client__
+#if defined __native_client__ || defined __ZRT_HOST
   /* Futex emulation support.  */
   struct thread_wait_list_node thread_wait_list_node;
 #endif

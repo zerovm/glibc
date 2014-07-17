@@ -89,8 +89,8 @@ selinux-LIBS := -lselinux $(libaudit) $(libcap)
 # contains only the basic kernel interface headers, not something like
 # libselinux.  So the simplest thing is to presume that the standard
 # system headers will be ok for this file.
-$(objpfx)nscd_stat.o: sysincludes = # nothing
-$(objpfx)selinux.o: sysincludes = # nothing
+$(objpfx)nscd_stat.o: #sysincludes = # nothing
+$(objpfx)selinux.o: #sysincludes = # nothing
 endif
 
 LDLIBS-nscd = $(selinux-LIBS)

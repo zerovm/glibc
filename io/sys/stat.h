@@ -204,7 +204,7 @@ __BEGIN_DECLS
 #endif
 
 
-#if !defined __USE_FILE_OFFSET64 || defined __native_client__
+#if !defined __USE_FILE_OFFSET64 || defined __native_client__ || defined __ZRT_HOST
 /* Get file attributes for FILE and put them in BUF.  */
 extern int stat (__const char *__restrict __file,
 		 struct stat *__restrict __buf) __THROW __nonnull ((1, 2));
@@ -236,7 +236,7 @@ extern int fstat64 (int __fd, struct stat64 *__buf) NACL_LFS_ALIAS (fstat)
 /* Similar to stat, get the attributes for FILE and put them in BUF.
    Relative path names are interpreted relative to FD unless FD is
    AT_FDCWD.  */
-# if !defined __USE_FILE_OFFSET64 || defined __native_client__
+# if !defined __USE_FILE_OFFSET64 || defined __native_client__ || defined __ZRT_HOST
 extern int fstatat (int __fd, __const char *__restrict __file,
 		    struct stat *__restrict __buf, int __flag)
      __THROW __nonnull ((2, 3));
@@ -259,7 +259,7 @@ extern int fstatat64 (int __fd, __const char *__restrict __file,
 #endif
 
 #if defined __USE_BSD || defined __USE_XOPEN_EXTENDED
-# if !defined __USE_FILE_OFFSET64 || defined __native_client__
+# if !defined __USE_FILE_OFFSET64 || defined __native_client__ || defined __ZRT_HOST
 /* Get file attributes about FILE and put them in BUF.
    If FILE is a symbolic link, do not follow it.  */
 extern int lstat (__const char *__restrict __file,
@@ -397,7 +397,7 @@ extern int futimens (int __fd, __const struct timespec __times[2]) __THROW;
 #endif
 
 /* Wrappers for stat and mknod system calls.  */
-#if !defined __USE_FILE_OFFSET64 || defined __native_client__
+#if !defined __USE_FILE_OFFSET64 || defined __native_client__ || defined __ZRT_HOST
 extern int __fxstat (int __ver, int __fildes, struct stat *__stat_buf)
      __THROW __nonnull ((3));
 extern int __xstat (int __ver, __const char *__filename,

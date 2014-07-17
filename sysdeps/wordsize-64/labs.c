@@ -20,7 +20,7 @@
 
 #include <stdlib/labs.c>
 
-#ifndef __native_client__
+#if !defined __native_client__ && !defined __ZRT_HOST
 /* On x86-64 NaCl sizeof(long long) > sizeof(long). */
 weak_alias (labs, imaxabs)
 #endif

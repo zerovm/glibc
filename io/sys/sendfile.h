@@ -30,7 +30,7 @@ __BEGIN_DECLS
    following the read bytes.  If OFFSET is a null pointer, use the normal
    file position instead.  Return the number of written bytes, or -1 in
    case of error.  */
-#if !defined __USE_FILE_OFFSET64 || defined __native_client__
+#if !defined __USE_FILE_OFFSET64 || defined __native_client__ || defined __ZRT_HOST
 extern ssize_t sendfile (int __out_fd, int __in_fd, off_t *__offset,
 			 size_t __count) __THROW;
 #else

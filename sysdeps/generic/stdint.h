@@ -38,7 +38,7 @@ typedef signed char		int8_t;
 typedef short int		int16_t;
 typedef int			int32_t;
 /* TODO(pasko): make sure __WORDSIZE is visible as 32 outside libc. */
-# if __WORDSIZE == 64 && !defined __native_client__
+# if __WORDSIZE == 64 && !defined __native_client__ && !defined __ZRT_HOST
 typedef long int		int64_t;
 # else
 __extension__
@@ -53,7 +53,7 @@ typedef unsigned short int	uint16_t;
 typedef unsigned int		uint32_t;
 # define __uint32_t_defined
 #endif
-#if __WORDSIZE == 64 && !defined __native_client__
+#if __WORDSIZE == 64 && !defined __native_client__ && !defined __ZRT_HOST
 typedef unsigned long int	uint64_t;
 #else
 __extension__
@@ -67,7 +67,7 @@ typedef unsigned long long int	uint64_t;
 typedef signed char		int_least8_t;
 typedef short int		int_least16_t;
 typedef int			int_least32_t;
-#if __WORDSIZE == 64 && !defined __native_client__
+#if __WORDSIZE == 64 && !defined __native_client__ && !defined __ZRT_HOST
 typedef long int		int_least64_t;
 #else
 __extension__
@@ -78,7 +78,7 @@ typedef long long int		int_least64_t;
 typedef unsigned char		uint_least8_t;
 typedef unsigned short int	uint_least16_t;
 typedef unsigned int		uint_least32_t;
-#if __WORDSIZE == 64 && !defined __native_client__
+#if __WORDSIZE == 64 && !defined __native_client__ && !defined __ZRT_HOST
 typedef unsigned long int	uint_least64_t;
 #else
 __extension__
@@ -90,7 +90,7 @@ typedef unsigned long long int	uint_least64_t;
 
 /* Signed.  */
 typedef signed char		int_fast8_t;
-#if __WORDSIZE == 64 && !defined __native_client__
+#if __WORDSIZE == 64 && !defined __native_client__ && !defined __ZRT_HOST
 typedef long int		int_fast16_t;
 typedef long int		int_fast32_t;
 typedef long int		int_fast64_t;
@@ -103,7 +103,7 @@ typedef long long int		int_fast64_t;
 
 /* Unsigned.  */
 typedef unsigned char		uint_fast8_t;
-#if __WORDSIZE == 64 && !defined __native_client__
+#if __WORDSIZE == 64 && !defined __native_client__ && !defined __ZRT_HOST
 typedef unsigned long int	uint_fast16_t;
 typedef unsigned long int	uint_fast32_t;
 typedef unsigned long int	uint_fast64_t;
@@ -116,7 +116,7 @@ typedef unsigned long long int	uint_fast64_t;
 
 
 /* Types for `void *' pointers.  */
-#if __WORDSIZE == 64 && !defined __native_client__
+#if __WORDSIZE == 64 && !defined __native_client__ && !defined __ZRT_HOST
 # ifndef __intptr_t_defined
 typedef long int		intptr_t;
 #  define __intptr_t_defined
@@ -132,7 +132,7 @@ typedef unsigned int		uintptr_t;
 
 
 /* Largest integral types.  */
-#if __WORDSIZE == 64 && !defined __native_client__
+#if __WORDSIZE == 64 && !defined __native_client__ && !defined __ZRT_HOST
 typedef long int		intmax_t;
 typedef unsigned long int	uintmax_t;
 #else
@@ -147,7 +147,7 @@ typedef unsigned long long int	uintmax_t;
    macros should only be defined if explicitly requested.  */
 #if !defined __cplusplus || defined __STDC_LIMIT_MACROS
 
-# if __WORDSIZE == 64 && !defined __native_client__
+# if __WORDSIZE == 64 && !defined __native_client__ && !defined __ZRT_HOST
 #  define __INT64_C(c)	c ## L
 #  define __UINT64_C(c)	c ## UL
 # else
@@ -227,7 +227,7 @@ typedef unsigned long long int	uintmax_t;
 
 
 /* Values to test for integral types holding `void *' pointer.  */
-# if __WORDSIZE == 64 && !defined __native_client__
+# if __WORDSIZE == 64 && !defined __native_client__ && !defined __ZRT_HOST
 #  define INTPTR_MIN		(-9223372036854775807L-1)
 #  define INTPTR_MAX		(9223372036854775807L)
 #  define UINTPTR_MAX		(18446744073709551615UL)
@@ -250,7 +250,7 @@ typedef unsigned long long int	uintmax_t;
 /* Limits of other integer types.  */
 
 /* Limits of `ptrdiff_t' type.  */
-# if __WORDSIZE == 64 && !defined __native_client__
+# if __WORDSIZE == 64 && !defined __native_client__ && !defined __ZRT_HOST
 #  define PTRDIFF_MIN		(-9223372036854775807L-1)
 #  define PTRDIFF_MAX		(9223372036854775807L)
 # else
@@ -263,7 +263,7 @@ typedef unsigned long long int	uintmax_t;
 # define SIG_ATOMIC_MAX		(2147483647)
 
 /* Limit of `size_t' type.  */
-# if __WORDSIZE == 64 && !defined __native_client__
+# if __WORDSIZE == 64 && !defined __native_client__ && !defined __ZRT_HOST
 #  define SIZE_MAX		(18446744073709551615UL)
 # else
 #  define SIZE_MAX		(4294967295U)
@@ -291,7 +291,7 @@ typedef unsigned long long int	uintmax_t;
 # define INT8_C(c)	c
 # define INT16_C(c)	c
 # define INT32_C(c)	c
-# if __WORDSIZE == 64 && !defined __native_client__
+# if __WORDSIZE == 64 && !defined __native_client__ && !defined __ZRT_HOST
 #  define INT64_C(c)	c ## L
 # else
 #  define INT64_C(c)	c ## LL
@@ -301,14 +301,14 @@ typedef unsigned long long int	uintmax_t;
 # define UINT8_C(c)	c
 # define UINT16_C(c)	c
 # define UINT32_C(c)	c ## U
-# if __WORDSIZE == 64 && !defined __native_client__
+# if __WORDSIZE == 64 && !defined __native_client__ && !defined __ZRT_HOST
 #  define UINT64_C(c)	c ## UL
 # else
 #  define UINT64_C(c)	c ## ULL
 # endif
 
 /* Maximal type.  */
-# if __WORDSIZE == 64 && !defined __native_client__
+# if __WORDSIZE == 64 && !defined __native_client__ && !defined __ZRT_HOST
 #  define INTMAX_C(c)	c ## L
 #  define UINTMAX_C(c)	c ## UL
 # else
