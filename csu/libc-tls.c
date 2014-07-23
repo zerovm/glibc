@@ -20,6 +20,8 @@
 #include <errno.h>
 #include <ldsodefs.h>
 #include <tls.h>
+/* Get the thread descriptor definition.  */
+# include <nptl/descr.h>
 #include <unistd.h>
 #include <stdio.h>
 #include <sys/param.h>
