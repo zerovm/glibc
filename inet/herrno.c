@@ -26,9 +26,15 @@
    accessible in the libc.  */
 
 #if USE___THREAD
+#ifdef __ZRT_HOST
+int h_errno __attribute__ ((nocommon));
+strong_alias (h_errno, _h_errno)
+strong_alias (h_errno, __libc_h_errno)
+#else
 __thread int h_errno;
 extern __thread int __libc_h_errno __attribute__ ((alias ("h_errno")))
   attribute_hidden;
+#endif
 # define h_errno __libc_h_errno
 #else
 /* This differs from plain `int h_errno;' in that it doesn't create
