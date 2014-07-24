@@ -20,7 +20,7 @@ MA 02111-1307, USA. */
 
 #include <bits/wordsize.h>
 
-#if defined(__native_client__) || defined(__ZRT_HOST)
+#ifdef __native_client__ 
 #define BITS_PER_MP_LIMB	32
 #define BYTES_PER_MP_LIMB	(32 / 8)
 #define BITS_PER_LONGINT	32

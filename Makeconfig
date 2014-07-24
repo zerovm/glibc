@@ -48,11 +48,6 @@ endif # machine
 endif # ARCH
 endif # config.make
 
-ifeq (yesyes,$(cross-compiling)$(strip $(zrt)))
-biarch?=64
-HOST_STATIC_LINK_FLAGS="-lgcc_eh $(link-libc-static)"
-endif
-
 # Directory for object files and libc.a.  If this is not defined, the
 # object files live in the subdirectories where their sources live, and
 # libc.a lives in the parent directory (this probably doesn't work any
@@ -91,6 +86,10 @@ export sysdep_dir := $(sysdep_dir)
 include $(common-objpfx)config.make
 
 ifeq (yes,$(strip $(zrt)))
+zrt-INCLUDE=-I$(ZRT_ROOT)/lib -DHAVE_ZRT
+zrt-LDFLAGS=$(ZRT_ROOT)/lib/zrt.o
+endif
+ifeq (forhost,$(strip $(zrt)))
 zrt-INCLUDE=-I$(ZRT_ROOT)/lib -DHAVE_ZRT
 zrt-LDFLAGS=$(ZRT_ROOT)/lib/zrt.o
 endif
@@ -430,6 +429,11 @@ ifeq (yes,$(have-hash-style))
 hashstyle-LDFLAGS = -Wl,--hash-style=both
 LDFLAGS.so += $(hashstyle-LDFLAGS)
 LDFLAGS-rtld += $(hashstyle-LDFLAGS)
+endif
+
+ifeq (forhost,$(strip $(zrt)))
+biarch?=64
+HOST_STATIC_LINK_FLAGS=-lgcc_eh $(link-libc-static)
 endif
 
 # Command for linking programs with the C library.

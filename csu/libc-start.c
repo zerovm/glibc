@@ -156,6 +156,17 @@ LIBC_START_MAIN (int (*main) (int, char **, char ** MAIN_AUXVEC_DECL),
        functions are using thread functions if these are available and
        we need to setup errno.  */
     __pthread_initialize_minimal ();
+
+#ifdef HAVE_ZRT
+    /*try to init zrt just after TLS setted up*/
+    struct zcalls_init_t* zcalls;
+    if ( ZCALLS_INIT == __query_zcalls(ZCALLS_INIT, (void**)&zcalls) &&
+	 zcalls ){
+	/*run zcall init*/
+	zcalls->init();
+    }
+#endif
+
     /* TODO(mseaborn): In the long term we could implement a futex
        syscall for NaCl and so this ad-hoc initialisation would not be
        necessary.  See:

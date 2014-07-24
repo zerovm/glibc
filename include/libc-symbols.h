@@ -461,7 +461,13 @@ for linking")
 #endif
 
 #ifdef HAVE_TLS_MODEL_ATTRIBUTE
+//disabling tls variables
+#ifdef __ZRT_HOST
+#define __thread 
+# define attribute_tls_model_ie __attribute__ ((nocommon))
+#else
 # define attribute_tls_model_ie __attribute__ ((tls_model ("initial-exec")))
+#endif
 #else
 # define attribute_tls_model_ie
 #endif

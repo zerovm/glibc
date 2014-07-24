@@ -29,10 +29,15 @@ int rtld_errno attribute_hidden;
 
 #elif USE___THREAD
 
+#ifdef __ZRT_HOST
+int errno __attribute__ ((nocommon));
+strong_alias (errno, _errno)
+strong_alias (errno, __libc_errno)
+#else
 __thread int errno;
 extern __thread int __libc_errno __attribute__ ((alias ("errno")))
   attribute_hidden;
-
+#endif
 #else
 
 /* This differs from plain `int errno;' in that it doesn't create

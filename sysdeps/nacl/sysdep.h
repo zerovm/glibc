@@ -2243,7 +2243,6 @@ INTERNAL_SYSCALL_writev_3 (int *err, int fd, const
 
 #if !defined(__ASSEMBLER__) &&				\
     defined(THREAD_SELF) && defined(CLOCK_IDFIELD_SIZE)
-#include <tls.h>
 
 /* We don't support redefinition of this function. We always use 30 bits of the
    address of pthread structure as TID.  */

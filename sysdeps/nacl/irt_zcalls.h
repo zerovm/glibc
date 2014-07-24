@@ -114,7 +114,7 @@ extern int (*__zcall_fchdir)(int fd);
 	    __nacl_irt_chdir          = zcalls->chdir;			\
 	    								\
 	    /*run zcall init*/						\
-	    zcalls->init();						\
+	    zcalls->preinit();						\
 	}								\
     }
 
