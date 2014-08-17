@@ -51,6 +51,15 @@ generated = msgs.h mtrace-tst-gettext tst-gettext.mtrace
 generated-dirs := domaindir localedir
 
 ifneq (no,$(BISON))
+BISONVERGT2 := $(shell expr `bison -V | grep ^bison | sed 's/^.* //' | cut -f1 -d.` \> 2)
+plural.y: plural2.y plural3.y
+ifeq (0,$(BISONVERGT2))
+	cp plural2.y plural.y
+	cp plural-exp2.h plural-exp.h
+else
+	cp plural3.y plural.y
+	cp plural-exp3.h plural-exp.h
+endif
 plural.c: plural.y
 	$(BISON) $(BISONFLAGS) $@ $^
 ifeq ($(with-cvs),yes)
