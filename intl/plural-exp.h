@@ -112,7 +112,7 @@ struct parse_args
 
 extern void FREE_EXPRESSION PARAMS ((struct expression *exp))
      internal_function;
-extern int PLURAL_PARSE PARAMS ((void *arg));
+extern int PLURAL_PARSE PARAMS ((struct parse_args *arg));
 extern const struct expression GERMANIC_PLURAL attribute_hidden;
 extern void EXTRACT_PLURAL_EXPRESSION PARAMS
   ((const char *nullentry, const struct expression **pluralp,

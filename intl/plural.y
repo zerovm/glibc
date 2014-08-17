@@ -40,11 +40,9 @@
 #ifndef _LIBC
 # define __gettextparse PLURAL_PARSE
 #endif
-
-#define YYLEX_PARAM	&((struct parse_args *) arg)->cp
-#define YYPARSE_PARAM	arg
 %}
-%pure_parser
+%param {struct parse_args *arg}
+%define api.pure full
 %expect 7
 
 %union {
@@ -67,8 +65,8 @@ static inline struct expression *new_exp_3 PARAMS ((enum operator op,
 						   struct expression *bexp,
 						   struct expression *tbranch,
 						   struct expression *fbranch));
-static int yylex PARAMS ((YYSTYPE *lval, const char **pexp));
-static void yyerror PARAMS ((const char *str));
+static int yylex PARAMS ((YYSTYPE *lval, struct parse_args *arg));
+static void yyerror PARAMS ((struct parse_args *arg, const char *str));
 
 /* Allocation of expressions.  */
 
@@ -176,7 +174,7 @@ start:	  exp
 	  {
 	    if ($1 == NULL)
 	      YYABORT;
-	    ((struct parse_args *) arg)->res = $1;
+	    arg->res = $1;
 	  }
 	;
 
@@ -258,18 +256,18 @@ FREE_EXPRESSION (exp)
 
 
 static int
-yylex (lval, pexp)
+yylex (lval, arg)
      YYSTYPE *lval;
-     const char **pexp;
+     struct parse_args *arg;
 {
-  const char *exp = *pexp;
+  const char *exp = arg->cp;
   int result;
 
   while (1)
     {
       if (exp[0] == '\0')
 	{
-	  *pexp = exp;
+	  arg->cp = exp;
 	  return YYEOF;
 	}
 
@@ -396,14 +394,15 @@ yylex (lval, pexp)
       break;
     }
 
-  *pexp = exp;
+  arg->cp = exp; 
 
   return result;
 }
 
 
 static void
-yyerror (str)
+yyerror (arg, str)
+     struct parse_args *arg;
      const char *str;
 {
   /* Do nothing.  We don't print error messages here.  */
