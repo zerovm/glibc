@@ -38,6 +38,7 @@
 
 
 /* These magic symbols are provided by the linker.  */
+#ifndef __ZRT_SO
 extern void (*__preinit_array_start []) (int, char **, char **)
   attribute_hidden;
 extern void (*__preinit_array_end []) (int, char **, char **)
@@ -48,7 +49,7 @@ extern void (*__init_array_end []) (int, char **, char **)
   attribute_hidden;
 extern void (*__fini_array_start []) (void) attribute_hidden;
 extern void (*__fini_array_end []) (void) attribute_hidden;
-
+#endif //__ZRT_SO
 
 /* These function symbols are provided for the .init/.fini section entry
    points automagically by the linker.  */
@@ -66,6 +67,7 @@ __libc_csu_init (int argc, char **argv, char **envp)
   /* For dynamically linked executables the preinit array is executed by
      the dynamic linker (before initializing any shared object.  */
 
+#ifndef __ZRT_SO
 #ifndef LIBC_NONSHARED
   /* For static executables, preinit happens rights before init.  */
   {
@@ -81,6 +83,7 @@ __libc_csu_init (int argc, char **argv, char **envp)
   const size_t size = __init_array_end - __init_array_start;
   for (size_t i = 0; i < size; i++)
       (*__init_array_start [i]) (argc, argv, envp);
+#endif //__ZRT_SO
 }
 
 /* This function should not be used anymore.  We run the executable's
@@ -89,11 +92,12 @@ __libc_csu_init (int argc, char **argv, char **envp)
 void
 __libc_csu_fini (void)
 {
+#ifndef __ZRT_SO
 #ifndef LIBC_NONSHARED
   size_t i = __fini_array_end - __fini_array_start;
   while (i-- > 0)
     (*__fini_array_start [i]) ();
-
   _fini ();
 #endif
+#endif //__ZRT_SO
 }

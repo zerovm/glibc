@@ -1336,20 +1336,25 @@ cannot allocate TLS data structures for initial thread");
       {
         if (c->prot & PROT_EXEC)
           {
+#ifndef __ZRT_HOST
             if (nacl_dyncode_map (fd, (void *) (l->l_addr + c->datastart),
                                   c->dataoff, c->dataend - c->datastart) < 0)
               {
                 errstring = N_("failed to load code from shared object");
                 goto call_lose_errno;
               }
+#else
+	    goto call_lose_errno;
+#endif //__ZRT_HOST
           }
         else
           {
+#ifndef __ZRT_HOST
             /* Tell Valgrind about the mapping. */
             if (c->mapend > c->mapstart)
               __nacl_data_map_for_valgrind ((void *) (l->l_addr + c->mapstart),
                   c->mapend - c->mapstart, c->mapoff, fd, c->prot);
-
+#endif // __ZRT_HOST
             if (c->mapend > c->mapstart
                 /* Map the segment contents from the file.  */
                 && (__mmap ((void *) (l->l_addr + c->mapstart),
