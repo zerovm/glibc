@@ -54,6 +54,7 @@
    to that address.  Future calls will bounce directly from the PLT to the
    function.  */
 
+
 #ifndef ELF_MACHINE_NO_PLT
 DL_FIXUP_VALUE_TYPE
 __attribute ((noinline)) ARCH_FIXUP_ATTRIBUTE
@@ -65,6 +66,7 @@ _dl_fixup (
 	      without the `__unbounded' qualifier.  */
 	   struct link_map *__unbounded l, ElfW(Word) reloc_offset)
 {
+#ifndef __ZRT_SO
   const ElfW(Sym) *const symtab
     = (const void *) D_PTR (l, l_info[DT_SYMTAB]);
   const char *strtab = (const void *) D_PTR (l, l_info[DT_STRTAB]);
@@ -169,10 +171,14 @@ _dl_fixup (
     return value;
 
   return elf_machine_fixup_plt (l, result, reloc, rel_addr, value);
+#else
+  return 0;
+#endif //#ifndef __ZRT_SO
 }
 #endif
 
 #if !defined PROF && !defined ELF_MACHINE_NO_PLT && !__BOUNDED_POINTERS__
+
 
 DL_FIXUP_VALUE_TYPE
 __attribute ((noinline)) ARCH_FIXUP_ATTRIBUTE
@@ -183,6 +189,7 @@ _dl_profile_fixup (
 		   struct link_map *l, ElfW(Word) reloc_offset,
 		   ElfW(Addr) retaddr, void *regs, long int *framesizep)
 {
+#ifndef __ZRT_SO
   void (*mcount_fct) (ElfW(Addr), ElfW(Addr)) = INTUSE(_dl_mcount);
 
   /* This is the address in the array where we store the result of previous
@@ -429,6 +436,9 @@ _dl_profile_fixup (
   (*mcount_fct) (retaddr, DL_FIXUP_VALUE_CODE_ADDR (value));
 
   return value;
+#else
+  return 0;
+#endif // __ZRT_SO
 }
 
 #endif /* PROF && ELF_MACHINE_NO_PLT */
@@ -440,6 +450,7 @@ ARCH_FIXUP_ATTRIBUTE
 _dl_call_pltexit (struct link_map *l, ElfW(Word) reloc_offset,
 		  const void *inregs, void *outregs)
 {
+#ifndef __ZRT_SO
 #ifdef SHARED
   /* This is the address in the array where we store the result of previous
      relocations.  */
@@ -475,4 +486,8 @@ _dl_call_pltexit (struct link_map *l, ElfW(Word) reloc_offset,
       afct = afct->next;
     }
 #endif
+#endif //#ifndef __ZRT_SO
 }
+
+
+

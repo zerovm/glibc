@@ -32,6 +32,7 @@ void
 _dl_resolve_conflicts (struct link_map *l, ElfW(Rela) *conflict,
 		       ElfW(Rela) *conflictend)
 {
+#ifndef __ZRT_SO
 #if ! ELF_MACHINE_NO_RELA
   if (__builtin_expect (GLRO(dl_debug_mask) & DL_DEBUG_RELOC, 0))
     _dl_debug_printf ("\nconflict processing: %s\n",
@@ -72,4 +73,6 @@ _dl_resolve_conflicts (struct link_map *l, ElfW(Rela) *conflict,
       elf_machine_rela (l, conflict, NULL, NULL, (void *) conflict->r_offset);
   }
 #endif
+#endif //__ZRT_SO
 }
+
