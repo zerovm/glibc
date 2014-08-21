@@ -45,9 +45,12 @@
    all callers.  */
 
 #undef fstatat
+#undef __fstatat
 int
 attribute_hidden
-fstatat (int fd, const char *file, struct stat *buf, int flag)
+__fstatat (int fd, const char *file, struct stat *buf, int flag)
 {
   return __fxstatat (_STAT_VER, fd, file, buf, flag);
 }
+
+weak_hidden_alias (__fstatat, fstatat)
