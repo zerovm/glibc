@@ -16,6 +16,7 @@
    Software Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA
    02111-1307 USA.  */
 
+#include <sys/types.h>
 #include <stdlib.h>
 #include <stdio.h>
 #include <unistd.h>
@@ -69,6 +70,9 @@ uintptr_t __stack_chk_guard attribute_relro;
 # define MAIN_AUXVEC_PARAM
 #endif
 
+#pragma GCC push_options
+#pragma GCC optimize ("O0")
+
 STATIC int LIBC_START_MAIN (int (*main) (int, char **, char **
 					 MAIN_AUXVEC_DECL),
 			    int argc,
@@ -114,6 +118,9 @@ LIBC_START_MAIN (int (*main) (int, char **, char ** MAIN_AUXVEC_DECL),
     /*Initialize syscall functions*/
     init_irt_table ();
 
+    /*For libzrt.so it's will be used original arguments, nvram args
+      will be ignored*/
+# ifndef __ZRT_SO
     /*basic setup of args, envs*/
     argc = 1;
     argv = alloca( sizeof(char*)*2 );
@@ -121,14 +128,16 @@ LIBC_START_MAIN (int (*main) (int, char **, char ** MAIN_AUXVEC_DECL),
     argv[0] = "stub\0";
     argv[1] = NULL;
     ubp_ev[0] = NULL;
+# endif //__ZRT_SO
 #endif //HAVE_ZRT
 
     INIT_ARGV_and_ENVIRON;
 
+#ifndef __ZRT_SO
     /* Store the lowest stack address.  This is done in ld.so if this is
        the code for the DSO.  */
     __libc_stack_end = stack_end;
-  
+
 # ifdef HAVE_AUX_VECTOR
     /* First process the auxiliary vector since we need to find the
        program header to locate an eventually present PT_TLS entry.  */
@@ -151,6 +160,8 @@ LIBC_START_MAIN (int (*main) (int, char **, char ** MAIN_AUXVEC_DECL),
 	    DL_SYSDEP_OSCHECK (__libc_fatal);
 	}
 # endif
+
+#endif //__ZRT_SO
 
     /* Initialize the thread library at least a bit since the libgcc
        functions are using thread functions if these are available and
@@ -175,6 +186,7 @@ LIBC_START_MAIN (int (*main) (int, char **, char ** MAIN_AUXVEC_DECL),
     __nacl_futex_init ();
 # endif
 
+#ifndef __ZRT_SO
     /* Set up the stack checker's canary.  */
     uintptr_t stack_chk_guard = _dl_setup_stack_chk_guard ();
 # ifdef THREAD_SET_STACK_GUARD
@@ -182,13 +194,15 @@ LIBC_START_MAIN (int (*main) (int, char **, char ** MAIN_AUXVEC_DECL),
 # else
     __stack_chk_guard = stack_chk_guard;
 # endif
+#endif //__ZRT_SO
 #endif
 
     /* Register the destructor of the dynamic linker if there is any.  */
     if (__builtin_expect (rtld_fini != NULL, 1))
 	__cxa_atexit ((void (*) (void *)) rtld_fini, NULL, NULL);
 
-#ifndef SHARED
+#ifndef __ZRT_SO
+# ifndef SHARED
     /* Call the initializer of the libc.  This is only needed here if we
        are compiling for the static library in which case we haven't
        run the constructors in `_dl_start_user'.  */
@@ -204,13 +218,13 @@ LIBC_START_MAIN (int (*main) (int, char **, char ** MAIN_AUXVEC_DECL),
        loader did the work already.  */
     if (__builtin_expect (__libc_enable_secure, 0))
 	__libc_check_standard_fds ();
-#endif
+# endif
 
     /* Call the initializer of the program, if any.  */
-#ifdef SHARED
+# ifdef SHARED
     if (__builtin_expect (GLRO(dl_debug_mask) & DL_DEBUG_IMPCALLS, 0))
 	GLRO(dl_debug_printf) ("\ninitialize program: %s\n\n", argv[0]);
-#endif
+# endif
 
     /*glibc init moved after zrt init*/
 
@@ -234,6 +248,8 @@ LIBC_START_MAIN (int (*main) (int, char **, char ** MAIN_AUXVEC_DECL),
     if (__builtin_expect (GLRO(dl_debug_mask) & DL_DEBUG_IMPCALLS, 0))
 	GLRO(dl_debug_printf) ("\ntransferring control: %s\n\n", argv[0]);
 #endif
+
+#endif //__ZRT_SO
 
 #ifdef HAVE_CLEANUP_JMP_BUF
     /* Memory for the cancellation buffer.  */
@@ -299,28 +315,35 @@ LIBC_START_MAIN (int (*main) (int, char **, char ** MAIN_AUXVEC_DECL),
 		while( nvram_args[arg_count] != NULL )
 		    ++arg_count;
 
-		/*set libc variables that would be used for further initialization*/
+#ifndef __ZRT_SO
+		/*update args by values from nvram*/
 		argc = arg_count;
 		argv = nvram_args;
 		__environ MAIN_AUXVEC_PARAM = nvram_envs;
+#endif //__ZRT_SO
 	    }
 	}
 	extern char **__libc_argv attribute_hidden;
 	/*update internal glibc arguments*/
 	__libc_argv = argv;
+#endif
 
+	/*in case if using zrt.so init function should not be NULL and 
+	saves nvram_envs into system environment, so __environ globabal var should not be changed*/
+	if (init)
+	    (*init) (argc, argv, nvram_envs);
+
+#ifdef HAVE_ZRT
 	/*premain callback*/
 	if ( zcalls_zrt_init && zcalls_zrt_init->zrt_premain ){
 	    zcalls_zrt_init->zrt_premain();
 	}
-
 #endif
 
-	if (init)
-	    (*init) (argc, argv, __environ MAIN_AUXVEC_PARAM);
-
 	/* Run the program.  */
-	result = main (argc, argv, __environ MAIN_AUXVEC_PARAM);
+#ifdef __ZRT_SO
+	result = main (argc, argv, nvram_envs);
+#endif
     }
     else
 	{
@@ -352,6 +375,9 @@ LIBC_START_MAIN (int (*main) (int, char **, char ** MAIN_AUXVEC_DECL),
     result = main (argc, argv, __environ MAIN_AUXVEC_PARAM);
 #endif
 
+#ifndef __ZRT_SO
     exit (result);
+#endif
 }
 
+#pragma GCC pop_options
