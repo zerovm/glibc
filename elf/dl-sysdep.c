@@ -64,7 +64,11 @@ INTVARDEF(__libc_enable_secure)
 int __libc_multiple_libcs = 0;	/* Defining this here avoids the inclusion
 				   of init-first.  */
 /* This variable contains the lowest stack address ever used.  */
-void *__libc_stack_end attribute_relro = NULL;
+void *__libc_stack_end 
+#ifndef __ZRT_SO
+attribute_relro 
+#endif //__ZRT_SO
+= NULL;
 rtld_hidden_data_def(__libc_stack_end)
 static ElfW(auxv_t) *_dl_auxv attribute_relro;
 

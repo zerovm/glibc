@@ -19,12 +19,14 @@
 
 #include <sysdep.h>
 
+
 	.text
 	.globl _dl_runtime_resolve
 	.type _dl_runtime_resolve, @function
 	.align 16
 	cfi_startproc
 _dl_runtime_resolve:
+#ifndef __ZRT_SO
 #ifndef __native_client__
 	subq $56,%rsp
 #else
@@ -62,9 +64,9 @@ _dl_runtime_resolve:
 	cfi_adjust_cfa_offset(-72)
 	nacljmp %r11d, %r15
 #endif
+#endif //__ZRT_SO
 	cfi_endproc
 	.size _dl_runtime_resolve, .-_dl_runtime_resolve
-
 
 #ifndef PROF
 	.globl _dl_runtime_profile
@@ -72,6 +74,7 @@ _dl_runtime_resolve:
 	.align 16
 	cfi_startproc
 _dl_runtime_profile:
+#ifndef __ZRT_SO
 #ifndef __native_client__
 	subq $88, %rsp
 #else
@@ -243,6 +246,8 @@ _dl_runtime_profile:
     popq %r11
     nacljmp %r11d, %r15
 #endif
+#endif //__ZRT_SO
+	
 	cfi_endproc
 	.size _dl_runtime_profile, .-_dl_runtime_profile
 #endif

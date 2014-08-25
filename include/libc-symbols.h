@@ -472,7 +472,11 @@ for linking")
 # define attribute_tls_model_ie
 #endif
 
+#ifndef __ZRT_SO
 #define attribute_relro __attribute__ ((section (".data.rel.ro")))
+#else
+#define attribute_relro
+#endif //__ZRT_SO
 
 /* Handling on non-exported internal names.  We have to do this only
    for shared code.  */

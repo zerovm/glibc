@@ -703,7 +703,12 @@ rtld_hidden_proto (_dl_make_stack_executable)
    might use the variable which results in copy relocations on some
    platforms.  But this does not matter, ld.so can always use the local
    copy.  */
-extern void *__libc_stack_end attribute_relro;
+extern void *__libc_stack_end 
+#ifndef __ZRT_SO
+attribute_relro
+#endif //__ZRT_SO
+;
+
 rtld_hidden_proto (__libc_stack_end)
 
 /* Parameters passed to the dynamic linker.  */

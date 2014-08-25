@@ -147,7 +147,7 @@ typedef struct
 #if defined __native_client__
 #define TLS_INIT_TP_SYSCALL \
   _result = __nacl_irt_tls_init (_thrdescr);
-#else
+#elif !defined __ZRT_SO
 #define TLS_INIT_TP_SYSCALL \
      /* It is a simple syscall to set the %fs value for the thread.  */	      \
      asm volatile ("syscall"						      \
@@ -156,7 +156,10 @@ typedef struct
 		     "D" ((unsigned long int) ARCH_SET_FS),		      \
 		     "S" (_thrdescr)					      \
 		   : "memory", "cc", "r11", "cx");
-#endif
+#else
+#define TLS_INIT_TP_SYSCALL
+#endif //__ZRT_SO
+
 
 /* Code to initially initialize the thread pointer.  This might need
    special attention since 'errno' is not yet available and if the

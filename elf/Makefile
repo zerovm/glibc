@@ -20,6 +20,8 @@
 
 subdir		:= elf
 
+include ../Makeconfig
+
 headers		= elf.h bits/elfclass.h link.h bits/link.h
 routines	= $(dl-routines) dl-support dl-iteratephdr \
 		  dl-addr enbl-secure dl-profstub \
@@ -31,9 +33,11 @@ dl-routines	= $(addprefix dl-,load cache lookup object reloc deps \
 			          runtime error init fini debug misc \
 				  version profile conflict tls origin \
 				  execstack caller open close trampoline) \
-		  nacl_read_tp irt_syscalls \
-		  nacl_dyncode_create nacl_dyncode_map nacl_dyncode_alloc \
-		  futex_emulation nacl_dyncode_valgrind
+		  nacl_read_tp irt_syscalls futex_emulation
+ifneq (forhost,$(strip $(zrt)))
+dl-routines	+= nacl_dyncode_create nacl_dyncode_map nacl_dyncode_alloc \
+		  nacl_dyncode_valgrind
+endif
 all-dl-routines = $(dl-routines) $(sysdep-dl-routines)
 # But they are absent from the shared libc, because that code is in ld.so.
 elide-routines.os = $(all-dl-routines) dl-support enbl-secure dl-origin \
@@ -101,8 +105,6 @@ distribute	:= rtld-Rules \
 CFLAGS-dl-runtime.c = -fexceptions -fasynchronous-unwind-tables
 CFLAGS-dl-lookup.c = -fexceptions -fasynchronous-unwind-tables
 CFLAGS-dl-iterate-phdr.c = $(uses-callbacks)
-
-include ../Makeconfig
 
 ifeq ($(unwind-find-fde),yes)
 routines += unwind-dw2-fde-glibc

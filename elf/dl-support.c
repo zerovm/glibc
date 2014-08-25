@@ -34,7 +34,7 @@
 #include <unsecvars.h>
 #include <hp-timing.h>
 
-#ifdef __native_client__
+#if defined __native_client__ || defined __ZRT_HOST
 #include <irt.h>
 #include <irt_syscalls.h>
 #endif

@@ -20,11 +20,11 @@
 #include "config.h"
 #include <ldsodefs.h>
 
-
 void *
 internal_function
 _dl_vdso_vsym (const char *name, const struct r_found_version *vers)
 {
+#ifndef __ZRT_SO
   struct link_map *map = GLRO (dl_sysinfo_map);
   void *value = NULL;
 
@@ -45,6 +45,9 @@ _dl_vdso_vsym (const char *name, const struct r_found_version *vers)
       if (ref != NULL)
 	value = DL_SYMBOL_ADDRESS (result, ref);
     }
-
   return value;
+#else
+  return NULL;
+#endif //__ZRT_SO
 }
+
