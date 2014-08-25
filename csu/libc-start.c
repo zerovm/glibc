@@ -341,9 +341,7 @@ LIBC_START_MAIN (int (*main) (int, char **, char ** MAIN_AUXVEC_DECL),
 #endif
 
 	/* Run the program.  */
-#ifdef __ZRT_SO
 	result = main (argc, argv, nvram_envs);
-#endif
     }
     else
 	{
