@@ -1508,15 +1508,15 @@ INTERNAL_SYSCALL_select_5 (int *err, int nfds, fd_set *readfds,
 			   fd_set *writefds, fd_set *exceptfds,
 			   const struct timeval *timeout)
 {
-    struct timespec req, rem;
-    TIMEVAL_TO_TIMESPEC(timeout, &req);
-    if ( !nanosleep(&req, &rem) && nfds == 0 ){
-	*err = 0;
+    int ret=0;
+    if ( __nacl_irt_select (nfds, readfds, writefds, exceptfds, timeout, &ret) < 0 ){
+	ret=-1;
+	*err = errno;
     }
     else{
-	*err = (38 /* ENOSYS */);
+	*err=0;
     }
-    return 0;
+    return ret;
 }
 
 __extern_always_inline int
