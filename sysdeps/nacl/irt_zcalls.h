@@ -112,6 +112,7 @@ extern int (*__zcall_fchdir)(int fd);
 	    __nacl_irt_clock_gettime  = zcalls->gettime;		\
 	    /*another calls*/						\
 	    __nacl_irt_chdir          = zcalls->chdir;			\
+	    __nacl_irt_select         = zcalls->select;			\
 	    								\
 	    /*run zcall init*/						\
 	    zcalls->preinit();						\
