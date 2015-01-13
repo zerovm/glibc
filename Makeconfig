@@ -434,6 +434,8 @@ endif
 ifeq (forhost,$(strip $(zrt)))
 biarch?=64
 HOST_STATIC_LINK_FLAGS=-lgcc_eh $(link-libc-static)
+#need to specify linker library while building in ubuntu 14.04, with gcc 4.8.2
+HOST_LDSO=/lib/x86_64-linux-gnu/ld-linux-x86-64.so.2
 endif
 
 # Command for linking programs with the C library.
@@ -448,7 +450,7 @@ ifndef +link
 						     $(start-installed-name))\
 			   $(+preinit) $(link-extra-libs) \
 			   $(common-objpfx)libc% $(+postinit),$^) \
-	      $(link-extra-libs) $(link-libc) $(+postctor) $(+postinit)
+	      $(link-extra-libs) $(link-libc) $(+postctor) $(+postinit) $(HOST_LDSO)
 endif
 # Command for statically linking programs with the C library.
 ifndef +link-static
@@ -474,7 +476,7 @@ ifndef +link-bounded
 						     $(start-installed-name))\
 			   $(+preinit) $(link-extra-libs-bounded) \
 			   $(common-objpfx)libc% $(+postinit),$^) \
-	      $(link-extra-libs-bounded) $(link-libc-bounded) $(+postctor) $(+postinit)
+	      $(link-extra-libs-bounded) $(link-libc-bounded) $(+postctor) $(+postinit) $(HOST_LDSO)
 endif
 ifndef config-LDFLAGS
 ifeq (yesyes,$(build-shared)$(elf))
