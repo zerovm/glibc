@@ -50,7 +50,14 @@ extern int (*__zcall_get_avphys_pages)(void);
        int (*__zcall_get_avphys_pages)(void);
 extern int (*__zcall_fchdir)(int fd);
        int (*__zcall_fchdir)(int fd);
-
+extern int (*__zcall_utime)(const char *filename, const struct utimbuf *times);
+       int (*__zcall_utime)(const char *filename, const struct utimbuf *times);
+extern int (*__zcall_utimes)(const char *filename, const struct timeval times[2]);
+       int (*__zcall_utimes)(const char *filename, const struct timeval times[2]);
+extern int (*__zcall_utimensat)(int dirfd, const char *pathname,
+                                const struct timespec times[2], int flags);
+       int (*__zcall_utimensat)(int dirfd, const char *pathname,
+                                const struct timespec times[2], int flags);
 
 
 #define INIT_ZCALLS {							\
@@ -143,6 +150,9 @@ extern int (*__zcall_fchdir)(int fd);
 	    __zcall_get_phys_pages = zcalls->get_phys_pages;		\
 	    __zcall_get_avphys_pages = zcalls->get_avphys_pages;	\
 	    __zcall_fchdir         = zcalls->fchdir;			\
+            __zcall_utime          = zcalls->utime;                     \
+            __zcall_utimes         = zcalls->utimes;                    \
+            __zcall_utimensat      = zcalls->utimensat;                 \
 	}								\
     }
 

@@ -586,8 +586,20 @@ __extern_always_inline int
 INTERNAL_SYSCALL_futimesat_3 (int *err, int dirfd, const char *pathname,
 			      const struct timeval times[2])
 {
-    *err = (38 /* ENOSYS */);
-    return 0;
+    struct timespec timespec[2];
+    TIMEVAL_TO_TIMESPEC(&times[0], &timespec[0]);
+    TIMEVAL_TO_TIMESPEC(&times[1], &timespec[1]);
+    int flags=0;
+    int ret=0;
+    if ( __zcall_utimensat(dirfd, pathname, timespec, flags) < 0 ){
+	ret=-1;
+	*err = errno;
+	errno=0;
+    }
+    else{
+	*err=0;
+    }
+    return ret;
 }
 
 struct kernel_sym;
@@ -2127,24 +2139,48 @@ __extern_always_inline int
 INTERNAL_SYSCALL_utime_2 (int *err, const char *filename,
 		          const struct utimbuf *times)
 {
-    *err = (38 /* ENOSYS */);
-    return 0;
+    int ret=0;
+    if ( __zcall_utime(filename, times) < 0 ){
+	ret=-1;
+	*err = errno;
+	errno=0;
+    }
+    else{
+	*err=0;
+    }
+    return ret;
 }
 
 __extern_always_inline int
 INTERNAL_SYSCALL_utimes_2 (int *err, const char *filename,
 			   const struct timeval times[2])
 {
-    *err = (38 /* ENOSYS */);
-    return 0;
+    int ret=0;
+    if ( __zcall_utimes(filename, times) < 0 ){
+	ret=-1;
+	*err = errno;
+	errno=0;
+    }
+    else{
+	*err=0;
+    }
+    return ret;
 }
 
 __extern_always_inline int
 INTERNAL_SYSCALL_utimensat_4 (int *err, int dirfd, const char *pathname,
 			      const struct timespec times[2], int flags)
 {
-    *err = (38 /* ENOSYS */);
-    return 0;
+    int ret=0;
+    if ( __zcall_utimensat(dirfd, pathname, times, flags) < 0 ){
+	ret=-1;
+	*err = errno;
+	errno=0;
+    }
+    else{
+	*err=0;
+    }
+    return ret;
 }
 
 __extern_always_inline int
